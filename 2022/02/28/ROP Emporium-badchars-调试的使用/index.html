@@ -3,17 +3,17 @@
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, maximum-scale=5, viewport-fit=cover">
-    <title>ROP Emporium-badchars-调试的使用 | Hexo</title>
+    <title>ROP Emporium-badchars-调试的使用 | Nemo</title>
     <meta name="description" content="ROPgadget Emporium-badchars 大致思路上write4差不多，但是不能出现’x’, ‘a’, ‘g’, &#39;.&#39;这些字符，于是确定思路，先传入字符串，然后用add，xor等指令改变其值 查找gadget： 12345678910111213141516171819202122232425262728293031323334353637383940ROPgadget --bin">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ROP Emporium-badchars-调试的使用">
-<meta property="og:url" content="http://example.com/2022/02/28/ROP%20Emporium-badchars-%E8%B0%83%E8%AF%95%E7%9A%84%E4%BD%BF%E7%94%A8/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:url" content="http://namonone.com/2022/02/28/ROP%20Emporium-badchars-%E8%B0%83%E8%AF%95%E7%9A%84%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Nemo">
 <meta property="og:description" content="ROPgadget Emporium-badchars 大致思路上write4差不多，但是不能出现’x’, ‘a’, ‘g’, &#39;.&#39;这些字符，于是确定思路，先传入字符串，然后用add，xor等指令改变其值 查找gadget： 12345678910111213141516171819202122232425262728293031323334353637383940ROPgadget --bin">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-02-27T16:00:00.000Z">
 <meta property="article:modified_time" content="2022-06-29T15:51:59.982Z">
-<meta property="article:author" content="John Doe">
+<meta property="article:author" content="Nemo">
 <meta property="article:tag" content="Pwn">
 <meta property="article:tag" content="CTF">
 <meta name="twitter:card" content="summary">
@@ -255,7 +255,7 @@
         </div>
         
 <blockquote class="copyright">
-    <p><strong>Link to this article : </strong><a class="permalink" href="http://example.com/2022/02/28/ROP%20Emporium-badchars-%E8%B0%83%E8%AF%95%E7%9A%84%E4%BD%BF%E7%94%A8/">http://example.com/2022/02/28/ROP Emporium-badchars-调试的使用/</a></p>
+    <p><strong>Link to this article : </strong><a class="permalink" href="http://namonone.com/2022/02/28/ROP%20Emporium-badchars-%E8%B0%83%E8%AF%95%E7%9A%84%E4%BD%BF%E7%94%A8/">http://namonone.com/2022/02/28/ROP Emporium-badchars-调试的使用/</a></p>
     <p><strong>This article is available under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a> License</strong></p>
 </blockquote>
 
