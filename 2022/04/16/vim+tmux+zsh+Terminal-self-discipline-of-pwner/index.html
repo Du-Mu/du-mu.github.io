@@ -3,28 +3,20 @@
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, maximum-scale=5, viewport-fit=cover">
-    <title>vim+tmux+zsh+Terminal 你的pwn效率进阶方案 | Nemo</title>
+    <title>vim+tmux+zsh+Terminal-self-discipline-of-pwner | Nemo</title>
     <meta name="description" content="vim+tmux+zsh+Terminal 你的pwn效率进阶方案 作为一个Pwner，需要频繁的接触命令行，特别是最近接触到了arm架构的pwn，需要一个窗口运行qemu，一个窗口跑脚本，一个窗口跑gdb，需要在几个窗口之间切换，同时我本身用sublime Text需要平凡切屏微调脚本，所以决定配置vim+tmux+zsh+terminal，实现一个兼顾美观和效率的pwn setup 本文主要基">
 <meta property="og:type" content="article">
-<meta property="og:title" content="vim+tmux+zsh+Terminal 你的pwn效率进阶方案">
-<meta property="og:url" content="http://namonone.com/2022/04/16/vim+tmux+zsh+Terminal%20%E4%BD%A0%E7%9A%84pwn%E6%95%88%E7%8E%87%E8%BF%9B%E9%98%B6%E6%96%B9%E6%A1%88/index.html">
+<meta property="og:title" content="vim+tmux+zsh+Terminal-self-discipline-of-pwner">
+<meta property="og:url" content="http://namonone.com/2022/04/16/vim+tmux+zsh+Terminal-self-discipline-of-pwner/index.html">
 <meta property="og:site_name" content="Nemo">
 <meta property="og:description" content="vim+tmux+zsh+Terminal 你的pwn效率进阶方案 作为一个Pwner，需要频繁的接触命令行，特别是最近接触到了arm架构的pwn，需要一个窗口运行qemu，一个窗口跑脚本，一个窗口跑gdb，需要在几个窗口之间切换，同时我本身用sublime Text需要平凡切屏微调脚本，所以决定配置vim+tmux+zsh+terminal，实现一个兼顾美观和效率的pwn setup 本文主要基">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="c:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416174615951.png">
-<meta property="og:image" content="c:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416185639958.png">
-<meta property="og:image" content="c:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416190907747.png">
-<meta property="og:image" content="c:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416191436697.png">
-<meta property="og:image" content="c:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416193659087.png">
-<meta property="og:image" content="c:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416194935563.png">
-<meta property="og:image" content="c:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416195051161.png">
 <meta property="article:published_time" content="2022-04-15T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-06-29T15:57:35.069Z">
+<meta property="article:modified_time" content="2022-07-15T12:00:12.690Z">
 <meta property="article:author" content="Nemo">
 <meta property="article:tag" content="Pwn">
 <meta property="article:tag" content="CTF">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="c:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416174615951.png">
 
     
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
@@ -204,7 +196,7 @@
             
     
         <h1 class="article-title text-lg" itemprop="name">
-            vim+tmux+zsh+Terminal 你的pwn效率进阶方案
+            vim+tmux+zsh+Terminal-self-discipline-of-pwner
         </h1>
     
 
@@ -213,7 +205,7 @@
             <p class="article-meta mb-3 text-xs">
                 <span class="article-date">
     <i class="iconfont icon-calendar-check"></i>
-	<a href="/2022/04/16/vim+tmux+zsh+Terminal%20%E4%BD%A0%E7%9A%84pwn%E6%95%88%E7%8E%87%E8%BF%9B%E9%98%B6%E6%96%B9%E6%A1%88/" class="article-date">
+	<a href="/2022/04/16/vim+tmux+zsh+Terminal-self-discipline-of-pwner/" class="article-date">
 	  <time datetime="2022-04-15T16:00:00.000Z" itemprop="datePublished">Apr 16</time>
 	</a>
 </span>
@@ -233,7 +225,7 @@
 
 
                 <span class="_partial/post-comment"><i class="icon icon-comment"></i>
-                    <a href="/2022/04/16/vim+tmux+zsh+Terminal%20%E4%BD%A0%E7%9A%84pwn%E6%95%88%E7%8E%87%E8%BF%9B%E9%98%B6%E6%96%B9%E6%A1%88/#comments" class="article-comment-link">
+                    <a href="/2022/04/16/vim+tmux+zsh+Terminal-self-discipline-of-pwner/#comments" class="article-comment-link">
                         Comments
                     </a>
                 </span>
@@ -253,9 +245,7 @@
 <p>作为一个Pwner，需要频繁的接触命令行，特别是最近接触到了arm架构的pwn，需要一个窗口运行qemu，一个窗口跑脚本，一个窗口跑gdb，需要在几个窗口之间切换，同时我本身用sublime Text需要平凡切屏微调脚本，所以决定配置vim+tmux+zsh+terminal，实现一个兼顾美观和效率的pwn setup</p>
 <p>本文主要基于ubuntu20系统</p>
 <h2 id="Terminal">Terminal</h2>
-<p>terminal是一个终端模拟器，其实终端模拟器是什么无所谓，只是terminal我看着比较美观，再加上我的ubuntu桌面是gnome桌面，自带gnome terminal，所以我就使用的terminal<img src="C:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416174615951.png" alt="image-20220416174615951"></p>
-<p>这是我的配置方案，其他部分不是很重要，主要是colors部分，背景改成灰/黑色，不透明度调到20%-30%，不影响terminal内文字的观看，同时能够看到后面的背景就行。</p>
-<p>之后，启动终端时</p>
+<p>terminal是一个终端模拟器，其实终端模拟器是什么无所谓，只是terminal我看着比较美观，再加上我的ubuntu桌面是gnome桌面，自带gnome terminal，所以我就使用terminal,  对于colors部分，背景改成灰/黑色，不透明度调到20%-30%，不影响terminal内文字的观看，同时能够看到后面的背景就行。</p>
 <h2 id="zsh配置方案">zsh配置方案</h2>
 <p>因为后面一些配置，在有了zsh后方便一些，所以先配置zsh</p>
 <h4 id="安装">安装</h4>
@@ -278,7 +268,7 @@ You can find <a target="_blank" rel="noopener" href="https://github.com/ohmyzsh/
 <ul>
 <li>
 <p>官方文件提供的安装方案如下<br>
-<img src="C:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416185639958.png" alt="image-20220416185639958"><br>
+使用curl连接。<br>
 如果你没有配置代理或者改hosts的话，你大概率是安装不了的，可以使用一下国内镜像:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh -c <span class="string">&quot;<span class="subst">$(curl -fsSL https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install.sh)</span>&quot;</span></span><br></pre></td></tr></table></figure>
 <p>需要先安装curl。由于我本人没有尝试过这个镜像，我本人是通过改hosts安装的，raw.fithubsercontent.con好像还没有完全屏蔽，改hosts仍然可行，如果安装失败的话，可以私我</p>
@@ -290,13 +280,12 @@ You can find <a target="_blank" rel="noopener" href="https://github.com/ohmyzsh/
 这个阶段，可以把文件管理器改为显示隐藏文件<br>
 如果你上一步安装完成，在主文件夹(也就是桌面软件的home目录，一般用~表示)会出现一个.zshrc的文件，这是zsh的配置文件，要用sudo vim写入，安装oh-my-zsh后</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim ~/.zshrc</span><br></pre></td></tr></table></figure>
-<p>打开后应该是如下样式<br>
-<img src="C:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416190907747.png" alt=""></p>
+<p>打开后应该有大量注释后文本，帮助你修改配置文本</p>
 </li>
 </ul>
 <p>​		我就把ZSH_THEME改成了ys，如果有需要，可以加一些插件，改一些style，因为oh-my-zsh		自带了相当多插件，怎么引入可以查看官方文档</p>
-<p>​		可以使用如下命令为命令添加别名，方便使用<br>
-​				<img src="C:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416191436697.png" alt="image-20220416191436697"></p>
+<p>​		可以使用alias命令为命令添加别名，方便使用<br>
+​</p>
 <ul>
 <li>
 <p>使配置文件生效</p>
@@ -313,7 +302,6 @@ You can find <a target="_blank" rel="noopener" href="https://github.com/ohmyzsh/
 <h4 id="配置">配置</h4>
 <p>依旧在主文件目录下新建一个 .tmux.conf配置文件</p>
 <p>具体配置可以参考: <a target="_blank" rel="noopener" href="https://github.com/YashdalfTheGray/dotfiles/blob/master/macos/.tmux.conf">https://github.com/YashdalfTheGray/dotfiles/blob/master/macos/.tmux.conf</a></p>
-<p><img src="C:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416193659087.png" alt="image-20220416193659087"></p>
 <p>最后这一部分就是加入插件的，自动帮你完成了插件安装</p>
 <p>复制这个配置就行，然后在shell进入tmux<br>
 键入:</p>
@@ -332,9 +320,6 @@ You can find <a target="_blank" rel="noopener" href="https://github.com/ohmyzsh/
 <h4 id="配置-2">配置</h4>
 <p>主文件夹新建.vimrc文件</p>
 <p>配置文件参考https://github.com/YashdalfTheGray/dotfiles/blob/master/macos/.vimrc</p>
-<p><img src="C:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416194935563.png" alt="image-20220416194935563"></p>
-<p>将此命令删掉<br>
-<img src="C:%5CUsers%5C86183%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20220416195051161.png" alt="image-20220416195051161"></p>
 <p>将此处改为~/.vim/plug</p>
 <p>打开vim，按esc命令进入命令模式, 输入:  ，再用source命令导入.vimrc</p>
 <p>再在命令模式输入:PlugInstall，插件安装完成，reload，整体配置成功，具体使用网上资料很多，不再赘述</p>
@@ -342,7 +327,7 @@ You can find <a target="_blank" rel="noopener" href="https://github.com/ohmyzsh/
         </div>
         
 <blockquote class="copyright">
-    <p><strong>Link to this article : </strong><a class="permalink" href="http://namonone.com/2022/04/16/vim+tmux+zsh+Terminal%20%E4%BD%A0%E7%9A%84pwn%E6%95%88%E7%8E%87%E8%BF%9B%E9%98%B6%E6%96%B9%E6%A1%88/">http://namonone.com/2022/04/16/vim+tmux+zsh+Terminal 你的pwn效率进阶方案/</a></p>
+    <p><strong>Link to this article : </strong><a class="permalink" href="http://namonone.com/2022/04/16/vim+tmux+zsh+Terminal-self-discipline-of-pwner/">http://namonone.com/2022/04/16/vim+tmux+zsh+Terminal-self-discipline-of-pwner/</a></p>
     <p><strong>This article is available under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a> License</strong></p>
 </blockquote>
 

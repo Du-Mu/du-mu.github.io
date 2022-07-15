@@ -3,16 +3,16 @@
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, maximum-scale=5, viewport-fit=cover">
-    <title>Libc leak and Bypass the canary-pwnable[dobblesort] | Nemo</title>
+    <title>Libc-Leak-and-Bypass-the-canary-dobblesort-[pwnable] | Nemo</title>
     <meta name="description" content="Libc leak and Bypass the canary-pwnable[dobblesort] 0x1 checksec ![checksec](2022-4-25-dobblesort&#x2F;图像 1.png) Full protection. 0x2 Analysis 查看这个程序， 123456789101112131415161718192021222324252627282930313">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Libc leak and Bypass the canary-pwnable[dobblesort]">
-<meta property="og:url" content="http://namonone.com/2022/04/25/Libc%20leak%20and%20Bypass%20the%20canary%20and-pwnable[dobblesort]/index.html">
+<meta property="og:title" content="Libc-Leak-and-Bypass-the-canary-dobblesort-[pwnable]">
+<meta property="og:url" content="http://namonone.com/2022/04/25/Libc-Leak-and-Bypass-the-canary-dobblesort-[pwnable]/index.html">
 <meta property="og:site_name" content="Nemo">
 <meta property="og:description" content="Libc leak and Bypass the canary-pwnable[dobblesort] 0x1 checksec ![checksec](2022-4-25-dobblesort&#x2F;图像 1.png) Full protection. 0x2 Analysis 查看这个程序， 123456789101112131415161718192021222324252627282930313">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-04-24T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-06-29T15:55:38.999Z">
+<meta property="article:modified_time" content="2022-07-12T12:04:37.400Z">
 <meta property="article:author" content="Nemo">
 <meta property="article:tag" content="Pwn">
 <meta property="article:tag" content="CTF">
@@ -196,7 +196,7 @@
             
     
         <h1 class="article-title text-lg" itemprop="name">
-            Libc leak and Bypass the canary-pwnable[dobblesort]
+            Libc-Leak-and-Bypass-the-canary-dobblesort-[pwnable]
         </h1>
     
 
@@ -205,7 +205,7 @@
             <p class="article-meta mb-3 text-xs">
                 <span class="article-date">
     <i class="iconfont icon-calendar-check"></i>
-	<a href="/2022/04/25/Libc%20leak%20and%20Bypass%20the%20canary%20and-pwnable%5Bdobblesort%5D/" class="article-date">
+	<a href="/2022/04/25/Libc-Leak-and-Bypass-the-canary-dobblesort-%5Bpwnable%5D/" class="article-date">
 	  <time datetime="2022-04-24T16:00:00.000Z" itemprop="datePublished">Apr 25</time>
 	</a>
 </span>
@@ -225,7 +225,7 @@
 
 
                 <span class="_partial/post-comment"><i class="icon icon-comment"></i>
-                    <a href="/2022/04/25/Libc%20leak%20and%20Bypass%20the%20canary%20and-pwnable%5Bdobblesort%5D/#comments" class="article-comment-link">
+                    <a href="/2022/04/25/Libc-Leak-and-Bypass-the-canary-dobblesort-%5Bpwnable%5D/#comments" class="article-comment-link">
                         Comments
                     </a>
                 </span>
@@ -242,16 +242,16 @@
         </header>
         <div class="marked-body article-body">
             <h1 id="Libc-leak-and-Bypass-the-canary-pwnable-dobblesort">Libc leak and Bypass the canary-pwnable[dobblesort]</h1>
-<h2 id="0x1-checksec">0x1 checksec</h2>
+<h2 id="0x1-checksec-2">0x1 checksec</h2>
 <p>![checksec](2022-4-25-dobblesort/图像 1.png)</p>
 <p>Full protection.</p>
-<h2 id="0x2-Analysis">0x2 Analysis</h2>
+<h2 id="0x2-Analysis-2">0x2 Analysis</h2>
 <p>查看这个程序，</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __cdecl <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> **argv, <span class="type">const</span> <span class="type">char</span> **envp)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> v3; <span class="comment">// eax</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> *v4; <span class="comment">// edi</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> i; <span class="comment">// esi</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> j; <span class="comment">// esi</span></span><br><span class="line">  <span class="type">int</span> result; <span class="comment">// eax</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> v8; <span class="comment">// [esp+18h] [ebp-74h] BYREF</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> v9[<span class="number">8</span>]; <span class="comment">// [esp+1Ch] [ebp-70h] BYREF</span></span><br><span class="line">  <span class="type">char</span> buf[<span class="number">64</span>]; <span class="comment">// [esp+3Ch] [ebp-50h] BYREF</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> v11; <span class="comment">// [esp+7Ch] [ebp-10h]</span></span><br><span class="line"></span><br><span class="line">  v11 = __readgsdword(<span class="number">0x14</span>u);</span><br><span class="line">  sub_8B5();</span><br><span class="line">  __printf_chk(<span class="number">1</span>, <span class="string">&quot;What your name :&quot;</span>);</span><br><span class="line">  read(<span class="number">0</span>, buf, <span class="number">0x40</span>u);</span><br><span class="line">  __printf_chk(<span class="number">1</span>, <span class="string">&quot;Hello %s,How many numbers do you what to sort :&quot;</span>);</span><br><span class="line">  __isoc99_scanf(<span class="string">&quot;%u&quot;</span>, &amp;v8);</span><br><span class="line">  v3 = v8;</span><br><span class="line">  <span class="keyword">if</span> ( v8 )</span><br><span class="line">  &#123;</span><br><span class="line">    v4 = v9;</span><br><span class="line">    <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; v8; ++i )</span><br><span class="line">    &#123;</span><br><span class="line">      __printf_chk(<span class="number">1</span>, <span class="string">&quot;Enter the %d number : &quot;</span>);</span><br><span class="line">      fflush(<span class="built_in">stdout</span>);</span><br><span class="line">      __isoc99_scanf(<span class="string">&quot;%u&quot;</span>, v4);</span><br><span class="line">      v3 = v8;</span><br><span class="line">      ++v4;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  sort(v9, v3);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;Result :&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> ( v8 )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">for</span> ( j = <span class="number">0</span>; j &lt; v8; ++j )</span><br><span class="line">      __printf_chk(<span class="number">1</span>, <span class="string">&quot;%u &quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  result = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> ( __readgsdword(<span class="number">0x14</span>u) != v11 )</span><br><span class="line">    sub_BA0();</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>对于这个反汇编的程序，可以看到漏洞点在于对于排序的个数没有限制，可以作为栈溢出的漏洞点</p>
 <p>同时，因为开了NX，RELRO，ret2shellcode无法作用，但是给了libc版本，考虑ret2libc.</p>
 <p>进一步的，通过调试，发现栈上存在libc的地址，考虑通过read和printf实现泄露</p>
-<h2 id="0x3-Process">0x3 Process</h2>
+<h2 id="0x3-Process-2">0x3 Process</h2>
 <ol>
 <li>读入cyclic，一直覆盖到libc基址的位置，再通过__printf_chuk泄露出libc基址</li>
 <li>读入需要排序的数字，在canary之前的数字选择较小的数字。保证排序之后canary仍然在原来的位置</li>
@@ -299,7 +299,7 @@ python3的next()改名了</li>
         </div>
         
 <blockquote class="copyright">
-    <p><strong>Link to this article : </strong><a class="permalink" href="http://namonone.com/2022/04/25/Libc%20leak%20and%20Bypass%20the%20canary%20and-pwnable[dobblesort]/">http://namonone.com/2022/04/25/Libc leak and Bypass the canary and-pwnable[dobblesort]/</a></p>
+    <p><strong>Link to this article : </strong><a class="permalink" href="http://namonone.com/2022/04/25/Libc-Leak-and-Bypass-the-canary-dobblesort-[pwnable]/">http://namonone.com/2022/04/25/Libc-Leak-and-Bypass-the-canary-dobblesort-[pwnable]/</a></p>
     <p><strong>This article is available under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a> License</strong></p>
 </blockquote>
 
@@ -322,7 +322,7 @@ python3的next()改名了</li>
     <div class="toc-sidebar">
         <nav id="toc" class="article-toc">
             <h3 class="toc-title">Catalogue</h3>
-            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Libc-leak-and-Bypass-the-canary-pwnable-dobblesort"><span class="toc-number">1.</span> <span class="toc-text">Libc leak and Bypass the canary-pwnable[dobblesort]</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x1-checksec"><span class="toc-number">1.1.</span> <span class="toc-text">0x1 checksec</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x2-Analysis"><span class="toc-number">1.2.</span> <span class="toc-text">0x2 Analysis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x3-Process"><span class="toc-number">1.3.</span> <span class="toc-text">0x3 Process</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x4-Some-questions"><span class="toc-number">1.4.</span> <span class="toc-text">0x4 Some questions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x5-exp"><span class="toc-number">1.5.</span> <span class="toc-text">0x5 exp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x6-New-skills"><span class="toc-number">1.6.</span> <span class="toc-text">0x6 New skills</span></a></li></ol></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Libc-leak-and-Bypass-the-canary-pwnable-dobblesort"><span class="toc-number">1.</span> <span class="toc-text">Libc leak and Bypass the canary-pwnable[dobblesort]</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x1-checksec-2"><span class="toc-number">1.1.</span> <span class="toc-text">0x1 checksec</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x2-Analysis-2"><span class="toc-number">1.2.</span> <span class="toc-text">0x2 Analysis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x3-Process-2"><span class="toc-number">1.3.</span> <span class="toc-text">0x3 Process</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x4-Some-questions"><span class="toc-number">1.4.</span> <span class="toc-text">0x4 Some questions</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x5-exp"><span class="toc-number">1.5.</span> <span class="toc-text">0x5 exp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x6-New-skills"><span class="toc-number">1.6.</span> <span class="toc-text">0x6 New skills</span></a></li></ol></li></ol>
         </nav>
     </div>
 </aside>
