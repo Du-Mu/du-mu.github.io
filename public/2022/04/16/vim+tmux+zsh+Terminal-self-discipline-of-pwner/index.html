@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html  lang="en" >
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+    <title>vim+tmux+zsh+Terminal-self-discipline-of-pwner | Nemo</title>
+    <meta name="description" content="vim+tmux+zsh+Terminal 你的pwn效率进阶方案 作为一个Pwner，需要频繁的接触命令行，特别是最近接触到了arm架构的pwn，需要一个窗口运行qemu，一个窗口跑脚本，一个窗口跑gdb，需要在几个窗口之间切换，同时我本身用sublime Text需要平凡切屏微调脚本，所以决定配置vim+tmux+zsh+terminal，实现一个兼顾美观和效率的pwn setup 本文主要基">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vim+tmux+zsh+Terminal-self-discipline-of-pwner">
+<meta property="og:url" content="http://namonone.com/2022/04/16/vim+tmux+zsh+Terminal-self-discipline-of-pwner/index.html">
+<meta property="og:site_name" content="Nemo">
+<meta property="og:description" content="vim+tmux+zsh+Terminal 你的pwn效率进阶方案 作为一个Pwner，需要频繁的接触命令行，特别是最近接触到了arm架构的pwn，需要一个窗口运行qemu，一个窗口跑脚本，一个窗口跑gdb，需要在几个窗口之间切换，同时我本身用sublime Text需要平凡切屏微调脚本，所以决定配置vim+tmux+zsh+terminal，实现一个兼顾美观和效率的pwn setup 本文主要基">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-04-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-07-15T12:00:12.690Z">
+<meta property="article:author" content="Nemo">
+<meta property="article:tag" content="Pwn">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+
+    
+<link rel="stylesheet" href="/css/common.min.css">
+
+
+
+    
+    
+    
+        <link href="//cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" rel="stylesheet">
+    
+    
+        <link href="//cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css" rel="stylesheet">
+    
+    
+    
+<link rel="stylesheet" href="/css/iconfont.min.css">
+
+    
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+    <body>
+        <header class="header header-fixture">
+    <div class="profile-search-wrap flex sm:block">
+        
+        
+        <div class="profile sm:text-center md:px-1 lg:px-3 sm:pb-4 sm:pt-6">
+            <a id="avatar" role="link" href="https://github.com/Du-Mu" class="inline-block lg:w-16 lg:h-16 w-8 h-8 m-2" target="_blank" rel="noopener" rel="noreferrer" >
+                <img src="/images/avatar.jpg" class="rounded-full" alt="avatar">
+            </a>
+            <h2 id="name" class="hidden lg:block">Nemo</h2>
+            <h3 id="title" class="hidden lg:block">Student &amp; Coder</h3>
+            
+            <small id="location" class="hidden lg:block">
+                <i class="iconfont icon-map-icon"></i>
+                WuHan, China
+            </small>
+            
+        </div>
+        
+        
+<div class="search flex-1 flex lg:inline-block sm:hidden lg:px-4 lg:mt-2 lg:mb-4 lg:w-full">
+    <form id="search-form" class="my-auto flex-1 lg:border lg:border-solid lg:border-gray-200">
+        <div class="input-group table bg-gray-100 lg:bg-white w-full">
+            <input id="search-input" type="text" placeholder="Search" class="inline-block w-full bg-gray-100 lg:bg-white p-1">
+            <span class="table-cell">
+                <button name="search tigger button" disabled>
+                    <i class="iconfont icon-search m-2"></i>
+                </button>
+            </span>
+        </div>
+    </form>
+        
+<div id="content-json" data-placeholder="Search" class="invisible hidden">/content.json</div>
+<script id="search-teamplate" type="text/html" data-path="/content.json">
+    <div>
+        <div class="search-header bg-gray-400">
+            <input id="actual-search-input" model="keyword" ref="input" class="inline-block w-full h-10 px-2 py-1" placeholder="Search" type="text">
+        </div>
+        <div class="search-result bg-gray-200">
+            {{#each searchPosts}}
+            <a href="/{{ path }}" class="result-item block px-2 pb-3 mb-1 pt-1 hover:bg-indigo-100">
+                <i class="iconfont icon-file"></i>
+                <h1 class="result-title inline font-medium text-lg">{{ title }}</h1>
+                <p class="result-content text-gray-600 text-sm">{{{ text }}}</p>
+            </a>
+            {{/each}}
+        </div>
+    </div>
+</script>
+
+</div>
+
+
+        <button name="menu toogle button" id="menu-toggle-btn" class="block sm:hidden p-3" role="button" aria-expanded="false">
+            <i class="iconfont icon-hamburger"></i>
+        </button>
+    </div>
+    <nav id="menu-nav" class="hidden sm:flex flex-col">
+        
+        
+            <div class="menu-item menu-home" role="menuitem">
+                <a href="/.">
+                    <i class="iconfont icon-home" aria-hidden="true"></i>
+                    <span class="menu-title">Home</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-archives" role="menuitem">
+                <a href="/archives">
+                    <i class="iconfont icon-archive" aria-hidden="true"></i>
+                    <span class="menu-title">Archives</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-categories" role="menuitem">
+                <a href="/categories">
+                    <i class="iconfont icon-folder" aria-hidden="true"></i>
+                    <span class="menu-title">Categories</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-tags" role="menuitem">
+                <a href="/tags">
+                    <i class="iconfont icon-tag" aria-hidden="true"></i>
+                    <span class="menu-title">Tags</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-repository" role="menuitem">
+                <a href="/repository">
+                    <i class="iconfont icon-project" aria-hidden="true"></i>
+                    <span class="menu-title">Repository</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-links" role="menuitem">
+                <a href="/links">
+                    <i class="iconfont icon-friend" aria-hidden="true"></i>
+                    <span class="menu-title">Links</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-about" role="menuitem">
+                <a href="/about">
+                    <i class="iconfont icon-cup" aria-hidden="true"></i>
+                    <span class="menu-title">About</span>
+                </a>
+            </div>
+        
+        
+<div class="social-links flex sm:flex-col lg:hidden mt-5">
+    
+        <span class="social-item text-center">
+            <a target="_blank" rel="noopener" href="https://github.com/Du-Mu">
+                <i class="iconfont social-icon icon-github"></i>
+                <span class="menu-title hidden lg:inline">menu.github</span>
+            </a>
+        </span>
+    
+        <span class="social-item text-center">
+            <a target="_blank" rel="noopener" href="https://t.me/Nem0None">
+                <i class="iconfont social-icon icon-telegram"></i>
+                <span class="menu-title hidden lg:inline">menu.telegram</span>
+            </a>
+        </span>
+    
+        <span class="social-item text-center">
+            <a href="/atom.xml">
+                <i class="iconfont social-icon icon-rss"></i>
+                <span class="menu-title hidden lg:inline">menu.rss</span>
+            </a>
+        </span>
+    
+</div>
+
+
+    </nav>
+</header>
+
+        <section class="main-section">
+            
+    <main class="flex-1 px-4 py-14 md:px-5 lg:px-8 lg:py-4 relative min-h-screen">
+    
+
+    <article class="content article article-archives article-type-list" itemscope="">
+        <header class="article-header">
+            
+    
+        <h1 class="article-title text-lg" itemprop="name">
+            vim+tmux+zsh+Terminal-self-discipline-of-pwner
+        </h1>
+    
+
+
+
+            <p class="article-meta mb-3 text-xs">
+                <span class="article-date">
+    <i class="iconfont icon-calendar-check"></i>
+	<a href="/2022/04/16/vim+tmux+zsh+Terminal-self-discipline-of-pwner/" class="article-date">
+	  <time datetime="2022-04-15T16:00:00.000Z" itemprop="datePublished">Apr 16</time>
+	</a>
+</span>
+
+                
+    <span class="article-category">
+    <i class="iconfont icon-folder"></i>
+    <a class="article-category-link" href="/categories/CTF/">CTF</a>
+  </span>
+
+
+                
+    <span class="article-tags">
+    <i class="iconfont icon-tag"></i>
+    <a class="article-tag-none-link" href="/tags/CTF/" rel="tag">CTF</a>, <a class="article-tag-none-link" href="/tags/Pwn/" rel="tag">Pwn</a>
+  </span>
+
+
+                <span class="_partial/post-comment"><i class="icon icon-comment"></i>
+                    <a href="/2022/04/16/vim+tmux+zsh+Terminal-self-discipline-of-pwner/#comments" class="article-comment-link">
+                        Comments
+                    </a>
+                </span>
+                
+    
+        <span class="post-wordcount" itemprop="wordCount">Word Count: 1.2k(words)</span>
+    
+    
+        <span class="post-readcount" itemprop="timeRequired">Read Count: 4(minutes)</span>
+    
+
+
+            </p>
+        </header>
+        <div class="marked-body article-body">
+            <h2 id="vim-tmux-zsh-Terminal-你的pwn效率进阶方案">vim+tmux+zsh+Terminal 你的pwn效率进阶方案</h2>
+<p>作为一个Pwner，需要频繁的接触命令行，特别是最近接触到了arm架构的pwn，需要一个窗口运行qemu，一个窗口跑脚本，一个窗口跑gdb，需要在几个窗口之间切换，同时我本身用sublime Text需要平凡切屏微调脚本，所以决定配置vim+tmux+zsh+terminal，实现一个兼顾美观和效率的pwn setup</p>
+<p>本文主要基于ubuntu20系统</p>
+<h2 id="Terminal">Terminal</h2>
+<p>terminal是一个终端模拟器，其实终端模拟器是什么无所谓，只是terminal我看着比较美观，再加上我的ubuntu桌面是gnome桌面，自带gnome terminal，所以我就使用terminal,  对于colors部分，背景改成灰/黑色，不透明度调到20%-30%，不影响terminal内文字的观看，同时能够看到后面的背景就行。</p>
+<h2 id="zsh配置方案">zsh配置方案</h2>
+<p>因为后面一些配置，在有了zsh后方便一些，所以先配置zsh</p>
+<h4 id="安装">安装</h4>
+<ul>
+<li>
+<p>安装zsh</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install zsh</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>替换为默认shell</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo chsh -s /bin/zsh</span><br></pre></td></tr></table></figure>
+<ul>
+<li>tips: 这个命令需要重启shell(or 系统，我记不清了，先关了再开终端试一下，没有生效再重启系统吧)才能生效，所以不要像我一样以为这个命令失效了，反复发呆</li>
+</ul>
+</li>
+<li>
+<p>安装oh-my-zsh<br>
+oh-my-zsh是github上的一个开源项目，可以便捷进行zsh的插件、主题管理<br>
+You can find <a target="_blank" rel="noopener" href="https://github.com/ohmyzsh/ohmyzsh">official document</a> here</p>
+<ul>
+<li>
+<p>官方文件提供的安装方案如下<br>
+使用curl连接。<br>
+如果你没有配置代理或者改hosts的话，你大概率是安装不了的，可以使用一下国内镜像:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh -c <span class="string">&quot;<span class="subst">$(curl -fsSL https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install.sh)</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<p>需要先安装curl。由于我本人没有尝试过这个镜像，我本人是通过改hosts安装的，raw.fithubsercontent.con好像还没有完全屏蔽，改hosts仍然可行，如果安装失败的话，可以私我</p>
+</li>
+</ul>
+</li>
+<li>
+<p>改配置文件<br>
+这个阶段，可以把文件管理器改为显示隐藏文件<br>
+如果你上一步安装完成，在主文件夹(也就是桌面软件的home目录，一般用~表示)会出现一个.zshrc的文件，这是zsh的配置文件，要用sudo vim写入，安装oh-my-zsh后</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim ~/.zshrc</span><br></pre></td></tr></table></figure>
+<p>打开后应该有大量注释后文本，帮助你修改配置文本</p>
+</li>
+</ul>
+<p>​		我就把ZSH_THEME改成了ys，如果有需要，可以加一些插件，改一些style，因为oh-my-zsh		自带了相当多插件，怎么引入可以查看官方文档</p>
+<p>​		可以使用alias命令为命令添加别名，方便使用<br>
+​</p>
+<ul>
+<li>
+<p>使配置文件生效</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
+<p>zsh命令行使用此命令，使配置文件生效</p>
+</li>
+</ul>
+<h4 id="使用">使用</h4>
+<p>zsh自带了许多非常好用的功能，自动补全，智能高亮，这里我就不教怎么使用了，可以参考<br>
+<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/21418449">为什么说 zsh 是 shell 中的极品？ - 知乎 (zhihu.com)</a></p>
+<h2 id="tmux">tmux</h2>
+<p>tmux是一个终端复用软件，多用于用于分屏，在shell 键入tmux就进入了tmux，具体使用快捷键和命令请百度，此处不教怎么使用<br>
+一个tips是tmux中的ctrl+b是一个进入命令模式的键，类似于vim的esc，所以很多快捷键写的ctrl+B+xx，意思是先按下ctrl+b，再按其他键</p>
+<h4 id="配置">配置</h4>
+<p>依旧在主文件目录下新建一个 .tmux.conf配置文件</p>
+<p>具体配置可以参考: <a target="_blank" rel="noopener" href="https://github.com/YashdalfTheGray/dotfiles/blob/master/macos/.tmux.conf">https://github.com/YashdalfTheGray/dotfiles/blob/master/macos/.tmux.conf</a></p>
+<p>最后这一部分就是加入插件的，自动帮你完成了插件安装</p>
+<p>复制这个配置就行，然后在shell进入tmux<br>
+键入:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux source-file ~/.tmux.conf</span><br></pre></td></tr></table></figure>
+<h2 id="vim">vim</h2>
+<p>如果说其他插件只是影响美观的，vim不装插件真的是跟装插件是两种软件，</p>
+<p>首先确认你安装了较新版本的vim</p>
+<h4 id="插件安装">插件安装</h4>
+<p>安装<a target="_blank" rel="noopener" href="https://github.com/junegunn/vim-plug#installation">vim-plug</a></p>
+<p>本人亲测官网安装命令路径不咋好用，一个是不挂代理连不上，一个式官网linux的安装路径无效，我们来手动安装。</p>
+<ul>
+<li>首先复制官网的plug.vim文件</li>
+<li>（如果没有）在本地主文件夹新建一个.vim文件夹，里面兴建一个autoload文件夹，将plug.vim放入</li>
+<li>再在.vim中新建一个plug目录</li>
+</ul>
+<h4 id="配置-2">配置</h4>
+<p>主文件夹新建.vimrc文件</p>
+<p>配置文件参考https://github.com/YashdalfTheGray/dotfiles/blob/master/macos/.vimrc</p>
+<p>将此处改为~/.vim/plug</p>
+<p>打开vim，按esc命令进入命令模式, 输入:  ，再用source命令导入.vimrc</p>
+<p>再在命令模式输入:PlugInstall，插件安装完成，reload，整体配置成功，具体使用网上资料很多，不再赘述</p>
+
+        </div>
+        
+<blockquote class="copyright">
+    <p><strong>Link to this article : </strong><a class="permalink" href="http://namonone.com/2022/04/16/vim+tmux+zsh+Terminal-self-discipline-of-pwner/">http://namonone.com/2022/04/16/vim+tmux+zsh+Terminal-self-discipline-of-pwner/</a></p>
+    <p><strong>This article is available under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a> License</strong></p>
+</blockquote>
+
+
+    </article>
+    
+    <section id="comments">
+        
+
+        
+    </section>
+
+
+    
+
+</main>
+
+
+<aside style="" id="sidebar" class="aside aside-fixture">
+    <div class="toc-sidebar">
+        <nav id="toc" class="article-toc">
+            <h3 class="toc-title">Catalogue</h3>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#vim-tmux-zsh-Terminal-%E4%BD%A0%E7%9A%84pwn%E6%95%88%E7%8E%87%E8%BF%9B%E9%98%B6%E6%96%B9%E6%A1%88"><span class="toc-number">1.</span> <span class="toc-text">vim+tmux+zsh+Terminal 你的pwn效率进阶方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Terminal"><span class="toc-number">2.</span> <span class="toc-text">Terminal</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zsh%E9%85%8D%E7%BD%AE%E6%96%B9%E6%A1%88"><span class="toc-number">3.</span> <span class="toc-text">zsh配置方案</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">3.0.1.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8"><span class="toc-number">3.0.2.</span> <span class="toc-text">使用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tmux"><span class="toc-number">4.</span> <span class="toc-text">tmux</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE"><span class="toc-number">4.0.1.</span> <span class="toc-text">配置</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#vim"><span class="toc-number">5.</span> <span class="toc-text">vim</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85"><span class="toc-number">5.0.1.</span> <span class="toc-text">插件安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-2"><span class="toc-number">5.0.2.</span> <span class="toc-text">配置</span></a></li></ol></li></ol></li></ol>
+        </nav>
+    </div>
+</aside>
+
+
+
+
+
+        </section>
+        <footer class="hidden lg:block fixed bottom-0 left-0 sm:w-1/12 lg:w-1/6 bg-gray-100 z-40">
+    
+    <div class="footer-social-links">
+        
+            <a target="_blank" rel="noopener" href="https://github.com/Du-Mu">
+                <i class="iconfont icon-github"></i>
+            </a>
+        
+            <a target="_blank" rel="noopener" href="https://t.me/Nem0None">
+                <i class="iconfont icon-telegram"></i>
+            </a>
+        
+            <a href="/atom.xml">
+                <i class="iconfont icon-rss"></i>
+            </a>
+        
+    </div>
+    
+    
+</footer>
+
+        <div id="mask" class="hidden mask fixed inset-0 bg-gray-900 opacity-75 z-40"></div>
+        <div id="search-view-container" class="hidden shadow-xl"></div>
+        
+<script src="/js/dom-event.min.js"></script>
+
+
+
+<script src="/js/local-search.min.js"></script>
+
+
+    <script src="//cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+        clientID: '79c898a8f1f2088f92c7',
+        clientSecret: '3537affb65269ebf3d5ec9139df024556931dd9d',
+        repo: 'blog-comments',
+        owner: 'Du-Mu',
+        admin: ['Du-Mu'],
+        id: md5(location.pathname),
+        distractionFreeMode: true
+    })
+    gitalk.render('comments')
+</script>
+
+
+
+    <script src="//cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+<script src="/js/light-gallery.min.js"></script>
+
+
+
+
+
+
+    </body>
+</html>

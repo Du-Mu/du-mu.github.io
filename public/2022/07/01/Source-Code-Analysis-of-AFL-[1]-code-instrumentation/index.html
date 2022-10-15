@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html  lang="en" >
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, maximum-scale=5, viewport-fit=cover">
+    <title>Source-Code-Analysis-of-AFL-[1]-code-instrumentation | Nemo</title>
+    <meta name="description" content="AFL源代码阅读[1]， 主要包含对afl-gcc.c 和afl-as.c的流程分析，也即插桩的过程。而插桩后进程间通信的过程相对复杂，将在后面单独分析。 0x1 文件依赖结构 基本文件结构:  afl-as.c、afl-as.h、afl-gcc.c :普通的代码插桩 afl-fuzz.c fuzzer实现代码 核心 llvm_mode llvm模式进行插桩，仅clang适用 qemu_mode">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Source-Code-Analysis-of-AFL-[1]-code-instrumentation">
+<meta property="og:url" content="http://namonone.com/2022/07/01/Source-Code-Analysis-of-AFL-[1]-code-instrumentation/index.html">
+<meta property="og:site_name" content="Nemo">
+<meta property="og:description" content="AFL源代码阅读[1]， 主要包含对afl-gcc.c 和afl-as.c的流程分析，也即插桩的过程。而插桩后进程间通信的过程相对复杂，将在后面单独分析。 0x1 文件依赖结构 基本文件结构:  afl-as.c、afl-as.h、afl-gcc.c :普通的代码插桩 afl-fuzz.c fuzzer实现代码 核心 llvm_mode llvm模式进行插桩，仅clang适用 qemu_mode">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-06-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-07-15T12:35:30.516Z">
+<meta property="article:author" content="Nemo">
+<meta property="article:tag" content="Pwn">
+<meta property="article:tag" content="Fuzz">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+
+    
+<link rel="stylesheet" href="/css/common.min.css">
+
+
+
+    
+    
+    
+        <link href="//cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" rel="stylesheet">
+    
+    
+        <link href="//cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css" rel="stylesheet">
+    
+    
+    
+<link rel="stylesheet" href="/css/iconfont.min.css">
+
+    
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+    <body>
+        <header class="header header-fixture">
+    <div class="profile-search-wrap flex sm:block">
+        
+        
+        <div class="profile sm:text-center md:px-1 lg:px-3 sm:pb-4 sm:pt-6">
+            <a id="avatar" role="link" href="https://github.com/Du-Mu" class="inline-block lg:w-16 lg:h-16 w-8 h-8 m-2" target="_blank" rel="noopener" rel="noreferrer" >
+                <img src="/images/avatar.jpg" class="rounded-full" alt="avatar">
+            </a>
+            <h2 id="name" class="hidden lg:block">Nemo</h2>
+            <h3 id="title" class="hidden lg:block">Student &amp; Coder</h3>
+            
+            <small id="location" class="hidden lg:block">
+                <i class="iconfont icon-map-icon"></i>
+                WuHan, China
+            </small>
+            
+        </div>
+        
+        
+<div class="search flex-1 flex lg:inline-block sm:hidden lg:px-4 lg:mt-2 lg:mb-4 lg:w-full">
+    <form id="search-form" class="my-auto flex-1 lg:border lg:border-solid lg:border-gray-200">
+        <div class="input-group table bg-gray-100 lg:bg-white w-full">
+            <input id="search-input" type="text" placeholder="Search" class="inline-block w-full bg-gray-100 lg:bg-white p-1">
+            <span class="table-cell">
+                <button name="search tigger button" disabled>
+                    <i class="iconfont icon-search m-2"></i>
+                </button>
+            </span>
+        </div>
+    </form>
+        
+<div id="content-json" data-placeholder="Search" class="invisible hidden">/content.json</div>
+<script id="search-teamplate" type="text/html" data-path="/content.json">
+    <div>
+        <div class="search-header bg-gray-400">
+            <input id="actual-search-input" model="keyword" ref="input" class="inline-block w-full h-10 px-2 py-1" placeholder="Search" type="text">
+        </div>
+        <div class="search-result bg-gray-200">
+            {{#each searchPosts}}
+            <a href="/{{ path }}" class="result-item block px-2 pb-3 mb-1 pt-1 hover:bg-indigo-100">
+                <i class="iconfont icon-file"></i>
+                <h1 class="result-title inline font-medium text-lg">{{ title }}</h1>
+                <p class="result-content text-gray-600 text-sm">{{{ text }}}</p>
+            </a>
+            {{/each}}
+        </div>
+    </div>
+</script>
+
+</div>
+
+
+        <button name="menu toogle button" id="menu-toggle-btn" class="block sm:hidden p-3" role="button" aria-expanded="false">
+            <i class="iconfont icon-hamburger"></i>
+        </button>
+    </div>
+    <nav id="menu-nav" class="hidden sm:flex flex-col">
+        
+        
+            <div class="menu-item menu-home" role="menuitem">
+                <a href="/.">
+                    <i class="iconfont icon-home" aria-hidden="true"></i>
+                    <span class="menu-title">Home</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-archives" role="menuitem">
+                <a href="/archives">
+                    <i class="iconfont icon-archive" aria-hidden="true"></i>
+                    <span class="menu-title">Archives</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-categories" role="menuitem">
+                <a href="/categories">
+                    <i class="iconfont icon-folder" aria-hidden="true"></i>
+                    <span class="menu-title">Categories</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-tags" role="menuitem">
+                <a href="/tags">
+                    <i class="iconfont icon-tag" aria-hidden="true"></i>
+                    <span class="menu-title">Tags</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-repository" role="menuitem">
+                <a href="/repository">
+                    <i class="iconfont icon-project" aria-hidden="true"></i>
+                    <span class="menu-title">Repository</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-links" role="menuitem">
+                <a href="/links">
+                    <i class="iconfont icon-friend" aria-hidden="true"></i>
+                    <span class="menu-title">Links</span>
+                </a>
+            </div>
+        
+        
+            <div class="menu-item menu-about" role="menuitem">
+                <a href="/about">
+                    <i class="iconfont icon-cup" aria-hidden="true"></i>
+                    <span class="menu-title">About</span>
+                </a>
+            </div>
+        
+        
+<div class="social-links flex sm:flex-col lg:hidden mt-5">
+    
+        <span class="social-item text-center">
+            <a target="_blank" rel="noopener" href="https://github.com/Du-Mu">
+                <i class="iconfont social-icon icon-github"></i>
+                <span class="menu-title hidden lg:inline">menu.github</span>
+            </a>
+        </span>
+    
+        <span class="social-item text-center">
+            <a target="_blank" rel="noopener" href="https://t.me/Nem0None">
+                <i class="iconfont social-icon icon-telegram"></i>
+                <span class="menu-title hidden lg:inline">menu.telegram</span>
+            </a>
+        </span>
+    
+        <span class="social-item text-center">
+            <a href="/atom.xml">
+                <i class="iconfont social-icon icon-rss"></i>
+                <span class="menu-title hidden lg:inline">menu.rss</span>
+            </a>
+        </span>
+    
+</div>
+
+
+    </nav>
+</header>
+
+        <section class="main-section">
+            
+    <main class="flex-1 px-4 py-14 md:px-5 lg:px-8 lg:py-4 relative min-h-screen">
+    
+
+    <article class="content article article-archives article-type-list" itemscope="">
+        <header class="article-header">
+            
+    
+        <h1 class="article-title text-lg" itemprop="name">
+            Source-Code-Analysis-of-AFL-[1]-code-instrumentation
+        </h1>
+    
+
+
+
+            <p class="article-meta mb-3 text-xs">
+                <span class="article-date">
+    <i class="iconfont icon-calendar-check"></i>
+	<a href="/2022/07/01/Source-Code-Analysis-of-AFL-%5B1%5D-code-instrumentation/" class="article-date">
+	  <time datetime="2022-06-30T16:00:00.000Z" itemprop="datePublished">Jul 1</time>
+	</a>
+</span>
+
+                
+    <span class="article-category">
+    <i class="iconfont icon-folder"></i>
+    <a class="article-category-link" href="/categories/Fuzz/">Fuzz</a>
+  </span>
+
+
+                
+    <span class="article-tags">
+    <i class="iconfont icon-tag"></i>
+    <a class="article-tag-none-link" href="/tags/Fuzz/" rel="tag">Fuzz</a>, <a class="article-tag-none-link" href="/tags/Pwn/" rel="tag">Pwn</a>
+  </span>
+
+
+                <span class="_partial/post-comment"><i class="icon icon-comment"></i>
+                    <a href="/2022/07/01/Source-Code-Analysis-of-AFL-%5B1%5D-code-instrumentation/#comments" class="article-comment-link">
+                        Comments
+                    </a>
+                </span>
+                
+    
+        <span class="post-wordcount" itemprop="wordCount">Word Count: 2.5k(words)</span>
+    
+    
+        <span class="post-readcount" itemprop="timeRequired">Read Count: 13(minutes)</span>
+    
+
+
+            </p>
+        </header>
+        <div class="marked-body article-body">
+            <p>AFL源代码阅读[1]， 主要包含对afl-gcc.c 和afl-as.c的流程分析，也即插桩的过程。而插桩后进程间通信的过程相对复杂，将在后面单独分析。</p>
+<h1 id="0x1-文件依赖结构">0x1 文件依赖结构</h1>
+<p>基本文件结构:</p>
+<ul>
+<li><strong>afl-as.c、afl-as.h、afl-gcc.c</strong> :普通的代码插桩</li>
+<li><strong>afl-fuzz.c</strong><br>
+fuzzer实现代码 核心</li>
+<li>llvm_mode<br>
+llvm模式进行插桩，仅clang适用</li>
+<li>qemu_mode<br>
+qemu模式插桩，针对二进制文件</li>
+<li>libdislocator<br>
+简单的内存检测工具</li>
+<li>libtokencap<br>
+语法关键字提取并生成字典文件</li>
+<li>afl-analyze.c<br>
+对测试样例的字典进行分析</li>
+<li>afl_cmin<br>
+对fuzzing用到的语料库进行精简操作</li>
+<li>afl_tmin.c<br>
+对fuzzing中用到的测试用例进行最小化操作</li>
+<li>afl-gotcpu.c<br>
+统计cpu占用率</li>
+<li>afl-plot<br>
+绘制报告图标</li>
+<li>afl-showmap.c<br>
+打印目标程序fuzz后的tuple信息</li>
+<li>afl-whatsup<br>
+并行fuzz结果统计</li>
+<li>alloc-inl.h<br>
+定义带检测功能的内存分配和释放操作</li>
+<li>Hash.h<br>
+hash函数的实现和定义</li>
+<li>test-instr.c<br>
+测试的目标程序</li>
+<li>dos<br>
+相关说明文档</li>
+<li>experimental<br>
+一些新特性的试验研究</li>
+</ul>
+<h1 id="0x2-基本模块分析">0x2 基本模块分析</h1>
+<h2 id="1-代码插桩">(1)代码插桩</h2>
+<p>基本流程: afl-gcc  --&gt;  afl-as</p>
+<h3 id="afl-gcc-c">afl-gcc.c</h3>
+<h4 id="0x1-基础变量">0x1.基础变量</h4>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>static u8*  as_path</td>
+<td><em>Path to the AFL ‘as’ wrapper</em></td>
+</tr>
+<tr>
+<td>static u8** cc_params</td>
+<td><em>Parameters passed to the real CC</em></td>
+</tr>
+<tr>
+<td>static u32  cc_par_cnt = 1</td>
+<td><em>Param count, including argv0</em></td>
+</tr>
+<tr>
+<td>static u8  be_quiet</td>
+<td><em>Quiet mode</em></td>
+</tr>
+<tr>
+<td>static u8 clang_mode</td>
+<td><em>Invoked as afl-clang?</em></td>
+</tr>
+</tbody>
+</table>
+<h4 id="0x2-main函数核心流程">0x2.main函数核心流程</h4>
+<p>a.检查是否是静默模式</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (isatty(<span class="number">2</span>) &amp;&amp; !getenv(<span class="string">&quot;AFL_QUIET&quot;</span>)) &#123;</span><br><span class="line"></span><br><span class="line">SAYF(cCYA <span class="string">&quot;afl-cc &quot;</span> cBRI VERSION cRST <span class="string">&quot; by &lt;lcamtuf@google.com&gt;\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">&#125; <span class="keyword">else</span> be_quiet = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<p>b. 检查参数是否完备</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (argc &lt; <span class="number">2</span>) &#123;</span><br><span class="line"></span><br><span class="line">SAYF(<span class="string">&quot;\n&quot;</span></span><br><span class="line">     <span class="string">&quot;This is a helper application for afl-fuzz. It serves as a drop-in replacement\n&quot;</span></span><br><span class="line">     <span class="string">&quot;for gcc or clang, letting you recompile third-party code with the required\n&quot;</span></span><br><span class="line">     <span class="string">&quot;runtime instrumentation. A common use pattern would be one of the following:\n\n&quot;</span></span><br><span class="line"></span><br><span class="line">     <span class="string">&quot;  CC=%s/afl-gcc ./configure\n&quot;</span></span><br><span class="line">     <span class="string">&quot;  CXX=%s/afl-g++ ./configure\n\n&quot;</span></span><br><span class="line"></span><br><span class="line">     <span class="string">&quot;You can specify custom next-stage toolchain via AFL_CC, AFL_CXX, and AFL_AS.\n&quot;</span></span><br><span class="line">     <span class="string">&quot;Setting AFL_HARDEN enables hardening optimizations in the compiled code.\n\n&quot;</span>,</span><br><span class="line">     BIN_PATH, BIN_PATH);</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>c. 找到as路径</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find_as(argv[<span class="number">0</span>]);</span><br></pre></td></tr></table></figure>
+<p>d. 对于参数进行编辑</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edit_params(argc, argv);</span><br></pre></td></tr></table></figure>
+<p>e. 调用</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">execvp(cc_params[<span class="number">0</span>], (<span class="type">char</span>**)cc_params);</span><br></pre></td></tr></table></figure>
+<h4 id="0x3-edit-params">0x3.edit_params()</h4>
+<p>edit_params()被调用于编辑各种参数.  最后传递给真正的编译器(gcc / clang)，对于as的路径进行处理，使之调用到as的封装, afl-as。</p>
+<p>//主要是一些细节方面的，之后遇到了再来仔细查看</p>
+<h4 id="0x4-find-as">0x4. find_as()</h4>
+<p>通过环境变量AFL_PATH找到封装的as的路径</p>
+<p>//同样主要是细节方面</p>
+<h3 id="afl-as-c">afl-as.c</h3>
+<h4 id="0x1-基础变量-2">0x1. 基础变量</h4>
+<table>
+<thead>
+<tr>
+<th>NAME</th>
+<th>MEANING</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>static u8** as_params</td>
+<td><em>Parameters passed to the real ‘as’</em></td>
+</tr>
+<tr>
+<td>static u8*  input_file</td>
+<td><em>Originally specified input file</em></td>
+</tr>
+<tr>
+<td>static u8*  modified_file</td>
+<td><em>Instrumented file for the real ‘as’</em></td>
+</tr>
+<tr>
+<td>static u32  inst_ratio = 100</td>
+<td><em>Instrumentation probability (%)</em></td>
+</tr>
+</tbody>
+</table>
+<h4 id="0x2-main函数主要逻辑">0x2. main函数主要逻辑</h4>
+<p>a. 同上，对各种模式的判断(这里和上面都对于APPLE都有不同，因为没接触过apple，暂且记下)</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">clang_mode = !!getenv(CLANG_ENV_VAR);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (isatty(<span class="number">2</span>) &amp;&amp; !getenv(<span class="string">&quot;AFL_QUIET&quot;</span>)) &#123;</span><br><span class="line"></span><br><span class="line">SAYF(cCYA <span class="string">&quot;afl-as &quot;</span> cBRI VERSION cRST <span class="string">&quot; by &lt;lcamtuf@google.com&gt;\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">&#125; <span class="keyword">else</span> be_quiet = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<p>b. 获取随机数种子</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">gettimeofday(&amp;tv, &amp;tz);</span><br><span class="line"></span><br><span class="line">rand_seed = tv.tv_sec ^ tv.tv_usec ^ getpid();</span><br><span class="line"></span><br><span class="line">srandom(rand_seed);</span><br></pre></td></tr></table></figure>
+<p>c. 编辑参数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edit_params(argc, argv);</span><br></pre></td></tr></table></figure>
+<p>d. 根据各种环境变量进行相关配置</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">if</span> (inst_ratio_str) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">sscanf</span>(inst_ratio_str, <span class="string">&quot;%u&quot;</span>, &amp;inst_ratio) != <span class="number">1</span> || inst_ratio &gt; <span class="number">100</span>) </span><br><span class="line">      FATAL(<span class="string">&quot;Bad value of AFL_INST_RATIO (must be between 0 and 100)&quot;</span>);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"><span class="comment">// 代码插桩率的设置</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (getenv(AS_LOOP_ENV_VAR))</span><br><span class="line">    FATAL(<span class="string">&quot;Endless loop when calling &#x27;as&#x27; (remove &#x27;.&#x27; from your PATH)&quot;</span>);</span><br><span class="line"></span><br><span class="line">  setenv(AS_LOOP_ENV_VAR, <span class="string">&quot;1&quot;</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* When compiling with ASAN, we don&#x27;t have a particularly elegant way to skip</span></span><br><span class="line"><span class="comment">     ASAN-specific branches. But we can probabilistically compensate for</span></span><br><span class="line"><span class="comment">     that... */</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (getenv(<span class="string">&quot;AFL_USE_ASAN&quot;</span>) || getenv(<span class="string">&quot;AFL_USE_MSAN&quot;</span>)) &#123;</span><br><span class="line">    sanitizer = <span class="number">1</span>;</span><br><span class="line">    inst_ratio /= <span class="number">3</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>e. 代码插桩</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!just_version) add_instrumentation();</span><br></pre></td></tr></table></figure>
+<p>f. 调用as</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!(pid = fork())) &#123;</span><br><span class="line"></span><br><span class="line">  execvp(as_params[<span class="number">0</span>], (<span class="type">char</span>**)as_params);</span><br><span class="line">  FATAL(<span class="string">&quot;Oops, failed to execute &#x27;%s&#x27; - check your PATH&quot;</span>, as_params[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (pid &lt; <span class="number">0</span>) PFATAL(<span class="string">&quot;fork() failed&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (waitpid(pid, &amp;status, <span class="number">0</span>) &lt;= <span class="number">0</span>) PFATAL(<span class="string">&quot;waitpid() failed&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!getenv(<span class="string">&quot;AFL_KEEP_ASSEMBLY&quot;</span>)) unlink(modified_file);</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span>(WEXITSTATUS(status));</span><br></pre></td></tr></table></figure>
+<h4 id="0x3-add-instrumentation-代码插桩">0x3. add_instrumentation()代码插桩</h4>
+<h5 id="a-主要流程">a. 主要流程</h5>
+<p>a-1. 打开输入文件和更改后的输出文件</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (input_file) &#123;</span><br><span class="line"></span><br><span class="line">  inf = fopen(input_file, <span class="string">&quot;r&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> (!inf) PFATAL(<span class="string">&quot;Unable to read &#x27;%s&#x27;&quot;</span>, input_file);</span><br><span class="line"></span><br><span class="line">&#125; <span class="keyword">else</span> inf = <span class="built_in">stdin</span>;</span><br><span class="line"></span><br><span class="line">outfd = open(modified_file, O_WRONLY | O_EXCL | O_CREAT, <span class="number">0600</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (outfd &lt; <span class="number">0</span>) PFATAL(<span class="string">&quot;Unable to write to &#x27;%s&#x27;&quot;</span>, modified_file);</span><br><span class="line"></span><br><span class="line">outf = fdopen(outfd, <span class="string">&quot;w&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!outf) PFATAL(<span class="string">&quot;fdopen() failed&quot;</span>);  </span><br></pre></td></tr></table></figure>
+<p>a-2. 读取每一行到line数组</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">while</span> (fgets(line, MAX_LINE, inf)) &#123;<span class="comment">//这个括号匹配到最后</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* In some cases, we want to defer writing the instrumentation trampoline</span></span><br><span class="line"><span class="comment">       until after all the labels, macros, comments, etc. If we&#x27;re in this</span></span><br><span class="line"><span class="comment">       mode, and if the line starts with a tab followed by a character, dump</span></span><br><span class="line"><span class="comment">       the trampoline now. */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!pass_thru &amp;&amp; !skip_intel &amp;&amp; !skip_app &amp;&amp; !skip_csect &amp;&amp; instr_ok &amp;&amp;</span><br><span class="line">        instrument_next &amp;&amp; line[<span class="number">0</span>] == <span class="string">&#x27;\t&#x27;</span> &amp;&amp; <span class="built_in">isalpha</span>(line[<span class="number">1</span>])) &#123;</span><br><span class="line"></span><br><span class="line">      <span class="built_in">fprintf</span>(outf, use_64bit ? trampoline_fmt_64 : trampoline_fmt_32,</span><br><span class="line">              R(MAP_SIZE));</span><br><span class="line"><span class="comment">// 这里是defered mode插桩执行语句</span></span><br><span class="line">      instrument_next = <span class="number">0</span>;</span><br><span class="line">      ins_lines++;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">fputs</span>(line, outf);</span><br></pre></td></tr></table></figure>
+<p>a-3. 对于插桩的核心处理，定位有跳转语句， 设置flag</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">if</span> (pass_thru) <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* All right, this is where the actual fun begins. For one, we only want to</span></span><br><span class="line"><span class="comment">       instrument the .text section. So, let&#x27;s keep track of that in processed</span></span><br><span class="line"><span class="comment">       files - and let&#x27;s set instr_ok accordingly. */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (line[<span class="number">0</span>] == <span class="string">&#x27;\t&#x27;</span> &amp;&amp; line[<span class="number">1</span>] == <span class="string">&#x27;.&#x27;</span>) &#123;</span><br><span class="line"></span><br><span class="line">      <span class="comment">/* OpenBSD puts jump tables directly inline with the code, which is</span></span><br><span class="line"><span class="comment">         a bit annoying. They use a specific format of p2align directives</span></span><br><span class="line"><span class="comment">         around them, so we use that as a signal. */</span></span><br><span class="line"><span class="comment">// 匹配文件中声明的段</span></span><br><span class="line">      <span class="keyword">if</span> (!clang_mode &amp;&amp; instr_ok &amp;&amp; !<span class="built_in">strncmp</span>(line + <span class="number">2</span>, <span class="string">&quot;p2align &quot;</span>, <span class="number">8</span>) &amp;&amp;</span><br><span class="line">          <span class="built_in">isdigit</span>(line[<span class="number">10</span>]) &amp;&amp; line[<span class="number">11</span>] == <span class="string">&#x27;\n&#x27;</span>) skip_next_label = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (!<span class="built_in">strncmp</span>(line + <span class="number">2</span>, <span class="string">&quot;text\n&quot;</span>, <span class="number">5</span>) ||</span><br><span class="line">          !<span class="built_in">strncmp</span>(line + <span class="number">2</span>, <span class="string">&quot;section\t.text&quot;</span>, <span class="number">13</span>) ||</span><br><span class="line">          !<span class="built_in">strncmp</span>(line + <span class="number">2</span>, <span class="string">&quot;section\t__TEXT,__text&quot;</span>, <span class="number">21</span>) ||</span><br><span class="line">          !<span class="built_in">strncmp</span>(line + <span class="number">2</span>, <span class="string">&quot;section __TEXT,__text&quot;</span>, <span class="number">21</span>)) &#123;</span><br><span class="line">        instr_ok = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">continue</span>; </span><br><span class="line">        <span class="comment">// 尝试匹配.text，匹配成功设置标志位为1(即可以插桩)</span></span><br><span class="line">        <span class="comment">// 进入下一次迭代</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (!<span class="built_in">strncmp</span>(line + <span class="number">2</span>, <span class="string">&quot;section\t&quot;</span>, <span class="number">8</span>) ||</span><br><span class="line">          !<span class="built_in">strncmp</span>(line + <span class="number">2</span>, <span class="string">&quot;section &quot;</span>, <span class="number">8</span>) ||</span><br><span class="line">          !<span class="built_in">strncmp</span>(line + <span class="number">2</span>, <span class="string">&quot;bss\n&quot;</span>, <span class="number">4</span>) ||</span><br><span class="line">          !<span class="built_in">strncmp</span>(line + <span class="number">2</span>, <span class="string">&quot;data\n&quot;</span>, <span class="number">5</span>)) &#123;</span><br><span class="line">        instr_ok = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Detect off-flavor assembly (rare, happens in gdb). When this is</span></span><br><span class="line"><span class="comment">       encountered, we set skip_csect until the opposite directive is</span></span><br><span class="line"><span class="comment">       seen, and we do not instrument. */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">strstr</span>(line, <span class="string">&quot;.code&quot;</span>)) &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (<span class="built_in">strstr</span>(line, <span class="string">&quot;.code32&quot;</span>)) skip_csect = use_64bit;</span><br><span class="line">      <span class="keyword">if</span> (<span class="built_in">strstr</span>(line, <span class="string">&quot;.code64&quot;</span>)) skip_csect = !use_64bit;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Detect syntax changes, as could happen with hand-written assembly.</span></span><br><span class="line"><span class="comment">       Skip Intel blocks, resume instrumentation when back to AT&amp;T. */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">strstr</span>(line, <span class="string">&quot;.intel_syntax&quot;</span>)) skip_intel = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">strstr</span>(line, <span class="string">&quot;.att_syntax&quot;</span>)) skip_intel = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Detect and skip ad-hoc __asm__ blocks, likewise skipping them. */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (line[<span class="number">0</span>] == <span class="string">&#x27;#&#x27;</span> || line[<span class="number">1</span>] == <span class="string">&#x27;#&#x27;</span>) &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (<span class="built_in">strstr</span>(line, <span class="string">&quot;#APP&quot;</span>)) skip_app = <span class="number">1</span>;</span><br><span class="line">      <span class="keyword">if</span> (<span class="built_in">strstr</span>(line, <span class="string">&quot;#NO_APP&quot;</span>)) skip_app = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* If we&#x27;re in the right mood for instrumenting, check for function</span></span><br><span class="line"><span class="comment">       names or conditional labels. This is a bit messy, but in essence,</span></span><br><span class="line"><span class="comment">       we want to catch:</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         ^main:      - function entry point (always instrumented)</span></span><br><span class="line"><span class="comment">         ^.L0:       - GCC branch label</span></span><br><span class="line"><span class="comment">         ^.LBB0_0:   - clang branch label (but only in clang mode)</span></span><br><span class="line"><span class="comment">         ^\tjnz foo  - conditional branches</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">       ...but not:</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         ^# BB#0:    - clang comments</span></span><br><span class="line"><span class="comment">         ^ # BB#0:   - ditto</span></span><br><span class="line"><span class="comment">         ^.Ltmp0:    - clang non-branch labels</span></span><br><span class="line"><span class="comment">         ^.LC0       - GCC non-branch labels</span></span><br><span class="line"><span class="comment">         ^.LBB0_0:   - ditto (when in GCC mode)</span></span><br><span class="line"><span class="comment">         ^\tjmp foo  - non-conditional jumps</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">       Additionally, clang and GCC on MacOS X follow a different convention</span></span><br><span class="line"><span class="comment">       with no leading dots on labels, hence the weird maze of #ifdefs</span></span><br><span class="line"><span class="comment">       later on.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (skip_intel || skip_app || skip_csect || !instr_ok ||</span><br><span class="line">        line[<span class="number">0</span>] == <span class="string">&#x27;#&#x27;</span> || line[<span class="number">0</span>] == <span class="string">&#x27; &#x27;</span>) <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Conditional branch instruction (jnz, etc). We append the instrumentation</span></span><br><span class="line"><span class="comment">       right after the branch (to instrument the not-taken path) and at the</span></span><br><span class="line"><span class="comment">       branch destination label (handled later on). */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (line[<span class="number">0</span>] == <span class="string">&#x27;\t&#x27;</span>) &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (line[<span class="number">1</span>] == <span class="string">&#x27;j&#x27;</span> &amp;&amp; line[<span class="number">2</span>] != <span class="string">&#x27;m&#x27;</span> &amp;&amp; R(<span class="number">100</span>) &lt; inst_ratio) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">fprintf</span>(outf, use_64bit ? trampoline_fmt_64 : trampoline_fmt_32,</span><br><span class="line">                R(MAP_SIZE));</span><br><span class="line"></span><br><span class="line">        ins_lines++;</span><br><span class="line"></span><br><span class="line">      &#125;</span><br><span class="line"><span class="comment">// 捕捉跳转标志，调用随机数函数，选择是否进行插桩</span></span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Label of some sort. This may be a branch destination, but we need to</span></span><br><span class="line"><span class="comment">       tread carefully and account for several different formatting</span></span><br><span class="line"><span class="comment">       conventions. */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __APPLE__</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Apple: L&lt;whatever&gt;&lt;digit&gt;: */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((colon_pos = <span class="built_in">strstr</span>(line, <span class="string">&quot;:&quot;</span>))) &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (line[<span class="number">0</span>] == <span class="string">&#x27;L&#x27;</span> &amp;&amp; <span class="built_in">isdigit</span>(*(colon_pos - <span class="number">1</span>))) &#123;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Everybody else: .L&lt;whatever&gt;: */</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">strstr</span>(line, <span class="string">&quot;:&quot;</span>)) &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (line[<span class="number">0</span>] == <span class="string">&#x27;.&#x27;</span>) &#123;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* __APPLE__ */</span></span></span><br><span class="line"></span><br><span class="line">        <span class="comment">/* .L0: or LBB0_0: style jump destination */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __APPLE__</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Apple: L&lt;num&gt; / LBB&lt;num&gt; */</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ((<span class="built_in">isdigit</span>(line[<span class="number">1</span>]) || (clang_mode &amp;&amp; !<span class="built_in">strncmp</span>(line, <span class="string">&quot;LBB&quot;</span>, <span class="number">3</span>)))</span><br><span class="line">            &amp;&amp; R(<span class="number">100</span>) &lt; inst_ratio) &#123;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Apple: .L&lt;num&gt; / .LBB&lt;num&gt; */</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ((<span class="built_in">isdigit</span>(line[<span class="number">2</span>]) || (clang_mode &amp;&amp; !<span class="built_in">strncmp</span>(line + <span class="number">1</span>, <span class="string">&quot;LBB&quot;</span>, <span class="number">3</span>)))</span><br><span class="line">            &amp;&amp; R(<span class="number">100</span>) &lt; inst_ratio) &#123;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* __APPLE__ */</span></span></span><br><span class="line"></span><br><span class="line">          <span class="comment">/* An optimization is possible here by adding the code only if the</span></span><br><span class="line"><span class="comment">             label is mentioned in the code in contexts other than call / jmp.</span></span><br><span class="line"><span class="comment">             That said, this complicates the code by requiring two-pass</span></span><br><span class="line"><span class="comment">             processing (messy with stdin), and results in a speed gain</span></span><br><span class="line"><span class="comment">             typically under 10%, because compilers are generally pretty good</span></span><br><span class="line"><span class="comment">             about not generating spurious intra-function jumps.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">             We use deferred output chiefly to avoid disrupting</span></span><br><span class="line"><span class="comment">             .Lfunc_begin0-style exception handling calculations (a problem on</span></span><br><span class="line"><span class="comment">             MacOS X). */</span></span><br><span class="line"></span><br><span class="line">          <span class="keyword">if</span> (!skip_next_label) instrument_next = <span class="number">1</span>; <span class="keyword">else</span> skip_next_label = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Function label (always instrumented, deferred mode). */</span></span><br><span class="line"></span><br><span class="line">        instrument_next = <span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h5 id="b-trampoline插桩代码">b. trampoline插桩代码</h5>
+<p>这些部分的声明在afl-as.h</p>
+<h6 id="b-1-bss段变量">b-1 .bss段变量</h6>
+<ul>
+<li><code>__afl_area_ptr</code>：共享内存地址；</li>
+<li><code>__afl_prev_loc</code>：上一个插桩位置（id为R(100)随机数的值）；</li>
+<li><code>__afl_fork_pid</code>：由fork产生的子进程的pid；</li>
+<li><code>__afl_temp</code>：缓冲区；</li>
+<li><code>__afl_setup_failure</code>：标志位，如果置位则直接退出；</li>
+<li><code>__afl_global_area_ptr</code>：全局指针。</li>
+</ul>
+<h6 id="b-1-trampoline-fmt-64-32">b-1.trampoline_fmt_64/32</h6>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">static const u8* trampoline_fmt_32 =</span><br><span class="line"></span><br><span class="line">  &quot;\n&quot;</span><br><span class="line">  &quot;/* --- AFL TRAMPOLINE (32-BIT) --- */\n&quot;</span><br><span class="line">  &quot;\n&quot;</span><br><span class="line">  &quot;.align 4\n&quot;</span><br><span class="line">  &quot;\n&quot;</span><br><span class="line">  &quot;leal -16(%%esp), %%esp\n&quot;</span><br><span class="line">  &quot;movl %%edi,  0(%%esp)\n&quot;</span><br><span class="line">  &quot;movl %%edx,  4(%%esp)\n&quot;</span><br><span class="line">  &quot;movl %%ecx,  8(%%esp)\n&quot;</span><br><span class="line">  &quot;movl %%eax, 12(%%esp)\n&quot;</span><br><span class="line">  &quot;movl $0x%08x, %%ecx\n&quot;  //想ecx存入随机桩代码</span><br><span class="line">  &quot;call __afl_maybe_log\n&quot; //调用__afl_maybe_log</span><br><span class="line">  &quot;movl 12(%%esp), %%eax\n&quot;</span><br><span class="line">  &quot;movl  8(%%esp), %%ecx\n&quot;</span><br><span class="line">  &quot;movl  4(%%esp), %%edx\n&quot;</span><br><span class="line">  &quot;movl  0(%%esp), %%edi\n&quot;</span><br><span class="line">  &quot;leal 16(%%esp), %%esp\n&quot;</span><br><span class="line">  &quot;\n&quot;</span><br><span class="line">  &quot;/* --- END --- */\n&quot;</span><br><span class="line">  &quot;\n&quot;;</span><br><span class="line"></span><br><span class="line">static const u8* trampoline_fmt_64 =</span><br><span class="line"></span><br><span class="line">  &quot;\n&quot;</span><br><span class="line">  &quot;/* --- AFL TRAMPOLINE (64-BIT) --- */\n&quot;</span><br><span class="line">  &quot;\n&quot;</span><br><span class="line">  &quot;.align 4\n&quot;</span><br><span class="line">  &quot;\n&quot;</span><br><span class="line">  &quot;leaq -(128+24)(%%rsp), %%rsp\n&quot;</span><br><span class="line">  &quot;movq %%rdx,  0(%%rsp)\n&quot;</span><br><span class="line">  &quot;movq %%rcx,  8(%%rsp)\n&quot;</span><br><span class="line">  &quot;movq %%rax, 16(%%rsp)\n&quot;</span><br><span class="line">  &quot;movq $0x%08x, %%rcx\n&quot;</span><br><span class="line">  &quot;call __afl_maybe_log\n&quot;</span><br><span class="line">  &quot;movq 16(%%rsp), %%rax\n&quot;</span><br><span class="line">  &quot;movq  8(%%rsp), %%rcx\n&quot;</span><br><span class="line">  &quot;movq  0(%%rsp), %%rdx\n&quot;</span><br><span class="line">  &quot;leaq (128+24)(%%rsp), %%rsp\n&quot;</span><br><span class="line">  &quot;\n&quot;</span><br><span class="line">  &quot;/* --- END --- */\n&quot;</span><br><span class="line">  &quot;\n&quot;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>主要功能:</p>
+<ul>
+<li>保存 <code>rdx</code>、 <code>rcx</code> 、<code>rax</code> 寄存器</li>
+<li>将 <code>rcx</code> 的值设置为 <code>fprintf()</code> 函数将要打印的变量内容</li>
+<li>调用 <code>__afl_maybe_log</code> 函数</li>
+<li>恢复寄存器</li>
+</ul>
+<h6 id="b-2-afl-maybe-log">b-2. __afl_maybe_log</h6>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;__afl_maybe_log:\n&quot;</span></span><br><span class="line"><span class="string">&quot;\n&quot;</span></span><br><span class="line"><span class="string">&quot;  lahf\n&quot;</span>   <span class="comment">// 对于标志位的处理</span></span><br><span class="line"><span class="string">&quot;  seto %al\n&quot;</span> </span><br><span class="line"><span class="string">&quot;\n&quot;</span></span><br><span class="line"><span class="string">&quot;  /* Check if SHM region is already mapped. */\n&quot;</span></span><br><span class="line"><span class="string">&quot;\n&quot;</span></span><br><span class="line"><span class="string">&quot;  movl  __afl_area_ptr, %edx\n&quot;</span></span><br><span class="line"><span class="string">&quot;  testl %edx, %edx\n&quot;</span>    <span class="comment">//判断__afl_area_ptr是否为NULL</span></span><br><span class="line"><span class="string">&quot;  je    __afl_setup\n&quot;</span>	<span class="comment">//为NULL则跳转设置</span></span><br><span class="line"><span class="string">&quot;\n&quot;</span></span><br></pre></td></tr></table></figure>
+
+        </div>
+        
+<blockquote class="copyright">
+    <p><strong>Link to this article : </strong><a class="permalink" href="http://namonone.com/2022/07/01/Source-Code-Analysis-of-AFL-[1]-code-instrumentation/">http://namonone.com/2022/07/01/Source-Code-Analysis-of-AFL-[1]-code-instrumentation/</a></p>
+    <p><strong>This article is available under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a> License</strong></p>
+</blockquote>
+
+
+    </article>
+    
+    <section id="comments">
+        
+
+        
+    </section>
+
+
+    
+
+</main>
+
+
+<aside style="" id="sidebar" class="aside aside-fixture">
+    <div class="toc-sidebar">
+        <nav id="toc" class="article-toc">
+            <h3 class="toc-title">Catalogue</h3>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x1-%E6%96%87%E4%BB%B6%E4%BE%9D%E8%B5%96%E7%BB%93%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">0x1 文件依赖结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x2-%E5%9F%BA%E6%9C%AC%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">0x2 基本模块分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BB%A3%E7%A0%81%E6%8F%92%E6%A1%A9"><span class="toc-number">2.1.</span> <span class="toc-text">(1)代码插桩</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#afl-gcc-c"><span class="toc-number">2.1.1.</span> <span class="toc-text">afl-gcc.c</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#0x1-%E5%9F%BA%E7%A1%80%E5%8F%98%E9%87%8F"><span class="toc-number">2.1.1.1.</span> <span class="toc-text">0x1.基础变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x2-main%E5%87%BD%E6%95%B0%E6%A0%B8%E5%BF%83%E6%B5%81%E7%A8%8B"><span class="toc-number">2.1.1.2.</span> <span class="toc-text">0x2.main函数核心流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x3-edit-params"><span class="toc-number">2.1.1.3.</span> <span class="toc-text">0x3.edit_params()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x4-find-as"><span class="toc-number">2.1.1.4.</span> <span class="toc-text">0x4. find_as()</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#afl-as-c"><span class="toc-number">2.1.2.</span> <span class="toc-text">afl-as.c</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#0x1-%E5%9F%BA%E7%A1%80%E5%8F%98%E9%87%8F-2"><span class="toc-number">2.1.2.1.</span> <span class="toc-text">0x1. 基础变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x2-main%E5%87%BD%E6%95%B0%E4%B8%BB%E8%A6%81%E9%80%BB%E8%BE%91"><span class="toc-number">2.1.2.2.</span> <span class="toc-text">0x2. main函数主要逻辑</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#0x3-add-instrumentation-%E4%BB%A3%E7%A0%81%E6%8F%92%E6%A1%A9"><span class="toc-number">2.1.2.3.</span> <span class="toc-text">0x3. add_instrumentation()代码插桩</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#a-%E4%B8%BB%E8%A6%81%E6%B5%81%E7%A8%8B"><span class="toc-number">2.1.2.3.1.</span> <span class="toc-text">a. 主要流程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#b-trampoline%E6%8F%92%E6%A1%A9%E4%BB%A3%E7%A0%81"><span class="toc-number">2.1.2.3.2.</span> <span class="toc-text">b. trampoline插桩代码</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#b-1-bss%E6%AE%B5%E5%8F%98%E9%87%8F"><span class="toc-number">2.1.2.3.2.1.</span> <span class="toc-text">b-1 .bss段变量</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#b-1-trampoline-fmt-64-32"><span class="toc-number">2.1.2.3.2.2.</span> <span class="toc-text">b-1.trampoline_fmt_64&#x2F;32</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#b-2-afl-maybe-log"><span class="toc-number">2.1.2.3.2.3.</span> <span class="toc-text">b-2. __afl_maybe_log</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></li></ol>
+        </nav>
+    </div>
+</aside>
+
+
+
+
+
+        </section>
+        <footer class="hidden lg:block fixed bottom-0 left-0 sm:w-1/12 lg:w-1/6 bg-gray-100 z-40">
+    
+    <div class="footer-social-links">
+        
+            <a target="_blank" rel="noopener" href="https://github.com/Du-Mu">
+                <i class="iconfont icon-github"></i>
+            </a>
+        
+            <a target="_blank" rel="noopener" href="https://t.me/Nem0None">
+                <i class="iconfont icon-telegram"></i>
+            </a>
+        
+            <a href="/atom.xml">
+                <i class="iconfont icon-rss"></i>
+            </a>
+        
+    </div>
+    
+    
+</footer>
+
+        <div id="mask" class="hidden mask fixed inset-0 bg-gray-900 opacity-75 z-40"></div>
+        <div id="search-view-container" class="hidden shadow-xl"></div>
+        
+<script src="/js/dom-event.min.js"></script>
+
+
+
+<script src="/js/local-search.min.js"></script>
+
+
+    <script src="//cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+        clientID: '79c898a8f1f2088f92c7',
+        clientSecret: '3537affb65269ebf3d5ec9139df024556931dd9d',
+        repo: 'blog-comments',
+        owner: 'Du-Mu',
+        admin: ['Du-Mu'],
+        id: md5(location.pathname),
+        distractionFreeMode: true
+    })
+    gitalk.render('comments')
+</script>
+
+
+
+    <script src="//cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+<script src="/js/light-gallery.min.js"></script>
+
+
+
+
+
+
+    </body>
+</html>
