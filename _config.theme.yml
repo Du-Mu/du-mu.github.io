@@ -5,51 +5,127 @@ menu:
   Categories: categories  # 分类
   Tags: tags  # 标签
   Repository: repository  # github repositories
-#  Books: books  # 豆瓣书单
+  Books: books  # 豆瓣书单
   Links: links  # 友链
   About: about  # 关于
 
 # Enable/Disable menu icons
 menu_icons:
   enable: true  # 是否启用导航菜单图标
-  home: icon-home
-  archives: icon-archive
+  home: icon-home-fill
+  archives: icon-archives-fill
   categories: icon-folder
-  tags: icon-tag
+  tags: icon-tags
   repository: icon-project
-  books: icon-book
-  links: icon-friend
-  about: icon-cup
+  books: icon-book-fill
+  links: icon-friendship
+  about: icon-cup-fill
 
+# rss
+rss: /atom.xml
+
+# Site
 site:
+  logo:
+    enabled: true
+    width: 40
+    height: 40
+    url: /images/avatar.jpg
+  title: V3rdant # 页面title
   favicon: /images/favicon.ico
-  #manifest:
-  site_verification:
-#    google:
-#    baidu:
-#  google_analytics:
-#  service_worker:
+  board: <p>そだよ</p> # 站点公告
+  copyright: false # 底部版权信息
 
+# config
+config:
+  skin: theme-black # 主题颜色 theme-black theme-blue theme-green theme-purple
+  layout: main-center # 布局方式 main-left main-center main-right
+  toc: true # 是否开启文章章节目录导航
+  menu_highlight: false # 是否开启当前菜单高亮显示
+  thumbnail: false # enable posts thumbnail, options: true, false
+  excerpt_link: Read More
+
+# Pagination
 pagination:
-  prev:
+  number: false
+  prev: 
     alwayShow: true
   next:
     alwayShow: true
 
+# Sidebar
+sidebar: right
+widgets:
+  - board  
+  - category
+  - tag
+  - tagcloud
+  - archive
+  - recent_posts
+
+# display widgets at the bottom of index pages (pagination == 2)
+index_widgets:
+# - category
+# - tagcloud
+# - archive  
+
+# widget behavior
+archive_type: 'monthly'
+show_count: true
+
+# Fancybox
+fancybox: false
+
+# Search
+search:
+  insight: true # you need to install `hexo-generator-json-content` before using Insight Search
+  baidu: false # you need to disable other search engines to use Baidu search, options: true, false
+
+# Donate
+donate:
+  enable: false
+  # 微信打赏
+  wechatpay:
+    qrcode: images/donate/wechatpayimg.png
+    title: 微信支付
+  # 支付宝打赏
+  alipay: 
+    qrcode: images/donate/alipayimg.png 
+    title: 支付宝
+
+# Share
+# weibo,qq,qzone,wechat,tencent,douban,diandian,facebook,twitter,google,linkedin
+share:
+  enable: true  # 是否启用分享
+  sites: weibo,qq,wechat,facebook,twitter  # PC端显示的分享图标
+  mobile_sites: weibo,qq,qzone  # 移动端显示的分享图标
+
+# Github
+github: 
+  username: Du-Mu
+
+# Comment
+# Gitment
+# Introduction: https://imsun.net/posts/gitment-introduction/
 comment:
-  type: gitalk  # 启用哪种评论系统
-  disqus:  # enter disqus shortname here
+  type: gitalk
+  disqus: # enter disqus shortname here
+  youyan: 
+    uid: 1783844 # enter youyan uid 
   livere:
-    uid: # enter youyan uid
+    uid: # enter youyan uid 
+  gitment:
+    githubID: 
+    repo: 
+    ClientID: 
+    ClientSecret: 
+    lazy: false
   gitalk: # gitalk. https://gitalk.github.io/
-    owner: Du-Mu #必须. GitHub repository 所有者，可以是个人或者组织。
-    admin: Du-Mu #必须. GitHub repository 的所有者和合作者 (对这个 repository 有写权限的用户)。
-    repo: blog-comments #必须. GitHub repository.
-    ClientID: 79c898a8f1f2088f92c7 #必须. GitHub Application Client ID.
-    ClientSecret: 3537affb65269ebf3d5ec9139df024556931dd9d #必须. GitHub Application Client `ecret.
-    labels: Gitalk
-    id: location.pathname
-    #proxy: https://netnr-proxy.cloudno.de/https://github.com/login/oauth/access_token
+    owner:  Du-Mu #必须. GitHub repository 所有者，可以是个人或者组织。
+    admin:  Du-Mu #必须. GitHub repository 的所有者和合作者 (对这个 repository 有写权限的用户)。
+    repo:  blog-comments#必须. GitHub repository.
+    ClientID:  79c898a8f1f2088f92c7 #必须. GitHub Application Client ID.
+    ClientSecret:  3537affb65269ebf3d5ec9139df024556931dd9d #必须. GitHub Application Client Secret.
   valine: # Valine. https://valine.js.org
     appid:  # your leancloud application appid
     appkey:  # your leancloud application appkey
@@ -60,30 +136,57 @@ comment:
     meta: nick,mail,link # custom comment header
     pageSize: 10 # pagination size
     visitor: false # Article reading statistic https://valine.js.org/visitor.html
-    lang: en # Language of comment instruction. Default CH
 
-
-github:
-  username: Du-Mu
-
+# douban 豆瓣书单
+# Api：
+  # https://developers.douban.com/wiki/?title=book_v2 图书
+  # https://developers.douban.com/wiki/?title=movie_v2 电影
+# books：  
+  # https://api.douban.com/v2/book/user/:name/collections?start=0&count=100 个人书单列表
+# movies: 
+  # https://api.douban.com/v2/movie/in_theaters 正在上映的电影
+  # https://api.douban.com/v2/movie/coming_soon 即将上映的电影
+  # https://api.douban.com/v2/movie/subject/:id 单个电影信息
+  # https://api.douban.com/v2/movie/search?q={text} 电影搜索
+douban:
+  user: # 豆瓣用户名
+  start: 0 # 从哪一条记录开始
+  count: 100 # 获取豆瓣书单数据条数
+  
+# PV
+pv:
+  busuanzi:
+    enable: false  # 不蒜子统计
+  leancloud:
+    enable: false  # leancloud统计
+    app_id: # leancloud <AppID>
+    app_key: # leancloud <AppKey>
+        
 # wordcount
 postCount:
   enable: true
   wordcount: true  # 文章字数统计
-  min2read: true  # 阅读时长预计
+  min2read: true  # 阅读时长预计 
 
-search: true # enable local search
-toc: true
-fancybox: true
-license: 'This article is available under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)</a> License'
-footer:
-#  custom:
-
+# Plugins
+plugins:
+  google_analytics: # enter the tracking ID for your Google Analytics
+  google_site_verification: # enter Google site verification code
+  baidu_analytics: # enter Baidu Analytics hash key
+  tencent_analytics: 
+  
+# Miscellaneous
+twitter:
+google_plus:
+fb_admins:
+fb_app_id:  
+  
+# profile
 profile:
   enabled: true # Whether to show profile bar
   avatar: images/avatar.jpg
-  #gravatar: MyEmailAddress@example.com # Gravatar email address, if you enable Gravatar, your avatar config will be overriden
-  author: Nemo
+  gravatar: # Gravatar email address, if you enable Gravatar, your avatar config will be overriden
+  author: A3rdant
   author_title: Student & Coder
   author_description: 
   location: WuHan, China
@@ -92,62 +195,37 @@ profile:
   social:
     links:
       github: https://github.com/Du-Mu
-      telegram: https://t.me/Nem0None
-      #twitter: https://twitter.com/example
+      # weibo: http://weibo.com/cofess
+      # twitter: https://twitter.com/iwebued
       # facebook: /
       # dribbble: /
-#      behance: https://www.behance.net/cofess
+      # behance: https://www.behance.net/cofess
       rss: atom.xml
     link_tooltip: true # enable the social link tooltip, options: true, false
+  # My Skills 
+  skills:
+    C: ★★★☆☆
+    Rust: ★★★☆☆
+    Shell: ★★★☆☆
+    Pwn: ★★★☆☆
+    linux: ★★★☆☆
 
   # My Personal Links
   links:
     Github: https://github.com/Du-Mu
     Blog: http://www.namonone.com
     Email: wzhdxtx123@outlook.com
-    #Wechat: liang222liang
   # My Personal Labels
-  #labels:
-  #  - 前端
-  #  - Node.js
-  #  - Golang
-  #  - Linux日常使用
-  #skills:
-  #  Git: ★★★☆☆
-  #  Gulp: ★★★☆☆
-  #  Javascript: ★★★☆☆
-  #  HTML+CSS: ★★★☆☆
-  #  Bootstrap: ★★★☆☆
-   # My Personal Works
-  works:
-   name:
-     link: http://www.namonone.com
-     date: 2016
+  labels:
+    - Binary Security
+    - Pwn
+    - Linux
+  # My Personal Works
+ # works:
+ #   name:
+ #     link: http://www.example.com
+ #     date: 2016
   # My Personal Projects
-  #projects:
-  #  Du-Mu/NodeRSSBot: https://github.com/Du-Mu/NodeRSSBot
-  #  Du-Mu/translator: https://github.com/Du-Mu/translator
-  #  Du-Mu/cacheman-level: https://github.com/Du-Mu/cacheman-level
-
-
-widgets:
-#  - board
-  - category
-  - tag
-  - tagcloud
-  - archive
-  - recent_posts
-
-#widget behaivor
-show_count: true
-
-cdn:
-  katex: //cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css
-  gitment: //cdn.jsdelivr.net/npm/gitment@0.0.3/style/default.min.css
-  gitalk: //cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css
-  gitalk_js: //cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js
-  blueimp_md5: //cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js
-  valine: //cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js
-  lightgallery_css: //cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css
-  lightgallery_js: //cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js
-  aplayer: //cdn.jsdelivr.net/npm/svelte-aplayer/dist/wc/svelte-aplayer.umd.js
+ # projects:
+ #   cofess/gulp-startpro: https://github.com/cofess/gulp-startpro
+ #   cofess/hexo-theme-pure: https://github.com/cofess/hexo-theme-pure

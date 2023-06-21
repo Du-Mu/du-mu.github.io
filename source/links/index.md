@@ -1,8 +1,7 @@
 ---
 title: Links
-layout: link
+layout: links
 comments: false
 sidebar: none
 ---
-
 

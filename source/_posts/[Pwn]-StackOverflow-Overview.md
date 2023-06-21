@@ -1,22 +1,19 @@
 ---
-title: [Pwn]-StackOverflow-Overview
-date: 2022-8-3
+title: PWN-StackOverflow-Overview 
+date: 2022-8-3 
 tags: 
-- Pwn
-- CTF
-
-categories:
-- CTF
-
-toc: true # 是否启用内容索引
-sidebar: none # 是否启用sidebar侧边栏，none：不启用
+- Pwn 
+- CTF 
+categories: CTF 
+toc: true 
+sidebar: none 
 ---
 
 
 
 
 
-### 0x1.杂谈
+### 杂谈
 
 作为一种基本的漏洞，栈溢出在CTF中出现的非常频繁，因为其多样化的利用形式，难以进行系统的归类，本文结合笔者个人的经验，综合讨论各种栈溢出技术，如果有遗漏，欢迎评论留言，或者给笔者发邮件，进行补充。
 
@@ -76,9 +73,9 @@ ciscn_s_3
 
 
 
-### 0x2.ret2shellcode
+### ret2shellcode
 
-#### 0x2.1.shellcode的书写
+#### shellcode的书写
 
 一般而言，可以直接通过pwntools 相应模块直接生成shellcode，然而现在以shellcode为考点的题目，一般都会对shellcode做出限制，诸如不能包含可打印字符等等。所以尽可能自己熟悉shellcode的书写。
 
@@ -265,11 +262,11 @@ cdp
 
 
 
-#### 0x2.2.shellcode生成工具
+#### shellcode生成工具
 
 同时，现在有多种针对shellcode进行编码的生成工具，生成符合限制的shellcode，如msf，alpha3等等，由于我没有用过，可以自行尝试。
 
-#### 0x2.3.mprotect()
+#### mprotect()
 
 进一步的，很多题目没有天然的readable  and  executable segment，题目可能通过mmap()映射了一段权限为7的段，或者存在mprotect()函数。
 
@@ -287,9 +284,9 @@ prot 内存的权限，7为可读可写可执行
 
 
 
-### 0x3.ret2libc
+### ret2libc
 
-#### 0x3.1.leak_libc
+#### leak_libc
 
 对于最后调用 libc 中 system 的题目而言，需要考虑的首要问题就是leak_libc.
 
@@ -340,15 +337,15 @@ libc6_2.17-93ubuntu4_i386
 
 
 
-#### 0x3.2.partial_overwrite
+#### partial_overwrite
 
-##### (1)前置知识
+##### 前置知识
 
 针对没有泄露的赛题，可以考虑partial_overwrite改写`got`表，实现system，因为一般而言，大部分libc函数，里面都存在syscall，所以syscall偏移和函数head_addr差别不会太大。
 
 考虑对于一个`got`表中的64位地址:  0xXXXXXXXXXXXXX， 假设其附近的syscall地址后三位偏移为0xaaa(请确定这个偏移和got内函数偏移只有最后四个16位数字不同)， 因为libc装载地址以页为单位，后三位是确定0x000，那么partial_overwrite覆盖后面两个字节， 即覆盖`got`为0xXXXXXXXXfaaa，那么有1/16的几率恰好syscall
 
-##### (2)爆破脚本写法
+##### 爆破脚本写法
 
 一个爆破脚本模板:
 
@@ -435,7 +432,7 @@ while True:
 
 
 
-#### 0x3.3.ret2dl_resolve()
+#### ret2dl_resolve()
 
 延迟绑定会使用_dl_resolve()函数
 
@@ -460,9 +457,9 @@ while True:
 
 
 
-### 0x4.Tricks
+### Tricks
 
-#### 0x4.1.stack pivoting
+#### stack pivoting
 
 栈迁移技巧， 主要针对可溢出字节较少的情况，通过`leave`此类指令控制rsp
 
@@ -549,7 +546,7 @@ p.interactive()
 
 
 
-#### 0x4.2.栈对齐
+#### 栈对齐
 
 栈对齐是高版本Ubuntu的一个特性，网上对于这个特性的解释很多都是错误的，还把它与栈平衡搞混了。
 
@@ -573,17 +570,15 @@ $ gdb -c core
 
 
 
-#### 0x4.3.Stack smash
+#### Stack smash
 
 对于某些将flag装载到内存，并且知道flag的地址、开启了cannary的题目而言，可以考虑stack_smash。
 
 在开启cannary 防护的题目中，检测到栈溢出后，会调用 `__stack_chk_fail` 函数来打印 argv[0] 指针所指向的字符串，而这个地址可以被覆盖，因此，可以利用此实现泄露flag
 
+#### SROP
 
-
-#### 0x4.4.SROP
-
-##### (1)前置知识:
+##### 前置知识:
 
 在进程接收到signal时，内核会将其上下文保存位sigFrame，然后进入signal_handle，对信号处理，返回后，会执行sigreturn调用，恢复保存Frame，主要包括寄存器和控制流(rip，rsp)的一些设置。
 
@@ -660,7 +655,7 @@ struct sigcontext
 
 
 
-##### (2)pwntools.srop
+##### pwntools.srop
 
 pwntools集成了SROP的模块，可以帮助制作fake_frame:
 
@@ -674,6 +669,103 @@ sigframe.rdx = 0x400
 sigframe.rsp = stack_addr
 sigframe.rip = syscall_ret
 ```
+
+
+
+#### stack_gaurd
+
+我们都知道canary来自`fs:0x28`， `fs` 实际上指向的是[TCB](http://www.openwall.com/lists/oss-security/2018/02/27/5) ， TCB结构如下
+
+```c
+typedef struct
+{
+  void *tcb;                /* Pointer to the TCB.  Not necessarily the
+                           thread descriptor used by libpthread.  */
+  dtv_t *dtv;
+  void *self;                /* Pointer to the thread descriptor.  */
+  int multiple_threads;
+  int gscope_flag;  // not in 32bit
+  uintptr_t sysinfo;
+  uintptr_t stack_guard;
+  uintptr_t pointer_guard;
+  unsigned long int vgetcpu_cache[2];
+  /* Bit 0: X86_FEATURE_1_IBT.
+     Bit 1: X86_FEATURE_1_SHSTK.
+   */
+  unsigned int feature_1;
+  int __glibc_unused1;
+  /* Reservation of some values for the TM ABI.  */
+  void *__private_tm[4];
+  /* GCC split stack support.  */
+  void *__private_ss;
+  /* The lowest address of shadow stack,  */
+  unsigned long long int ssp_base;
+  /* Must be kept even if it is no longer used by glibc since programs,
+     like AddressSanitizer, depend on the size of tcbhead_t.  */
+  __128bits __glibc_unused2[8][4] __attribute__ ((aligned (32)));
+  void *__padding[8];
+} tcbhead_t;
+```
+
+0x28的偏移实际上是指向的stack_guard
+
+那么如何确定段选择地址呢，我们知道段寄存器的基地址是不可见的，而且fs/gs可见的数值也不是段选择子而是0，所以在gdb中我们选择`pthread_self()` 来查看`fs`的地址，对比上面的结构，我们可以看到此函数其实是返回了结构体自身的地址。
+
+```c
+pthread_t
+pthread_self (void)
+{
+  return (pthread_t) THREAD_SELF;
+}
+```
+
+
+
+在gdb中查看这个地址，发现这个地址实际上在libc的附近。
+
+```shell
+p/x (tcbhead_t)*(tcbhead_t *)(pthread_self())
+p/x (void*)(pthread_self())
+```
+
+
+
+```shell
+pwndbg> vmmap
+LEGEND: STACK | HEAP | CODE | DATA | RWX | RODATA
+             Start                End Perm     Size Offset File
+    0x555555554000     0x555555555000 r--p     1000      0 /home/nemo/Pwn/workspace/2023ciscn/funcanary/funcanary
+    0x555555555000     0x555555556000 r-xp     1000   1000 /home/nemo/Pwn/workspace/2023ciscn/funcanary/funcanary
+    0x555555556000     0x555555557000 r--p     1000   2000 /home/nemo/Pwn/workspace/2023ciscn/funcanary/funcanary
+    0x555555557000     0x555555558000 r--p     1000   2000 /home/nemo/Pwn/workspace/2023ciscn/funcanary/funcanary
+    0x555555558000     0x555555559000 rw-p     1000   3000 /home/nemo/Pwn/workspace/2023ciscn/funcanary/funcanary
+    0x7ffff7dc7000     0x7ffff7dc9000 rw-p     2000      0 [anon_7ffff7dc7]
+    0x7ffff7dc9000     0x7ffff7def000 r--p    26000      0 /usr/lib64/libc.so.6
+    0x7ffff7def000     0x7ffff7f4c000 r-xp   15d000  26000 /usr/lib64/libc.so.6
+    0x7ffff7f4c000     0x7ffff7f99000 r--p    4d000 183000 /usr/lib64/libc.so.6
+    0x7ffff7f99000     0x7ffff7f9d000 r--p     4000 1d0000 /usr/lib64/libc.so.6
+    0x7ffff7f9d000     0x7ffff7f9f000 rw-p     2000 1d4000 /usr/lib64/libc.so.6
+    0x7ffff7f9f000     0x7ffff7fa9000 rw-p     a000      0 [anon_7ffff7f9f]
+    0x7ffff7fc4000     0x7ffff7fc8000 r--p     4000      0 [vvar]
+    0x7ffff7fc8000     0x7ffff7fca000 r-xp     2000      0 [vdso]
+    0x7ffff7fca000     0x7ffff7fcb000 r--p     1000      0 /usr/lib64/ld-linux-x86-64.so.2
+    0x7ffff7fcb000     0x7ffff7ff1000 r-xp    26000   1000 /usr/lib64/ld-linux-x86-64.so.2
+    0x7ffff7ff1000     0x7ffff7ffb000 r--p     a000  27000 /usr/lib64/ld-linux-x86-64.so.2
+    0x7ffff7ffb000     0x7ffff7ffd000 r--p     2000  30000 /usr/lib64/ld-linux-x86-64.so.2
+    0x7ffff7ffd000     0x7ffff7fff000 rw-p     2000  32000 /usr/lib64/ld-linux-x86-64.so.2
+    0x7ffffffde000     0x7ffffffff000 rw-p    21000      0 [stack]
+0xffffffffff600000 0xffffffffff601000 --xp     1000      0 [vsyscall]
+pwndbg> p/x (void*)(pthread_self())
+$16 = 0x7ffff7fa8680
+```
+
+如果我们能覆盖stack_guard， 那么相应的，我们就能绕过canary的保护。
+
+
+
+但是，显然，正常栈溢出是无法到达这个地址的。然而，在存在子线程栈溢出的情况下，线程栈地址是接近线程`fs` 寄存器地址的，所以可以通过此来实现覆盖。
+
+
 
 
 
