@@ -1,26 +1,479 @@
-{% extends "_layout.swig" %}
-  {% block title %}
-    {{config.title}}
-    {% if config.subtitle %}
-      | {{ config.subtitle }}
-    {% endif %}
-  {% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="browsermode" content="application">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="V3rdant's Blog">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="msapplication-navbutton-color" content="#666666">
+<meta name= "format-detection" content="telephone=no" />
 
-  {% block main %}
-    {% if page.type === 'about' %}
+
+
+
+  <meta name="keywords" content="pwn" />
+
+
+
+<link rel="apple-touch-startup-image" media="(device-width: 375px)" href="assets/apple-launch-1125x2436.png">
+<link rel="apple-touch-startup-image" media="(orientation: landscape)" href="assets/apple-touch-startup-image-2048x1496.png">
+
+<link rel="stylesheet" href="/style/style.css">
+
+<script>
+  var nlviconfig = {
+    title: "V3rdant's Blog",
+    author: "V3rdant",
+    baseUrl: "/",
+    theme: {
+      scheme: "banderole",
+      lightbox: true,
+      animate: true,
+      search: true,
+      friends: false,
+      reward: false,
+      pjax: false,
+      lazy: false,
+      toc: true
+    }
+  }
+</script>
+
+
+
+
+    
+<link rel="stylesheet" href="/script/lib/lightbox/css/lightbox.min.css">
+
+
+
+
+
+    
+<link rel="stylesheet" href="/syuanpi/syuanpi.min.css">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+@font-face {
+  font-family: "Allura";
+  src: url('/font/allura/allura.ttf');
+}
+</style>
+
+  <title>
+    V3rdant's Blog
+    
+  </title>
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="V3rdant's Blog" type="application/atom+xml">
+</head>
+<body>
+  <div class="container">
+    <header class="header" id="header">
+  <div class="header-wrapper">
+    <div class="logo">
+  <div class="logo-inner syuanpi tvIn" style="display:none;">
+    <h1><a href="/">V3rdant's Blog</a></h1>
+    
+  </div>
+</div>
+
+    <nav class="main-nav">
+  
+  <ul class="main-nav-list syuanpi tvIn">
+  
+    <li class="menu-item">
+      <a href="javascript:;" id="search-btn" aria-label="Search">
+        <i class="iconfont icon-search"></i>
+      </a>
+    </li>
+  
+  
+  
+    
+  
+    <li class="menu-item">
+      <a href="/" id="article">
+        <span class="base-name">
+          
+            ARTICLE
+          
+        </span>
+      </a>
+    </li>
+  
+  
+    
+  
+    <li class="menu-item">
+      <a href="/archives" id="archives">
+        <span class="base-name">
+          
+            ARCHIVES
+          
+        </span>
+      </a>
+    </li>
+  
+  
+    
+  
+    <li class="menu-item">
+      <a href="javascript:;" id="tags">
+        <span class="base-name">
+          
+            TAGS
+          
+        </span>
+      </a>
+    </li>
+  
+  
+    
+  
+    <li class="menu-item">
+      <a href="/about" id="about">
+        <span class="base-name">
+          
+            ABOUT
+          
+        </span>
+      </a>
+    </li>
+  
+  
+  </ul>
+  
+</nav>
+
+  </div>
+</header>
+<div class="mobile-header" id="mobile-header">
+  <div class="mobile-header-nav">
+    <div class="mobile-header-item" id="mobile-left">
+      <div class="header-menu-item">
+        <div class="header-menu-line"></div>
+      </div>
+    </div>
+    <h1 class="mobile-header-title">
+      <a href="/">V3rdant's Blog</a>
+    </h1>
+    <div class="mobile-header-item"></div>
+  </div>
+  <div class="mobile-header-body">
+    <ul class="mobile-header-list">
+      
+        <li class="mobile-nav-item syuanpi fadeInRightShort back-0">
+          <a href="/" >
+            
+              ARTICLE
+            
+          </a>
+        </li>
+      
+        <li class="mobile-nav-item syuanpi fadeInRightShort back-1">
+          <a href="/archives" >
+            
+              ARCHIVES
+            
+          </a>
+        </li>
+      
+        <li class="mobile-nav-item syuanpi fadeInRightShort back-2">
+          <a href="javascript:;" id="mobile-tags">
+            
+              TAGS
+            
+          </a>
+        </li>
+      
+        <li class="mobile-nav-item syuanpi fadeInRightShort back-3">
+          <a href="/about" >
+            
+              ABOUT
+            
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+
+    <div class="container-inner" style="display:none;">
+      <main class="main" id="main">
+        <div class="main-wrapper">
+          
+    
       <div class="about syuanpi fadeInRightShort">
-        <h2 class="title"> {{ __('nav.about') }} </h2>
+        <h2 class="title"> About </h2>
         <div class="content">
-          {% if theme.self %}
-            {{ theme.self }}
-          {% else %}
-            {{ page.content }}
-          {% endif %}
+          
+            
+          
         </div>
       </div>
-      {% include "_partial/friendlink.swig" %}
-      {% include "_partial/_post/comments.swig" %}
-    {% else %}
-      {{ page.content }}
-    {% endif %}
-  {% endblock %}
+      
+      
+
+    
+  
+        </div>
+      </main>
+      <footer class="footer syuanpi fadeIn" id="footer">
+  <hr>
+  <div class="footer-wrapper">
+    <div class="left">
+      <div class="contact-icon">
+  
+  
+    <a target="_blank" rel="noopener" href="https://www.facebook.com/" class="iconfont icon-facebook" title="facebook"></a>
+  
+    <a target="_blank" rel="noopener" href="https://twitter.com/" class="iconfont icon-twitter" title="twitter"></a>
+  
+    <a target="_blank" rel="noopener" href="https://www.instagram.com/" class="iconfont icon-instagram" title="instagram"></a>
+  
+    <a target="_blank" rel="noopener" href="https://weibo.com/" class="iconfont icon-weibo" title="weibo"></a>
+  
+    <a target="_blank" rel="noopener" href="https://www.zhihu.com/people/" class="iconfont icon-zhihu" title="zhihu"></a>
+  
+    <a target="_blank" rel="noopener" href="https://github.com/" class="iconfont icon-github" title="github"></a>
+  
+    <a target="_blank" rel="noopener" href="https://www.linkedin.com/in/" class="iconfont icon-linkedin" title="linkedin"></a>
+  
+    <a target="_blank" rel="noopener" href="https://www.douban.com/people/" class="iconfont icon-douban" title="douban"></a>
+  
+    <a target="_blank" rel="noopener" href="https://medium.com/" class="iconfont icon-medium" title="medium"></a>
+  
+    <a target="_blank" rel="noopener" href="https://www.yuque.com/" class="iconfont icon-yuque" title="yuque"></a>
+  
+</div>
+
+    </div>
+    <div class="right">
+      <div class="copyright">
+    <div class="info">
+        <span>&copy;</span>
+        <span>2016 ~ 2024</span>
+        <span>❤</span>
+        <span>V3rdant</span>
+    </div>
+    <div class="theme">
+        <span>
+            Powered by
+            <a href="http://hexo.io/" target="_blank" rel="noopener">Hexo </a>
+        </span>
+        <span>
+            Theme
+            <a target="_blank" rel="noopener" href="https://github.com/ColMugX/hexo-theme-Nlvi"> Nlvi </a>
+        </span>
+    </div>
+    
+</div>
+
+    </div>
+  </div>
+</footer>
+    </div>
+    <div class="tagcloud" id="tagcloud">
+  <div class="tagcloud-taglist">
+  
+    <div class="tagcloud-tag">
+      <button>Pwn</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>linux</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>io_uring</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>shellcode</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>CTF</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>pwn</button>
+    </div>
+  
+  </div>
+  
+    <div class="tagcloud-postlist active">
+      <h2>Pwn</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Linux.Seccomp-and-Ptrace/">
+            <time class="tagcloud-posttime">2023 / 10 / 31</time>
+            <span>Linux.Seccomp-and-Ptrace</span>
+          </a>
+        </div>
+      
+        <div class="tagcloud-post">
+          <a href="/Pwn.Heap-Exploation-up-to-2.31/">
+            <time class="tagcloud-posttime">2023 / 06 / 21</time>
+            <span>Pwn.Heap-Exploation-up-to-2.31</span>
+          </a>
+        </div>
+      
+        <div class="tagcloud-post">
+          <a href="/Pwn.I-Wanna-be-A-LLVM-Passer/">
+            <time class="tagcloud-posttime">2023 / 06 / 23</time>
+            <span>I wanna be a llvm passer</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>linux</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Linux.Seccomp-and-Ptrace/">
+            <time class="tagcloud-posttime">2023 / 10 / 31</time>
+            <span>Linux.Seccomp-and-Ptrace</span>
+          </a>
+        </div>
+      
+        <div class="tagcloud-post">
+          <a href="/Linux.io_uring-Top-down-Approch/">
+            <time class="tagcloud-posttime">2023 / 12 / 04</time>
+            <span>Linux.io_uring-Top-down-Approch</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>io_uring</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Linux.io_uring-Top-down-Approch/">
+            <time class="tagcloud-posttime">2023 / 12 / 04</time>
+            <span>Linux.io_uring-Top-down-Approch</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>shellcode</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Linux.io_uring-Top-down-Approch/">
+            <time class="tagcloud-posttime">2023 / 12 / 04</time>
+            <span>Linux.io_uring-Top-down-Approch</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>CTF</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Pwn.Heap-Exploation-up-to-2.31/">
+            <time class="tagcloud-posttime">2023 / 06 / 21</time>
+            <span>Pwn.Heap-Exploation-up-to-2.31</span>
+          </a>
+        </div>
+      
+        <div class="tagcloud-post">
+          <a href="/Pwn.I-Wanna-be-A-LLVM-Passer/">
+            <time class="tagcloud-posttime">2023 / 06 / 23</time>
+            <span>I wanna be a llvm passer</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>pwn</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Pwn.Stack-Overflow-Overview/">
+            <time class="tagcloud-posttime">2022 / 08 / 03</time>
+            <span>Pwn.StackOverflow-Overview</span>
+          </a>
+        </div>
+      
+        <div class="tagcloud-post">
+          <a href="/Pwn.The-Art-of-Shellcode/">
+            <time class="tagcloud-posttime">2022 / 07 / 31</time>
+            <span>Pwn.the-Art-of-Shellcode</span>
+          </a>
+        </div>
+      
+    </div>
+  
+</div>
+
+  </div>
+  <div class="backtop syuanpi melt toTop" id="backtop">
+    <i class="iconfont icon-up"></i>
+    <span style="text-align:center;font-family:Georgia;"><span style="font-family:Georgia;" id="scrollpercent">1</span>%</span>
+</div>
+
+  <div class="search" id="search">
+    <div class="input">
+      <input type="text" id="search-input" placeholder="搜索一下？" autofocus>
+    </div>
+    <div id="search-result"></div>
+  </div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+
+
+
+  <script></script>
+  <script src="/script/lib/lightbox/js/lightbox.min.js" async></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+<script src="/script/scheme/banderole.js"></script>
+
+
+
+
+<script src="/script/bootstarp.js"></script>
+
+
+
+
+
+</body>
+</html>

