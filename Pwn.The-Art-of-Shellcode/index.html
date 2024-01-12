@@ -253,6 +253,7 @@
 <li><a target="_blank" rel="noopener" href="https://shell-storm.org/shellcode/index.html">shellcode database</a></li>
 <li><a target="_blank" rel="noopener" href="https://www.exploit-db.com/google-hacking-database">exploit-db</a></li>
 </ul>
+<span id="more"></span>
 <p>接下来给出几个尽可能短的shellcode</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">; excve(&#x27;/bin/sh&#x27;,&#x27;sh&#x27;,0)</span><br><span class="line">; rax: 0x3b</span><br><span class="line">; rdi: &#x27;/bin/sh&#x27; </span><br><span class="line">; rsi: &#x27;sh&#x27; </span><br><span class="line">; rdx; NULL</span><br></pre></td></tr></table></figure>
 <h2 id="最短shellcode">最短shellcode</h2>
@@ -346,61 +347,13 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
 <h2 id="利用32位调用绕过orw">利用32位调用绕过orw</h2>
 <p>x86与x64的syscall number是不一样的，如果能够跳转到32位执行相应的shellcode，就可一绕过限制。</p>
 <p><strong>x86</strong> <strong>sys_number</strong></p>
-<table>
-<thead>
-<tr>
-<th>sys_number</th>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>3</td>
-<td>read</td>
-<td></td>
-<td>0x03</td>
-<td>unsigned int fd</td>
-<td>char *buf</td>
-<td>size_t count</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>4</td>
-<td>write</td>
-<td></td>
-<td>0x04</td>
-<td>unsigned int fd</td>
-<td>const char *buf</td>
-<td>size_t count</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>5</td>
-<td>open</td>
-<td></td>
-<td>0x05</td>
-<td>const char *filename</td>
-<td>int flags</td>
-<td>umode_t mode</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
+<p>| sys_number  |   |   |   |   |<br>
+|—|—|—|—|—|—|<br>
+|3|read|0x03|unsigned int fd|char *buf|size_t count|<br>
+|4|write|0x04|unsigned int fd|const char *buf|size_t count|<br>
+|5|open|0x05|const char *filename|int flags|umode_t mode|</p>
 <p>而程序是由32位还是64位执行是由cs寄存器决定的，而retfq指令可以对其作出更改，从而切换寄存器状态，所以可以由此实现orw。</p>
+<p>值得注意的是, 对于32位程序, 由于kernel 也要对其作出相应支持, 所以内核代码中有一个操作系统层面的arch判断, personality, 这会影响mmap之类的操作</p>
 <h2 id="x32-ABI">x32 ABI</h2>
 <p>x32 ABI 是一个应用程序二进制接口 (ABI)，也是 Linux 内核的接口之一。 x32 ABI 在 Intel 和 AMD 64 位硬件上提供 32 位整数、长整数和指针。</p>
 <p>可以通过 查看内核源代码 unistd_x32.h 查看</p>
@@ -409,9 +362,13 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
 <p>即可以通过0x40000000+syscall_number 来调用一些系统调用。所以可以绕过对syscall的限制。</p>
 <p>不过这个特性似乎在大多数发行版中不受支持。</p>
 <h2 id="io-uring">io_uring</h2>
-<p>可以通过io_uring绕过对open限制的</p>
-<h2 id="mmap">mmap</h2>
-<p>似乎mmap可以把文件映射到虚拟内存，绕过对open的限制。</p>
+<p>io_uring 本身可以实现所有orw乃至socket连接操作, 在linux5.xx最少需要<code>mmap</code>和 <code>io_uring_setup</code> 两个syscall, 之后增加了 <code>IORING_SETUP_NOMMAP</code> 则可以只用一个syscall来实现orw</p>
+<h1 id="对于syscall指令的过滤">对于syscall指令的过滤</h1>
+<ul>
+<li>vdso</li>
+<li>sysenter</li>
+<li>int 80</li>
+</ul>
 <h1 id="tricks">tricks</h1>
 <ul>
 <li>对于一些题目，对shellcode的检查用到了strlen，那么可以通过先使用一些存在NULL截断的指令，从而使得后面的字符串绕过限制。</li>
@@ -489,7 +446,7 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
   <aside class="post-toc">
     <div class="title"><span>Index</span></div>
     <div class="toc-inner">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Basic"><span class="toc-text">Basic</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%9F%ADshellcode"><span class="toc-text">最短shellcode</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%BE%81%E4%B8%8E%E6%9D%A1%E4%BB%B6"><span class="toc-text">特征与条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B1%87%E7%BC%96"><span class="toc-text">汇编</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-text">字节码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#orw"><span class="toc-text">orw</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%BE%81%E4%B8%8E%E6%9D%A1%E4%BB%B6-2"><span class="toc-text">特征与条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B1%87%E7%BC%96-2"><span class="toc-text">汇编</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E7%A0%81-2"><span class="toc-text">字节码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E6%8C%87%E5%AE%9A%E5%9C%B0%E5%9D%80orw"><span class="toc-text">可指定地址orw</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%A7%E4%BF%A1%E9%81%93%E7%88%86%E7%A0%B4"><span class="toc-text">侧信道爆破</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E9%99%90%E5%88%B6"><span class="toc-text">字符限制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E7%A0%81%E5%B7%A5%E5%85%B7"><span class="toc-text">编码工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Alpha3"><span class="toc-text">Alpha3</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AE64"><span class="toc-text">AE64</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%8B%E5%8A%A8%E7%BB%95%E8%BF%87"><span class="toc-text">手动绕过</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%89%B9%E5%AE%9A%E4%BD%8D%E7%BD%AE%E5%AD%97%E7%AC%A6%E9%99%90%E5%88%B6"><span class="toc-text">特定位置字符限制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8Eorw%E7%9A%84%E9%99%90%E5%88%B6"><span class="toc-text">对于orw的限制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A832%E4%BD%8D%E8%B0%83%E7%94%A8%E7%BB%95%E8%BF%87orw"><span class="toc-text">利用32位调用绕过orw</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#x32-ABI"><span class="toc-text">x32 ABI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#io-uring"><span class="toc-text">io_uring</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mmap"><span class="toc-text">mmap</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#tricks"><span class="toc-text">tricks</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Basic"><span class="toc-text">Basic</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%9F%ADshellcode"><span class="toc-text">最短shellcode</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%BE%81%E4%B8%8E%E6%9D%A1%E4%BB%B6"><span class="toc-text">特征与条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B1%87%E7%BC%96"><span class="toc-text">汇编</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E7%A0%81"><span class="toc-text">字节码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#orw"><span class="toc-text">orw</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%BE%81%E4%B8%8E%E6%9D%A1%E4%BB%B6-2"><span class="toc-text">特征与条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B1%87%E7%BC%96-2"><span class="toc-text">汇编</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E8%8A%82%E7%A0%81-2"><span class="toc-text">字节码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E6%8C%87%E5%AE%9A%E5%9C%B0%E5%9D%80orw"><span class="toc-text">可指定地址orw</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%A7%E4%BF%A1%E9%81%93%E7%88%86%E7%A0%B4"><span class="toc-text">侧信道爆破</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E9%99%90%E5%88%B6"><span class="toc-text">字符限制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E7%A0%81%E5%B7%A5%E5%85%B7"><span class="toc-text">编码工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Alpha3"><span class="toc-text">Alpha3</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AE64"><span class="toc-text">AE64</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%8B%E5%8A%A8%E7%BB%95%E8%BF%87"><span class="toc-text">手动绕过</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%89%B9%E5%AE%9A%E4%BD%8D%E7%BD%AE%E5%AD%97%E7%AC%A6%E9%99%90%E5%88%B6"><span class="toc-text">特定位置字符限制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8Eorw%E7%9A%84%E9%99%90%E5%88%B6"><span class="toc-text">对于orw的限制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A832%E4%BD%8D%E8%B0%83%E7%94%A8%E7%BB%95%E8%BF%87orw"><span class="toc-text">利用32位调用绕过orw</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#x32-ABI"><span class="toc-text">x32 ABI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#io-uring"><span class="toc-text">io_uring</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8Esyscall%E6%8C%87%E4%BB%A4%E7%9A%84%E8%BF%87%E6%BB%A4"><span class="toc-text">对于syscall指令的过滤</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#tricks"><span class="toc-text">tricks</span></a></li></ol>
     </div>
   </aside>
 
@@ -627,6 +584,13 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
           </a>
         </div>
       
+        <div class="tagcloud-post">
+          <a href="/Linux.io_uring-Top-down-Approach/">
+            <time class="tagcloud-posttime">2023 / 12 / 04</time>
+            <span>Linux.io_uring-Top-down-Approch</span>
+          </a>
+        </div>
+      
     </div>
   
     <div class="tagcloud-postlist ">
@@ -639,6 +603,13 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
           </a>
         </div>
       
+        <div class="tagcloud-post">
+          <a href="/Linux.io_uring-Top-down-Approach/">
+            <time class="tagcloud-posttime">2023 / 12 / 04</time>
+            <span>Linux.io_uring-Top-down-Approch</span>
+          </a>
+        </div>
+      
     </div>
   
     <div class="tagcloud-postlist ">
@@ -646,6 +617,13 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
       
         <div class="tagcloud-post">
           <a href="/Linux.io_uring-Top-down-Approch/">
+            <time class="tagcloud-posttime">2023 / 12 / 04</time>
+            <span>Linux.io_uring-Top-down-Approch</span>
+          </a>
+        </div>
+      
+        <div class="tagcloud-post">
+          <a href="/Linux.io_uring-Top-down-Approach/">
             <time class="tagcloud-posttime">2023 / 12 / 04</time>
             <span>Linux.io_uring-Top-down-Approch</span>
           </a>

