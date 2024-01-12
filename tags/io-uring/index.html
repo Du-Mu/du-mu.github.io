@@ -237,6 +237,27 @@
               <p>最近在N1线下赛遇见一个seccomp沙箱，限制了只能使用 <code>io_uring_setup</code> 一个系统调用，之前不久的ACTF中， 使用<code>mmap</code>、<code>io_uring_setup</code>、<code>io_uring_enter</code> 三个系统调用，完成了orw。 如何仅仅使用 <code>io_uring_setup</code> 完成orw呢？</p>
 <p>本文将不仅仅局限于CTF，而是从io_uring的实现出发，先从宏观角度透视io_uring的实现框架， 然后以源代码为基础，自顶向下，从liburing，io_uring的用户态接口， 最后到io_uring的内核实现，一步步聚焦 <code>io_uring</code>  具体的实现。</p>
 <p>由于笔者为安全方向，因此笔者将更多关注 io_uring 中用户和内核态的通信这一容易产生安全漏洞的模块，而不会聚焦io_uring的异步调度和任务处理，以上。</p>
+            
+          </div>
+          <div class="archive-post-info">
+            <time class="archive-post-time">
+              2023-12-04
+            </time>
+            <a  class="archive-post-link" href="/Linux.io_uring-Top-down-Approach/">
+              Linux.io_uring-Top-down-Approch
+            </a>
+          </div>
+        </div>
+      
+        
+          </section>
+        
+        <div class="archive-post">
+          <div class="archive-post-content">
+            
+              <p>最近在N1线下赛遇见一个seccomp沙箱，限制了只能使用 <code>io_uring_setup</code> 一个系统调用，之前不久的ACTF中， 使用<code>mmap</code>、<code>io_uring_setup</code>、<code>io_uring_enter</code> 三个系统调用，完成了orw。 如何仅仅使用 <code>io_uring_setup</code> 完成orw呢？</p>
+<p>本文将不仅仅局限于CTF，而是从io_uring的实现出发，先从宏观角度透视io_uring的实现框架， 然后以源代码为基础，自顶向下，从liburing，io_uring的用户态接口， 最后到io_uring的内核实现，一步步聚焦 <code>io_uring</code>  具体的实现。</p>
+<p>由于笔者为安全方向，因此笔者将更多关注 io_uring 中用户和内核态的通信这一容易产生安全漏洞的模块，而不会聚焦io_uring的异步调度和任务处理，以上。</p>
 <h2 id="overview">overview</h2>
 <p>在开始前，首先介绍一下什么是<a target="_blank" rel="noopener" href="https://man.archlinux.org/man/io_uring.7.en">io_uring</a> 。</p>
 <p>io_uring 是 Linux 5.1 引入的一套新的异步 I/O 接口机制,主要有以下特点:</p>
@@ -628,27 +649,6 @@ IOPOLL 通过 <code>io_uring_enter</code> 通知内核来收割任务</p>
           </div>
         </div>
       
-        
-          </section>
-        
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <p>最近在N1线下赛遇见一个seccomp沙箱，限制了只能使用 <code>io_uring_setup</code> 一个系统调用，之前不久的ACTF中， 使用<code>mmap</code>、<code>io_uring_setup</code>、<code>io_uring_enter</code> 三个系统调用，完成了orw。 如何仅仅使用 <code>io_uring_setup</code> 完成orw呢？</p>
-<p>本文将不仅仅局限于CTF，而是从io_uring的实现出发，先从宏观角度透视io_uring的实现框架， 然后以源代码为基础，自顶向下，从liburing，io_uring的用户态接口， 最后到io_uring的内核实现，一步步聚焦 <code>io_uring</code>  具体的实现。</p>
-<p>由于笔者为安全方向，因此笔者将更多关注 io_uring 中用户和内核态的通信这一容易产生安全漏洞的模块，而不会聚焦io_uring的异步调度和任务处理，以上。</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-12-04
-            </time>
-            <a  class="archive-post-link" href="/Linux.io_uring-Top-down-Approach/">
-              Linux.io_uring-Top-down-Approch
-            </a>
-          </div>
-        </div>
-      
       
         </section></section>
       
@@ -784,14 +784,14 @@ IOPOLL 通过 <code>io_uring_enter</code> 通知内核来收割任务</p>
         </div>
       
         <div class="tagcloud-post">
-          <a href="/Linux.io_uring-Top-down-Approch/">
+          <a href="/Linux.io_uring-Top-down-Approach/">
             <time class="tagcloud-posttime">2023 / 12 / 04</time>
             <span>Linux.io_uring-Top-down-Approch</span>
           </a>
         </div>
       
         <div class="tagcloud-post">
-          <a href="/Linux.io_uring-Top-down-Approach/">
+          <a href="/Linux.io_uring-Top-down-Approch/">
             <time class="tagcloud-posttime">2023 / 12 / 04</time>
             <span>Linux.io_uring-Top-down-Approch</span>
           </a>
@@ -803,14 +803,14 @@ IOPOLL 通过 <code>io_uring_enter</code> 通知内核来收割任务</p>
       <h2>io_uring</h2>
       
         <div class="tagcloud-post">
-          <a href="/Linux.io_uring-Top-down-Approch/">
+          <a href="/Linux.io_uring-Top-down-Approach/">
             <time class="tagcloud-posttime">2023 / 12 / 04</time>
             <span>Linux.io_uring-Top-down-Approch</span>
           </a>
         </div>
       
         <div class="tagcloud-post">
-          <a href="/Linux.io_uring-Top-down-Approach/">
+          <a href="/Linux.io_uring-Top-down-Approch/">
             <time class="tagcloud-posttime">2023 / 12 / 04</time>
             <span>Linux.io_uring-Top-down-Approch</span>
           </a>
@@ -822,14 +822,14 @@ IOPOLL 通过 <code>io_uring_enter</code> 通知内核来收割任务</p>
       <h2>shellcode</h2>
       
         <div class="tagcloud-post">
-          <a href="/Linux.io_uring-Top-down-Approch/">
+          <a href="/Linux.io_uring-Top-down-Approach/">
             <time class="tagcloud-posttime">2023 / 12 / 04</time>
             <span>Linux.io_uring-Top-down-Approch</span>
           </a>
         </div>
       
         <div class="tagcloud-post">
-          <a href="/Linux.io_uring-Top-down-Approach/">
+          <a href="/Linux.io_uring-Top-down-Approch/">
             <time class="tagcloud-posttime">2023 / 12 / 04</time>
             <span>Linux.io_uring-Top-down-Approch</span>
           </a>
