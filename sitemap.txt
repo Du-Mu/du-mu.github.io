@@ -7,7 +7,6 @@ https://v3rdant.cn/Linux.io_uring-Top-down-Approach/
 https://v3rdant.cn/about/index.html
 https://v3rdant.cn/categories/index.html
 https://v3rdant.cn/tags/index.html
-https://v3rdant.cn/Linux.io_uring-Top-down-Approch/
 https://v3rdant.cn/links/index.html
 https://v3rdant.cn/repository/index.html
 https://v3rdant.cn/
