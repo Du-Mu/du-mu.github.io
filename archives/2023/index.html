@@ -290,6 +290,30 @@
         <div class="archive-post">
           <div class="archive-post-content">
             
+              <h1 id="安全机制">安全机制</h1>
+<p><strong>CONFIG_CFI_CLANG=y</strong><br>
+控制流完整性校验，限制ROP</p>
+<p><strong>CONFIG_SLAB_FREELIST_HARDENED=y</strong><br>
+类似于用户态下 glibc 中的 safe-linking 机制，在内核中的 slab/slub 分配器当中也存在着类似的机制保护着 freelist—— <code>SLAB_FREELIST_HARDENED</code>：</p>
+            
+          </div>
+          <div class="archive-post-info">
+            <time class="archive-post-time">
+              2023-08-11
+            </time>
+            <a  class="archive-post-link" href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
+              Pwn.Linux-Kernel-Pwn-All-in-One
+            </a>
+          </div>
+        </div>
+      
+        
+          
+          
+          
+        <div class="archive-post">
+          <div class="archive-post-content">
+            
               <h1 id="overview">overview</h1>
 <p>华中赛遇到了一个llvm的题，顺手系统总结一下llvm pass吧。</p>
 <p>首先简单介绍一下llvm，llvm是一套用C++编写的编译器基础设施。LLVM Pass提供了一些可供重写的函数，本义是用来实现一些优化。而Pwn的llvm pass类题，就是重写了runOnFunction函数。</p>
@@ -321,30 +345,6 @@
             </time>
             <a  class="archive-post-link" href="/Pwn.Heap-Exploation-up-to-2.31/">
               Pwn.Heap-Exploation-up-to-2.31
-            </a>
-          </div>
-        </div>
-      
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h1 id="安全机制">安全机制</h1>
-<p><strong>CONFIG_CFI_CLANG=y</strong><br>
-控制流完整性校验，限制ROP</p>
-<p><strong>CONFIG_SLAB_FREELIST_HARDENED=y</strong><br>
-类似于用户态下 glibc 中的 safe-linking 机制，在内核中的 slab/slub 分配器当中也存在着类似的机制保护着 freelist—— <code>SLAB_FREELIST_HARDENED</code>：</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-04-11
-            </time>
-            <a  class="archive-post-link" href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-              Pwn.Linux-Kernel-Pwn-All-in-One
             </a>
           </div>
         </div>
@@ -477,7 +477,7 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 04 / 11</time>
+            <time class="tagcloud-posttime">2023 / 08 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -503,7 +503,7 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 04 / 11</time>
+            <time class="tagcloud-posttime">2023 / 08 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -553,7 +553,7 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 04 / 11</time>
+            <time class="tagcloud-posttime">2023 / 08 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -584,7 +584,7 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 04 / 11</time>
+            <time class="tagcloud-posttime">2023 / 08 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
