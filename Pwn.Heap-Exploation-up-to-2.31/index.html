@@ -435,7 +435,7 @@
 <p>而在ctf题中，最常劫持的got表也是strlen，因为其会在puts中被调用，很容易被用到。</p>
 <p>同时，在house of pig的攻击流程中，可以将malloc@got作为malloc_hook的替代。</p>
 <p>其优点在于像hooks一样劫持方便，只需要libc地址加一次任意分配即可，缺点在与其利用存在限制，并不是所有程序都会用到got表中的函数</p>
-<p>此外，很多字符串相关函数，都会调用got表中123的函数，因此可以通过此来劫持。</p>
+<p>此外，很多字符串相关函数，都会调用got表中的函数，因此可以通过此来劫持。</p>
 <p>不过在最近的比赛中，笔者打算使用libc.got 时，发现高版本libc似乎很多libc got链用不了了。</p>
 <p>同时@kylebot 使用angr挖掘IO_FILE链启发了我，笔者打算写一个用argn挖掘可利用的libc.got的工具  #TODO  稍微鸽一下（</p>
 <h3 id="IO-FILE">IO_FILE</h3>
@@ -723,6 +723,14 @@
       <button>Kernel</button>
     </div>
   
+    <div class="tagcloud-tag">
+      <button>Fuzz</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>Coding</button>
+    </div>
+  
   </div>
   
     <div class="tagcloud-postlist active">
@@ -751,7 +759,7 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -777,7 +785,7 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -827,7 +835,7 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -858,8 +866,32 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>Fuzz</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Fuzz.AFL-All-in-One/">
+            <time class="tagcloud-posttime">2024 / 01 / 12</time>
+            <span>Fuzz.AFL-All-in-One</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>Coding</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Fuzz.AFL-All-in-One/">
+            <time class="tagcloud-posttime">2024 / 01 / 12</time>
+            <span>Fuzz.AFL-All-in-One</span>
           </a>
         </div>
       

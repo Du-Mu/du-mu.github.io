@@ -1,10 +1,11 @@
+https://v3rdant.cn/Pwn.Heap-Exploation-up-to-2.31/
+https://v3rdant.cn/Pwn.Stack-Overflow-Overview/
+https://v3rdant.cn/Pwn.The-Art-of-Shellcode/
 https://v3rdant.cn/Pwn.Linux-Kernel-Pwn-All-in-One/
+https://v3rdant.cn/Fuzz.AFL-All-in-One/
 https://v3rdant.cn/Linux.Seccomp-and-Ptrace/
 https://v3rdant.cn/Pwn.I-Wanna-be-A-LLVM-Passer/
-https://v3rdant.cn/Pwn.Stack-Overflow-Overview/
 https://v3rdant.cn/about/index.html
-https://v3rdant.cn/Pwn.The-Art-of-Shellcode/
-https://v3rdant.cn/Pwn.Heap-Exploation-up-to-2.31/
 https://v3rdant.cn/Linux.io_uring-Top-down-Approach/
 https://v3rdant.cn/categories/index.html
 https://v3rdant.cn/tags/index.html
@@ -18,5 +19,8 @@ https://v3rdant.cn/tags/shellcode/
 https://v3rdant.cn/tags/CTF/
 https://v3rdant.cn/tags/pwn/
 https://v3rdant.cn/tags/Kernel/
+https://v3rdant.cn/tags/Fuzz/
+https://v3rdant.cn/tags/Coding/
 https://v3rdant.cn/categories/CTF/
 https://v3rdant.cn/categories/Pwn/
+https://v3rdant.cn/categories/Fuzz/

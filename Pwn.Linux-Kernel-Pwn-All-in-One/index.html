@@ -231,7 +231,7 @@
       <div class="post-time syuanpi fadeInRightShort back-1">
         <div class="post-time-wrapper">
           
-          <time>2023-08-11</time>
+          <time>2024-01-11</time>
           
             
               <span class="post-category"><a href="/categories/Pwn/">Pwn</a></span>
@@ -276,8 +276,10 @@
 <p>决定内核栈是否存在随机偏移</p>
 <p><strong>CONFIG_MEMCG_KMEM</strong></p>
 <p>决定<code>GFP_KERNEL</code> 与 <code>GFP_KERNEL_ACCOUNT</code> 是否会从同样的 <code>kmalloc-xx</code> 中进行分配</p>
-<p><strong>CONFIG_CFI_CLANG=y</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">## more config </span><br><span class="line">```shell</span><br><span class="line">CONFIG_STATIC_USERMODEHELPER=y  </span><br><span class="line">CONFIG_STATIC_USERMODEHELPER_PATH=&quot;&quot;  </span><br><span class="line">CONFIG_SLUB=y  </span><br><span class="line">CONFIG_SLAB_FREELIST_RANDOM=y  </span><br><span class="line">CONFIG_SLAB_FREELIST_HARDENED=y  </span><br><span class="line">CONFIG_HARDENED_USERCOPY=y</span><br><span class="line"></span><br><span class="line">CONFIG_MEMCG_KMEM # Binary Exploitation</span><br><span class="line"></span><br><span class="line">## Introduce </span><br><span class="line">#决定`GFP_KERNEL` 与 `GFP_KERNEL_ACCOUNT` 是否会从同样的 `kmalloc-xx` 中进行分配</span><br></pre></td></tr></table></figure>
+<p><strong>CONFIG_CFI_CLANG</strong></p>
+<p>决定是否开启CFI(控制流完整性)， 限制了ROP</p>
+<p><strong>CONFIG_STATIC_USERMODEHELPER</strong></p>
+<p>决定modprobe_path 是否可写</p>
 <h1 id="信息搜集">信息搜集</h1>
 <ol>
 <li>查看内核版本</li>
@@ -352,11 +354,6 @@
 <ol>
 <li>GFP_KERNEL: 0x6000C0</li>
 </ol>
-<h1 id="Tricks">Tricks</h1>
-<h2 id="heap-addr">heap addr</h2>
-<ul>
-<li>在内核“堆基址”（<code>page_offset_base</code>） + <code>0x9d000</code> 处存放着 <code>secondary_startup_64</code> 函数的地址</li>
-</ul>
 <h1 id="攻击方法">攻击方法</h1>
 <ul>
 <li>ROP
@@ -386,7 +383,7 @@
 <p>简单来说，ret2usr的核心就是利用内核的ring 0权限，执行用户空间的代码来实现提权。</p>
 <p>一个典型的ret2usr rop链：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">rop_chain[i++] = (<span class="type">size_t</span>)getRootPrivilige;  </span><br><span class="line">rop_chain[i++] = SWAPGS_POPFQ_RET + offset;  </span><br><span class="line">rop_chain[i++] = <span class="number">0</span>;  </span><br><span class="line">rop_chain[i++] = IRETQ + offset;  </span><br><span class="line">rop_chain[i++] = (<span class="type">size_t</span>)getRootShell;  </span><br><span class="line">rop_chain[i++] = user_cs;  </span><br><span class="line">rop_chain[i++] = user_rflags;  </span><br><span class="line">rop_chain[i++] = user_sp;  </span><br><span class="line">rop_chain[i++] = user_ss;</span><br></pre></td></tr></table></figure>
-<p>这里的getRootPrivilige就是用户态的 提全代码。</p>
+<p>这里的getRootPrivilige就是用户态的 提权代码。</p>
 <h4 id="绕过SMAP与SMEP">绕过SMAP与SMEP</h4>
 <p>SMAP和SMEP是 <code>x64</code> 限制内核和用户空间的数据访问的一个架构功能，通过CR4寄存器的低位来判断是否开启。 开启后 从内核态访问用户态的数据会直接panic，因此通过在ROP链中插入 修改 <code>cr4</code> 寄存器的gadget即可绕过</p>
 <h4 id="KPTI如何限制ret2usr">KPTI如何限制ret2usr</h4>
@@ -411,7 +408,7 @@ This sharing at the PGD level also inherently shares all the lower layers of the
 <p>内核堆区 direct_mapping_arean 存在对于整个物理内存的映射，因此，通过mmap在用户态喷射的匿名页面，实际上也从此分配。</p>
 <p>通过mmap大量分配，可以获取到 kernel 上一块近乎连续的物理内存，因此，通过不断堆喷布置gadget滑块，然后随机选择一个内核基地址进行栈迁移，最终就有很大概率命中我们写入的页面。</p>
 <h3 id="sycrop">sycrop</h3>
-<p>通过下硬件断点在用户态触发的方式，可以将寄存器内容推送到与per cpu entry area固定偏移的DB stack上，而在linux 6.2之前， per cpu entry area没有加入随机化，地址固定，所以可以达到在内核固定地址造ROP链的手段</p>
+<p>通过下硬件断点在用户态触发的方式，可以将寄存器内容推送到与 <code>per_cpu_entry_area</code> 固定偏移的DB stack上，而在linux 6.2之前， <code>per_cpu_entry_area</code> 没有加入随机化，地址固定，所以可以达到在内核固定地址造ROP链的手段</p>
 <h3 id="work-for-cpu-fn"><code>work_for_cpu_fn</code></h3>
 <p>这实际上是一个tricks，在内核很难ROP时，可以利用</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">work_for_cpu_fn</span><span class="params">(<span class="keyword">struct</span> work_struct *work)</span></span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">work_for_cpu</span> *<span class="title">wfc</span> =</span> container_of(work, <span class="keyword">struct</span> work_for_cpu, work);</span><br><span class="line">  wfc-&gt;ret = wfc-&gt;fn(wfc-&gt;arg);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -437,6 +434,8 @@ This sharing at the PGD level also inherently shares all the lower layers of the
 <h5 id="基于add-key的堆喷">基于add_key的堆喷</h5>
 <h5 id="UASM">UASM</h5>
 <p>见后文UASM的利用</p>
+<h5 id="cross-cache-UAF">cross cache UAF</h5>
+<p>#TODO</p>
 <h3 id="heap-overflow">heap overflow</h3>
 <h4 id="基础overflow">基础overflow</h4>
 <p>同上文，存在特定结构体的Overflow， 因此可以非常方便地控制一个有效结构，此时的利用非常简单。</p>
@@ -481,12 +480,15 @@ This sharing at the PGD level also inherently shares all the lower layers of the
 而且线性映射区域存在内核的全部映射，可以在这个地址范围找到上述页面。</p>
 <p>更妙的是，pg_vec可以由用户态决定，不过其分配flag是<code>GFP_KERNEL</code></p>
 <p>相比于ROP，利用更加简单，并且不受CFI的影响。</p>
+<h2 id="dirtypagetable">dirtypagetable</h2>
+<p>#TODO</p>
 <h2 id="POP-page-level-ROP">POP | page level ROP</h2>
 <p>来自blachhat2021的一种思路，主要是用来拓展脑洞，实际利用起来不如UASM直接改内核代码方便。但是很有传统利用的美感。</p>
 <p>#TODO</p>
 <h2 id="tricks">tricks</h2>
 <ul>
 <li>基于inter硬件漏洞的leak tricks</li>
+<li>在内核“堆基址”（<code>page_offset_base</code>） + <code>0x9d000</code> 处存放着 <code>secondary_startup_64</code> 函数的地址</li>
 </ul>
 <h2 id="从CTF到实战利用的哲思">从CTF到实战利用的哲思</h2>
 <p>#TODO</p>
@@ -537,16 +539,16 @@ This sharing at the PGD level also inherently shares all the lower layers of the
     
   <nav class="article-page">
     
-      <a href="/Linux.Seccomp-and-Ptrace/" id="art-left" class="art-left">
+      <a href="/Fuzz.AFL-All-in-One/" id="art-left" class="art-left">
         <span class="next-title">
-          <i class="iconfont icon-left"></i>Linux.Seccomp-and-Ptrace
+          <i class="iconfont icon-left"></i>Fuzz.AFL-All-in-One
         </span>
       </a>
     
     
-      <a href="/Pwn.I-Wanna-be-A-LLVM-Passer/" id="art-right" class="art-right">
+      <a href="/Linux.io_uring-Top-down-Approach/" id="art-right" class="art-right">
         <span class="prev-title">
-          Pwn.I wanna be a llvm passer<i class="iconfont icon-right"></i>
+          Linux.io_uring-Top-down-Approch<i class="iconfont icon-right"></i>
         </span>
       </a>
     
@@ -574,7 +576,7 @@ This sharing at the PGD level also inherently shares all the lower layers of the
   <aside class="post-toc">
     <div class="title"><span>Index</span></div>
     <div class="toc-inner">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%9C%BA%E5%88%B6"><span class="toc-text">安全机制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86"><span class="toc-text">信息搜集</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Target"><span class="toc-text">Target</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#modify-cred"><span class="toc-text">modify cred</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E5%AE%9A%E4%BD%8Dcred"><span class="toc-text">直接定位cred</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#commit-creds"><span class="toc-text">commit_creds</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#prepare-kernel-cred"><span class="toc-text">prepare_kernel_cred()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#init-cred"><span class="toc-text">init_cred</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#modprobe-path"><span class="toc-text">modprobe_path</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E5%AE%9A%E4%BD%8D"><span class="toc-text">直接定位</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%97%B4%E6%8E%A5%E5%AE%9A%E4%BD%8D"><span class="toc-text">间接定位</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poweroff-cmd"><span class="toc-text">poweroff_cmd</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E5%AE%8F"><span class="toc-text">一些宏</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Tricks"><span class="toc-text">Tricks</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#heap-addr"><span class="toc-text">heap addr</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95"><span class="toc-text">攻击方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#ROP"><span class="toc-text">ROP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ret2usr"><span class="toc-text">ret2usr</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BB%95%E8%BF%87SMAP%E4%B8%8ESMEP"><span class="toc-text">绕过SMAP与SMEP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#KPTI%E5%A6%82%E4%BD%95%E9%99%90%E5%88%B6ret2usr"><span class="toc-text">KPTI如何限制ret2usr</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pt-regs-%E4%B8%8E-KROP"><span class="toc-text">pt_regs 与 KROP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ret2dir"><span class="toc-text">ret2dir</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sycrop"><span class="toc-text">sycrop</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#work-for-cpu-fn"><span class="toc-text">work_for_cpu_fn</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#overview"><span class="toc-text">overview</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#heap"><span class="toc-text">heap</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#UAF"><span class="toc-text">UAF</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E6%95%88%E5%A4%A7%E5%B0%8FObj%E7%9A%84UAF%E5%92%8C%E8%89%AF%E5%A5%BD%E7%9A%84kmalloc-flag"><span class="toc-text">有效大小Obj的UAF和良好的kmalloc flag</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%BB%E6%84%8F%E5%A4%A7%E5%B0%8F%E7%9A%84UAF"><span class="toc-text">任意大小的UAF</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#CVE-2021-22555%EF%BC%9A-%E5%9F%BA%E4%BA%8Emsg-msg%E7%9A%84%E5%A0%86%E5%96%B7-GFP-KERNEL-ACCOUNT"><span class="toc-text">CVE-2021-22555： 基于msg_msg的堆喷 | GFP_KERNEL_ACCOUNT</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8Eadd-key%E7%9A%84%E5%A0%86%E5%96%B7"><span class="toc-text">基于add_key的堆喷</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#UASM"><span class="toc-text">UASM</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#heap-overflow"><span class="toc-text">heap overflow</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80overflow"><span class="toc-text">基础overflow</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#cross-cache-overflow-%E6%89%93%E7%A0%B4slab%E9%9A%94%E7%A6%BB"><span class="toc-text">cross_cache overflow  | 打破slab隔离</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8Epipe-buffer%E7%9A%84%E6%BA%A2%E5%87%BA%E9%80%9A%E8%A7%A3"><span class="toc-text">基于pipe_buffer的溢出通解</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Race-condition"><span class="toc-text">Race condition</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#double-feach"><span class="toc-text">double feach</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#userfault"><span class="toc-text">userfault</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fuse"><span class="toc-text">fuse</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UASM-2"><span class="toc-text">UASM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#POP-page-level-ROP"><span class="toc-text">POP | page level ROP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tricks"><span class="toc-text">tricks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8ECTF%E5%88%B0%E5%AE%9E%E6%88%98%E5%88%A9%E7%94%A8%E7%9A%84%E5%93%B2%E6%80%9D"><span class="toc-text">从CTF到实战利用的哲思</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%9C%BA%E5%88%B6"><span class="toc-text">安全机制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%90%9C%E9%9B%86"><span class="toc-text">信息搜集</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Target"><span class="toc-text">Target</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#modify-cred"><span class="toc-text">modify cred</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E5%AE%9A%E4%BD%8Dcred"><span class="toc-text">直接定位cred</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#commit-creds"><span class="toc-text">commit_creds</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#prepare-kernel-cred"><span class="toc-text">prepare_kernel_cred()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#init-cred"><span class="toc-text">init_cred</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#modprobe-path"><span class="toc-text">modprobe_path</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E5%AE%9A%E4%BD%8D"><span class="toc-text">直接定位</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%97%B4%E6%8E%A5%E5%AE%9A%E4%BD%8D"><span class="toc-text">间接定位</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#poweroff-cmd"><span class="toc-text">poweroff_cmd</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E5%AE%8F"><span class="toc-text">一些宏</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95"><span class="toc-text">攻击方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#ROP"><span class="toc-text">ROP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ret2usr"><span class="toc-text">ret2usr</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BB%95%E8%BF%87SMAP%E4%B8%8ESMEP"><span class="toc-text">绕过SMAP与SMEP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#KPTI%E5%A6%82%E4%BD%95%E9%99%90%E5%88%B6ret2usr"><span class="toc-text">KPTI如何限制ret2usr</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pt-regs-%E4%B8%8E-KROP"><span class="toc-text">pt_regs 与 KROP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ret2dir"><span class="toc-text">ret2dir</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sycrop"><span class="toc-text">sycrop</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#work-for-cpu-fn"><span class="toc-text">work_for_cpu_fn</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#overview"><span class="toc-text">overview</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#heap"><span class="toc-text">heap</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#UAF"><span class="toc-text">UAF</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%89%E6%95%88%E5%A4%A7%E5%B0%8FObj%E7%9A%84UAF%E5%92%8C%E8%89%AF%E5%A5%BD%E7%9A%84kmalloc-flag"><span class="toc-text">有效大小Obj的UAF和良好的kmalloc flag</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%BB%E6%84%8F%E5%A4%A7%E5%B0%8F%E7%9A%84UAF"><span class="toc-text">任意大小的UAF</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#CVE-2021-22555%EF%BC%9A-%E5%9F%BA%E4%BA%8Emsg-msg%E7%9A%84%E5%A0%86%E5%96%B7-GFP-KERNEL-ACCOUNT"><span class="toc-text">CVE-2021-22555： 基于msg_msg的堆喷 | GFP_KERNEL_ACCOUNT</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8Eadd-key%E7%9A%84%E5%A0%86%E5%96%B7"><span class="toc-text">基于add_key的堆喷</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#UASM"><span class="toc-text">UASM</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#cross-cache-UAF"><span class="toc-text">cross cache UAF</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#heap-overflow"><span class="toc-text">heap overflow</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80overflow"><span class="toc-text">基础overflow</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#cross-cache-overflow-%E6%89%93%E7%A0%B4slab%E9%9A%94%E7%A6%BB"><span class="toc-text">cross_cache overflow  | 打破slab隔离</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8Epipe-buffer%E7%9A%84%E6%BA%A2%E5%87%BA%E9%80%9A%E8%A7%A3"><span class="toc-text">基于pipe_buffer的溢出通解</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Race-condition"><span class="toc-text">Race condition</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#double-feach"><span class="toc-text">double feach</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#userfault"><span class="toc-text">userfault</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fuse"><span class="toc-text">fuse</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UASM-2"><span class="toc-text">UASM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dirtypagetable"><span class="toc-text">dirtypagetable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#POP-page-level-ROP"><span class="toc-text">POP | page level ROP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#tricks"><span class="toc-text">tricks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8ECTF%E5%88%B0%E5%AE%9E%E6%88%98%E5%88%A9%E7%94%A8%E7%9A%84%E5%93%B2%E6%80%9D"><span class="toc-text">从CTF到实战利用的哲思</span></a></li></ol></li></ol>
     </div>
   </aside>
 
@@ -671,6 +673,14 @@ This sharing at the PGD level also inherently shares all the lower layers of the
       <button>Kernel</button>
     </div>
   
+    <div class="tagcloud-tag">
+      <button>Fuzz</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>Coding</button>
+    </div>
+  
   </div>
   
     <div class="tagcloud-postlist active">
@@ -699,7 +709,7 @@ This sharing at the PGD level also inherently shares all the lower layers of the
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -725,7 +735,7 @@ This sharing at the PGD level also inherently shares all the lower layers of the
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -775,7 +785,7 @@ This sharing at the PGD level also inherently shares all the lower layers of the
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -806,8 +816,32 @@ This sharing at the PGD level also inherently shares all the lower layers of the
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>Fuzz</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Fuzz.AFL-All-in-One/">
+            <time class="tagcloud-posttime">2024 / 01 / 12</time>
+            <span>Fuzz.AFL-All-in-One</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>Coding</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Fuzz.AFL-All-in-One/">
+            <time class="tagcloud-posttime">2024 / 01 / 12</time>
+            <span>Fuzz.AFL-All-in-One</span>
           </a>
         </div>
       

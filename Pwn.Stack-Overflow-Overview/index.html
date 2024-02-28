@@ -261,7 +261,7 @@
 <p>有可读可写内存空间吗----&gt;ret2shellcode</p>
 <p>给了libc文件或者有信息泄露函数(IO函数)----&gt;ret2libc</p>
 <p>接下来，再分门别类谈:</p>
-<h3 id="0x1-ret2syscall">0x1.ret2syscall</h3>
+<h3 id="ret2syscall">ret2syscall</h3>
 <p>因为syscall属于相对简单的，暂且放在前面谈。</p>
 <table>
 <thead>
@@ -323,8 +323,7 @@
 <p>对于最后调用 libc 中 system 的题目而言，需要考虑的首要问题就是leak_libc.</p>
 <p>目前而言，我遇到的栈题中leak_libc，有两种方法：</p>
 <ol>
-<li>partial_overwrite<br>
-有时候，在栈中会存留libc中地址，在后面存在直接输出的函数的情况下，可以带出此地址。</li>
+<li>partial_overwrite, 有时候，在栈中会存留libc中地址，在后面存在直接输出的函数的情况下，可以带出此地址。</li>
 <li>通过puts，write等函数，打印<code>.got</code>，获取对应函数的地址，这里，在没有给定对应libc版本的情况下，也可以通过LibcSearcher查找对应libc版本</li>
 </ol>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ref:  https://github.com/lieanu/LibcSearcher</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment">#第二个参数，为已泄露的实际地址,或最后12位(比如：d90)，int类型</span></span><br><span class="line">obj = LibcSearcher(<span class="string">&quot;fgets&quot;</span>, <span class="number">0X7ff39014bd90</span>)</span><br><span class="line"></span><br><span class="line">obj.dump(<span class="string">&quot;system&quot;</span>)        <span class="comment">#system 偏移</span></span><br><span class="line">obj.dump(<span class="string">&quot;str_bin_sh&quot;</span>)    <span class="comment">#/bin/sh 偏移</span></span><br><span class="line">obj.dump(<span class="string">&quot;__libc_start_main_ret&quot;</span>)    </span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -424,7 +423,8 @@
 <p>说明是栈对齐的原因，小心调整栈帧就行</p>
 <h4 id="Stack-smash">Stack smash</h4>
 <p>对于某些将flag装载到内存，并且知道flag的地址、开启了cannary的题目而言，可以考虑stack_smash。</p>
-<p>在开启cannary 防护的题目中，检测到栈溢出后，会调用 <code>__stack_chk_fail</code> 函数来打印 argv[0]  (在栈上，和环境变脸在一起)指针所指向的字符串，而这个地址可以被覆盖，因此，可以利用此实现泄露flag</p>
+<p>在开启cannary 防护的题目中，检测到栈溢出后，会调用 <code>__stack_chk_fail</code> 函数来打印 argv[0]  (在栈上，和环境变量在一起)指针所指向的字符串，而这个地址可以被覆盖，因此，可以利用此实现泄露flag</p>
+<p>在链接高版本libc的情况下，已经不会再打印 <code>argv[0]</code> 了， 此方法已经失效</p>
 <h4 id="SROP">SROP</h4>
 <h5 id="前置知识-2">前置知识:</h5>
 <p>在进程接收到signal时，内核会将其上下文保存位sigFrame，然后进入signal_handle，对信号处理，返回后，会执行sigreturn调用，恢复保存Frame，主要包括寄存器和控制流(rip，rsp)的一些设置。</p>
@@ -549,7 +549,7 @@
   <aside class="post-toc">
     <div class="title"><span>Index</span></div>
     <div class="toc-inner">
-      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%82%E8%B0%88"><span class="toc-text">杂谈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x1-ret2syscall"><span class="toc-text">0x1.ret2syscall</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ret2shellcode"><span class="toc-text">ret2shellcode</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#shellcode%E7%9A%84%E4%B9%A6%E5%86%99"><span class="toc-text">shellcode的书写</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#shellcode%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7"><span class="toc-text">shellcode生成工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#mprotect"><span class="toc-text">mprotect()</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ret2libc"><span class="toc-text">ret2libc</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#leak-libc"><span class="toc-text">leak_libc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#partial-overwrite"><span class="toc-text">partial_overwrite</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-text">前置知识</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E8%84%9A%E6%9C%AC%E5%86%99%E6%B3%95"><span class="toc-text">爆破脚本写法</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ret2dl-resolve"><span class="toc-text">ret2dl_resolve()</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tricks"><span class="toc-text">Tricks</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ret2csu"><span class="toc-text">ret2csu</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#stack-pivoting"><span class="toc-text">stack pivoting</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#example"><span class="toc-text">example</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%88%E5%AF%B9%E9%BD%90"><span class="toc-text">栈对齐</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stack-smash"><span class="toc-text">Stack smash</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SROP"><span class="toc-text">SROP</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86-2"><span class="toc-text">前置知识:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#pwntools-srop"><span class="toc-text">pwntools.srop</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#stack-gaurd"><span class="toc-text">stack_gaurd</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bypass-Full-RELRO"><span class="toc-text">bypass Full RELRO</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vsyscall-vdso"><span class="toc-text">vsyscall&#x2F;vdso</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%82%E8%B0%88"><span class="toc-text">杂谈</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ret2syscall"><span class="toc-text">ret2syscall</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ret2shellcode"><span class="toc-text">ret2shellcode</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#shellcode%E7%9A%84%E4%B9%A6%E5%86%99"><span class="toc-text">shellcode的书写</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#shellcode%E7%94%9F%E6%88%90%E5%B7%A5%E5%85%B7"><span class="toc-text">shellcode生成工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#mprotect"><span class="toc-text">mprotect()</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ret2libc"><span class="toc-text">ret2libc</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#leak-libc"><span class="toc-text">leak_libc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#partial-overwrite"><span class="toc-text">partial_overwrite</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-text">前置知识</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%88%86%E7%A0%B4%E8%84%9A%E6%9C%AC%E5%86%99%E6%B3%95"><span class="toc-text">爆破脚本写法</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ret2dl-resolve"><span class="toc-text">ret2dl_resolve()</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tricks"><span class="toc-text">Tricks</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ret2csu"><span class="toc-text">ret2csu</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#stack-pivoting"><span class="toc-text">stack pivoting</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#example"><span class="toc-text">example</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%88%E5%AF%B9%E9%BD%90"><span class="toc-text">栈对齐</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Stack-smash"><span class="toc-text">Stack smash</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SROP"><span class="toc-text">SROP</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86-2"><span class="toc-text">前置知识:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#pwntools-srop"><span class="toc-text">pwntools.srop</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#stack-gaurd"><span class="toc-text">stack_gaurd</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bypass-Full-RELRO"><span class="toc-text">bypass Full RELRO</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vsyscall-vdso"><span class="toc-text">vsyscall&#x2F;vdso</span></a></li></ol>
     </div>
   </aside>
 
@@ -646,6 +646,14 @@
       <button>Kernel</button>
     </div>
   
+    <div class="tagcloud-tag">
+      <button>Fuzz</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>Coding</button>
+    </div>
+  
   </div>
   
     <div class="tagcloud-postlist active">
@@ -674,7 +682,7 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -700,7 +708,7 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -750,7 +758,7 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -781,8 +789,32 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>Fuzz</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Fuzz.AFL-All-in-One/">
+            <time class="tagcloud-posttime">2024 / 01 / 12</time>
+            <span>Fuzz.AFL-All-in-One</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>Coding</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Fuzz.AFL-All-in-One/">
+            <time class="tagcloud-posttime">2024 / 01 / 12</time>
+            <span>Fuzz.AFL-All-in-One</span>
           </a>
         </div>
       

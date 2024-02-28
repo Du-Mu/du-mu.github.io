@@ -372,7 +372,8 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
 <h1 id="tricks">tricks</h1>
 <ul>
 <li>对于一些题目，对shellcode的检查用到了strlen，那么可以通过先使用一些存在NULL截断的指令，从而使得后面的字符串绕过限制。</li>
-<li>在无法获取shellcode运行地址时，可以运行syscall，运行后，rcx会被改写为下一条指令的地址</li>
+<li>在无法获取shellcode运行地址时，可以运行syscall，运行后，rcx会被改写为下一条指令的地址。在32位程序中，还可以通过call指令获取将运行地址压入栈中，在64位地址中，可以直接通过 <code>lea rax, [rip]</code> 来获取rip地址</li>
+<li>对于需要libc地址的程序，可以考虑通过xmm寄存器获得libc相关地址</li>
 </ul>
 
       
@@ -543,6 +544,14 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
       <button>Kernel</button>
     </div>
   
+    <div class="tagcloud-tag">
+      <button>Fuzz</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>Coding</button>
+    </div>
+  
   </div>
   
     <div class="tagcloud-postlist active">
@@ -571,7 +580,7 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -597,7 +606,7 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -647,7 +656,7 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -678,8 +687,32 @@ w的限制还好说，可以通过侧信道leak出flag，而如果禁用了open�
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>Fuzz</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Fuzz.AFL-All-in-One/">
+            <time class="tagcloud-posttime">2024 / 01 / 12</time>
+            <span>Fuzz.AFL-All-in-One</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>Coding</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Fuzz.AFL-All-in-One/">
+            <time class="tagcloud-posttime">2024 / 01 / 12</time>
+            <span>Fuzz.AFL-All-in-One</span>
           </a>
         </div>
       

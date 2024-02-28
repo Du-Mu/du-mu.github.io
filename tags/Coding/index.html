@@ -80,7 +80,7 @@
 
   <title>
   
-    Archives · V3rdant's Blog
+    Coding · V3rdant's Blog
   
 </title>
 <meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="V3rdant's Blog" type="application/atom+xml">
@@ -226,21 +226,11 @@
     
   <div class="archive syuanpi fadeInRightShort" id="archive">
     
-      <aside class="archive-title">Total</aside>
-      <span class="archive-num">8 Posts In Total</span>
-    
       
       
         
-          
-          
-            
-            
-            <div class="archive-group">
-            <time class="archive-year"> 2024 </time>
-            <div class="archive-list">
-          
-          
+          </section>
+        
         <div class="archive-post">
           <div class="archive-post-content">
             
@@ -598,180 +588,6 @@
             </time>
             <a  class="archive-post-link" href="/Fuzz.AFL-All-in-One/">
               Fuzz.AFL-All-in-One
-            </a>
-          </div>
-        </div>
-      
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h1 id="安全机制">安全机制</h1>
-<p><strong>CONFIG_CFI_CLANG=y</strong><br>
-控制流完整性校验，限制ROP</p>
-<p><strong>CONFIG_SLAB_FREELIST_HARDENED=y</strong><br>
-类似于用户态下 glibc 中的 safe-linking 机制，在内核中的 slab/slub 分配器当中也存在着类似的机制保护着 freelist—— <code>SLAB_FREELIST_HARDENED</code>：</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2024-01-11
-            </time>
-            <a  class="archive-post-link" href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-              Pwn.Linux-Kernel-Pwn-All-in-One
-            </a>
-          </div>
-        </div>
-      
-        
-          
-          
-            
-              </div></section>
-            
-            
-            <div class="archive-group">
-            <time class="archive-year"> 2023 </time>
-            <div class="archive-list">
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <p>最近在N1线下赛遇见一个seccomp沙箱，限制了只能使用 <code>io_uring_setup</code> 一个系统调用，之前不久的ACTF中， 使用<code>mmap</code>、<code>io_uring_setup</code>、<code>io_uring_enter</code> 三个系统调用，完成了orw。 如何仅仅使用 <code>io_uring_setup</code> 完成orw呢？</p>
-<p>本文将不仅仅局限于CTF，而是从io_uring的实现出发，先从宏观角度透视io_uring的实现框架， 然后以源代码为基础，自顶向下，从liburing，io_uring的用户态接口， 最后到io_uring的内核实现，一步步聚焦 <code>io_uring</code>  具体的实现。</p>
-<p>由于笔者为安全方向，因此笔者将更多关注 io_uring 中用户和内核态的通信这一容易产生安全漏洞的模块，而不会聚焦io_uring的异步调度和任务处理，以上。</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-12-04
-            </time>
-            <a  class="archive-post-link" href="/Linux.io_uring-Top-down-Approach/">
-              Linux.io_uring-Top-down-Approch
-            </a>
-          </div>
-        </div>
-      
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h2 id="Background">Background</h2>
-<p>最近ACTF出现了一个限制非常严格的沙箱，校队里一位pwn师傅搜到了一些用ptrace修改子进程rax来绕过seccomp的wp。</p>
-<p>正值校赛，为了出题的事忙得焦头烂额，就没有细想。</p>
-<p>但是由于我记得seccomp 是内核hook，而ptrace， 出于一些对调试器的映像，我觉得他对于attach的子进程的寄存器的更改，<s>是在用户态实现的</s>。 那么ptrace的处理应该在seccomp之前，所以我觉得不太可行。</p>
-<p>在有时间后，我开始探究了一下，确实不太可行，只是原因跟我想象得不太一样…</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-10-31
-            </time>
-            <a  class="archive-post-link" href="/Linux.Seccomp-and-Ptrace/">
-              Linux.Seccomp-and-Ptrace
-            </a>
-          </div>
-        </div>
-      
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h1 id="overview">overview</h1>
-<p>华中赛遇到了一个llvm的题，顺手系统总结一下llvm pass吧。</p>
-<p>首先简单介绍一下llvm，llvm是一套用C++编写的编译器基础设施。LLVM Pass提供了一些可供重写的函数，本义是用来实现一些优化。而Pwn的llvm pass类题，就是重写了runOnFunction函数。</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-06-23
-            </time>
-            <a  class="archive-post-link" href="/Pwn.I-Wanna-be-A-LLVM-Passer/">
-              Pwn.I wanna be a llvm passer
-            </a>
-          </div>
-        </div>
-      
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <p>关于heap我所知道的一切</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-06-21
-            </time>
-            <a  class="archive-post-link" href="/Pwn.Heap-Exploation-up-to-2.31/">
-              Pwn.Heap-Exploation-up-to-2.31
-            </a>
-          </div>
-        </div>
-      
-        
-          
-          
-            
-              </div></section>
-            
-            
-            <div class="archive-group">
-            <time class="archive-year"> 2022 </time>
-            <div class="archive-list">
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h3 id="杂谈">杂谈</h3>
-<p>作为一种基本的漏洞，栈溢出在CTF中出现的非常频繁，因为其多样化的利用形式，难以进行系统的归类，本文结合笔者个人的经验，综合讨论各种栈溢出技术，如果有遗漏，欢迎评论留言，或者给笔者发邮件，进行补充。</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2022-08-03
-            </time>
-            <a  class="archive-post-link" href="/Pwn.Stack-Overflow-Overview/">
-              Pwn.Stack-Overflow-Overview
-            </a>
-          </div>
-        </div>
-      
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h1 id="Basic">Basic</h1>
-<p>首先给出两个常用shellcode仓库，可以检索需要的shellcode</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://shell-storm.org/shellcode/index.html">shellcode database</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.exploit-db.com/google-hacking-database">exploit-db</a></li>
-</ul>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2022-07-31
-            </time>
-            <a  class="archive-post-link" href="/Pwn.The-Art-of-Shellcode/">
-              Pwn.the-Art-of-Shellcode
             </a>
           </div>
         </div>

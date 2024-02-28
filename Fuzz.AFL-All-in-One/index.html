@@ -18,6 +18,8 @@
   <meta name="keywords" content="pwn" />
 
 
+  <meta name="keywords" content="Fuzz, Coding, nlvi" />
+
 
 <link rel="apple-touch-startup-image" media="(device-width: 375px)" href="assets/apple-launch-1125x2436.png">
 <link rel="apple-touch-startup-image" media="(orientation: landscape)" href="assets/apple-touch-startup-image-2048x1496.png">
@@ -78,11 +80,7 @@
 }
 </style>
 
-  <title>
-  
-    Archives · V3rdant's Blog
-  
-</title>
+  <title> Fuzz.AFL-All-in-One · V3rdant's Blog </title>
 <meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="V3rdant's Blog" type="application/atom+xml">
 </head>
 <body>
@@ -224,27 +222,32 @@
         <div class="main-wrapper">
           
     
-  <div class="archive syuanpi fadeInRightShort" id="archive">
-    
-      <aside class="archive-title">Total</aside>
-      <span class="archive-num">8 Posts In Total</span>
-    
-      
-      
+  
+  <article class="
+  post
+   is_post 
+  ">
+    <header class="post-header">
+      <div class="post-time syuanpi fadeInRightShort back-1">
+        <div class="post-time-wrapper">
+          
+          <time>2024-01-12</time>
+          
+            
+              <span class="post-category"><a href="/categories/Fuzz/">Fuzz</a></span>
+            
+          
+        </div>
+      </div>
+      <h1 class="post-title syuanpi fadeInRightShort back-2">
         
-          
-          
-            
-            
-            <div class="archive-group">
-            <time class="archive-year"> 2024 </time>
-            <div class="archive-list">
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h1 id="overview">overview</h1>
+          Fuzz.AFL-All-in-One
+        
+      </h1>
+    </header>
+    <div class="post-content syuanpi fadeInRightShort back-3">
+      
+        <h1 id="overview">overview</h1>
 <p>对于AFL代码的重新阅读，笔者之前曾经阅读过一次AFL代码，但是比较粗糙，所以决定重新阅读一遍，理解其中比较细节的部分。</p>
 <p>首先简单介绍一下AFL，AFL是一个覆盖率引导的fuzz 工具。</p>
 <p>它将一个无跳转的顺序执行流程看成一个基本块，并通过一个bitmap记录运行时每一个输入对应的标准块。</p>
@@ -590,202 +593,86 @@
 <h3 id="common-fuzz-stuff-一个testcase的运行">common_fuzz_stuff | 一个testcase的运行</h3>
 <p>在fuzz过程中，用来通知fork_server运行一次测试，并且保存有效的种子</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">EXP_ST u8 <span class="title function_">common_fuzz_stuff</span><span class="params">(<span class="type">char</span> **argv, u8 *out_buf, u32 len)</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">  u8 fault;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (post_handler)</span><br><span class="line">  &#123;</span><br><span class="line"></span><br><span class="line">    out_buf = post_handler(out_buf, &amp;len);</span><br><span class="line">    <span class="comment">// 此handler通常是afl_processers</span></span><br><span class="line">    <span class="keyword">if</span> (!out_buf || !len)</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  write_to_testcase(out_buf, len);</span><br><span class="line">  <span class="comment">// 保存此testcase</span></span><br><span class="line">  fault = run_target(argv, exec_tmout);</span><br><span class="line">  <span class="comment">// 运行一次测试</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 返回1说明需要快速终止</span></span><br><span class="line">  <span class="keyword">if</span> (stop_soon)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (fault == FAULT_TMOUT)</span><br><span class="line">  &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (subseq_tmouts++ &gt; TMOUT_LIMIT)</span><br><span class="line">    &#123;</span><br><span class="line">      cur_skipped_paths++;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    subseq_tmouts = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Users can hit us with SIGUSR1 to request the current input</span></span><br><span class="line"><span class="comment">     to be abandoned. */</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (skip_requested)</span><br><span class="line">  &#123;</span><br><span class="line"></span><br><span class="line">    skip_requested = <span class="number">0</span>;</span><br><span class="line">    cur_skipped_paths++;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* This handles FAULT_ERROR for us: */</span></span><br><span class="line"></span><br><span class="line">  queued_discovered += save_if_interesting(argv, out_buf, len, fault);</span><br><span class="line">  <span class="comment">// 如果存在interesting 的种子，保存起来</span></span><br><span class="line">  <span class="keyword">if</span> (!(stage_cur % stats_update_freq) || stage_cur + <span class="number">1</span> == stage_max)</span><br><span class="line">    show_stats();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2024-01-12
-            </time>
-            <a  class="archive-post-link" href="/Fuzz.AFL-All-in-One/">
-              Fuzz.AFL-All-in-One
-            </a>
-          </div>
-        </div>
       
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h1 id="安全机制">安全机制</h1>
-<p><strong>CONFIG_CFI_CLANG=y</strong><br>
-控制流完整性校验，限制ROP</p>
-<p><strong>CONFIG_SLAB_FREELIST_HARDENED=y</strong><br>
-类似于用户态下 glibc 中的 safe-linking 机制，在内核中的 slab/slub 分配器当中也存在着类似的机制保护着 freelist—— <code>SLAB_FREELIST_HARDENED</code>：</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2024-01-11
-            </time>
-            <a  class="archive-post-link" href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-              Pwn.Linux-Kernel-Pwn-All-in-One
-            </a>
-          </div>
-        </div>
+    
+    </div>
+    
+      <div class="post-tags syuanpi fadeInRightShort back-3">
       
-        
-          
-          
-            
-              </div></section>
-            
-            
-            <div class="archive-group">
-            <time class="archive-year"> 2023 </time>
-            <div class="archive-list">
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <p>最近在N1线下赛遇见一个seccomp沙箱，限制了只能使用 <code>io_uring_setup</code> 一个系统调用，之前不久的ACTF中， 使用<code>mmap</code>、<code>io_uring_setup</code>、<code>io_uring_enter</code> 三个系统调用，完成了orw。 如何仅仅使用 <code>io_uring_setup</code> 完成orw呢？</p>
-<p>本文将不仅仅局限于CTF，而是从io_uring的实现出发，先从宏观角度透视io_uring的实现框架， 然后以源代码为基础，自顶向下，从liburing，io_uring的用户态接口， 最后到io_uring的内核实现，一步步聚焦 <code>io_uring</code>  具体的实现。</p>
-<p>由于笔者为安全方向，因此笔者将更多关注 io_uring 中用户和内核态的通信这一容易产生安全漏洞的模块，而不会聚焦io_uring的异步调度和任务处理，以上。</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-12-04
-            </time>
-            <a  class="archive-post-link" href="/Linux.io_uring-Top-down-Approach/">
-              Linux.io_uring-Top-down-Approch
-            </a>
-          </div>
-        </div>
+        <a href="/tags/Fuzz/">Fuzz</a>
       
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h2 id="Background">Background</h2>
-<p>最近ACTF出现了一个限制非常严格的沙箱，校队里一位pwn师傅搜到了一些用ptrace修改子进程rax来绕过seccomp的wp。</p>
-<p>正值校赛，为了出题的事忙得焦头烂额，就没有细想。</p>
-<p>但是由于我记得seccomp 是内核hook，而ptrace， 出于一些对调试器的映像，我觉得他对于attach的子进程的寄存器的更改，<s>是在用户态实现的</s>。 那么ptrace的处理应该在seccomp之前，所以我觉得不太可行。</p>
-<p>在有时间后，我开始探究了一下，确实不太可行，只是原因跟我想象得不太一样…</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-10-31
-            </time>
-            <a  class="archive-post-link" href="/Linux.Seccomp-and-Ptrace/">
-              Linux.Seccomp-and-Ptrace
-            </a>
-          </div>
-        </div>
+        <a href="/tags/Coding/">Coding</a>
       
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h1 id="overview">overview</h1>
-<p>华中赛遇到了一个llvm的题，顺手系统总结一下llvm pass吧。</p>
-<p>首先简单介绍一下llvm，llvm是一套用C++编写的编译器基础设施。LLVM Pass提供了一些可供重写的函数，本义是用来实现一些优化。而Pwn的llvm pass类题，就是重写了runOnFunction函数。</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-06-23
-            </time>
-            <a  class="archive-post-link" href="/Pwn.I-Wanna-be-A-LLVM-Passer/">
-              Pwn.I wanna be a llvm passer
-            </a>
-          </div>
-        </div>
+      </div>
+    
+    
       
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <p>关于heap我所知道的一切</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-06-21
-            </time>
-            <a  class="archive-post-link" href="/Pwn.Heap-Exploation-up-to-2.31/">
-              Pwn.Heap-Exploation-up-to-2.31
-            </a>
-          </div>
-        </div>
+
       
-        
-          
-          
-            
-              </div></section>
-            
-            
-            <div class="archive-group">
-            <time class="archive-year"> 2022 </time>
-            <div class="archive-list">
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h3 id="杂谈">杂谈</h3>
-<p>作为一种基本的漏洞，栈溢出在CTF中出现的非常频繁，因为其多样化的利用形式，难以进行系统的归类，本文结合笔者个人的经验，综合讨论各种栈溢出技术，如果有遗漏，欢迎评论留言，或者给笔者发邮件，进行补充。</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2022-08-03
-            </time>
-            <a  class="archive-post-link" href="/Pwn.Stack-Overflow-Overview/">
-              Pwn.Stack-Overflow-Overview
-            </a>
-          </div>
-        </div>
+  <hr class="copy-line">
+  <div class="post-copyright">
+    <div class="copy-author">
+      <span>Author :</span>
+      <span>V3rdant</span>
+    </div>
+    <div class="copy-url">
+      <span>Url :</span>
+      <a href="https://v3rdant.cn/Fuzz.AFL-All-in-One/">https://v3rdant.cn/Fuzz.AFL-All-in-One/</a>
+    </div>
+    <div class="copy-origin">
+      <span>Origin :</span>
+      <a href="https://v3rdant.cn">https://v3rdant.cn</a>
+    </div>
+    <div class="copy-license">
       
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h1 id="Basic">Basic</h1>
-<p>首先给出两个常用shellcode仓库，可以检索需要的shellcode</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://shell-storm.org/shellcode/index.html">shellcode database</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.exploit-db.com/google-hacking-database">exploit-db</a></li>
-</ul>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2022-07-31
-            </time>
-            <a  class="archive-post-link" href="/Pwn.The-Art-of-Shellcode/">
-              Pwn.the-Art-of-Shellcode
-            </a>
-          </div>
-        </div>
-      
-      
-        </section></section>
-      
+      著作权归作者所有，转载请联系作者获得授权。
+    </div>
   </div>
+
+    
+  </article>
   
-  <nav class="pagination">
-      <span class="page-number current">1</span>
+    
+  <nav class="article-page">
+    
+    
+      <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/" id="art-right" class="art-right">
+        <span class="prev-title">
+          Pwn.Linux-Kernel-Pwn-All-in-One<i class="iconfont icon-right"></i>
+        </span>
+      </a>
+    
   </nav>
 
 
+    
+  <i id="com-switch" class="iconfont icon-down jumping-in long infinite" style="font-size:24px;display:block;text-align:center;transform:rotate(180deg);"></i>
+  <div class="post-comments" id="post-comments" style="display: block;margin: auto 16px;">
+    
+
+    
+    
+
+    
+
+  </div>
+
+
+
+  
+  
+    
+  
+  <aside class="post-toc">
+    <div class="title"><span>Index</span></div>
+    <div class="toc-inner">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#overview"><span class="toc-text">overview</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#afl-gcc-afl-as-%E4%BB%A3%E7%A0%81%E6%8F%92%E6%A1%A9"><span class="toc-text">afl-gcc&#x2F;afl-as | 代码插桩</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#add-instrumentation"><span class="toc-text">add_instrumentation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#trampoline-fmt-64"><span class="toc-text">trampoline_fmt_64</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#main-payload-64"><span class="toc-text">main_payload_64</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%BF%90%E8%A1%8C"><span class="toc-text">第一次运行</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">初始化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#afl-fork-wait-loop"><span class="toc-text">__afl_fork_wait_loop</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#afl-store"><span class="toc-text">__afl_store</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#afl-fuzz-%E4%B8%80%E6%AC%A1fuzz%E7%9A%84%E6%A0%87%E5%87%86%E6%B5%81%E7%A8%8B"><span class="toc-text">afl-fuzz | 一次fuzz的标准流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="toc-text">全局变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#main"><span class="toc-text">main</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#setup-shm-%E5%9F%BA%E4%BA%8E%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E7%9A%84%E6%B6%88%E6%81%AF%E4%BC%A0%E9%80%92"><span class="toc-text">setup_shm | 基于共享内存的消息传递</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8Etestcase%E7%9A%84%E9%A2%84%E5%A4%84%E7%90%86"><span class="toc-text">对于testcase的预处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#read-testcases-%E8%AF%BB%E5%8F%96testcase"><span class="toc-text">read_testcases | 读取testcase</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#add-to-queue"><span class="toc-text">add_to_queue</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#perform-dry-run-%E5%AF%B9%E4%BA%8Etestcase%E7%9A%84%E8%AF%95%E8%BF%90%E8%A1%8C"><span class="toc-text">perform_dry_run | 对于testcase的试运行</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#calibrate-case"><span class="toc-text">calibrate_case</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#init-forkserver"><span class="toc-text">init_forkserver</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#run-target"><span class="toc-text">run_target</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#update-bitmap-score"><span class="toc-text">update_bitmap_score</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cull-queue-%E5%AF%B9%E4%BA%8Equeue%E7%9A%84%E4%BF%AE%E5%89%AA"><span class="toc-text">cull_queue | 对于queue的修剪</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fuzz-one-%E7%A7%8D%E5%AD%90%E7%9A%84%E5%8F%98%E5%BC%82"><span class="toc-text">fuzz_one | 种子的变异</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AE%E5%AE%9A%E6%80%A7%E5%8F%98%E5%BC%82"><span class="toc-text">确定性变异</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#bitflip"><span class="toc-text">bitflip</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ARITHMETIC-INC-DEC"><span class="toc-text">ARITHMETIC INC&#x2F;DEC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#INTERESTING-VALUES"><span class="toc-text">INTERESTING VALUES</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DICTIONARY-STUFF"><span class="toc-text">DICTIONARY STUFF</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Havoc-Stage"><span class="toc-text">Havoc Stage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Splice-Stage"><span class="toc-text">Splice Stage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#trim-case-%E5%AF%B9%E4%BA%8Etestcase%E7%9A%84%E4%BF%AE%E5%89%AA"><span class="toc-text">trim_case | 对于testcase的修剪</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#calculate-score-%E5%AF%B9%E4%BA%8Etestcase%E5%88%86%E6%95%B0%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="toc-text">calculate_score | 对于testcase分数的计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#common-fuzz-stuff-%E4%B8%80%E4%B8%AAtestcase%E7%9A%84%E8%BF%90%E8%A1%8C"><span class="toc-text">common_fuzz_stuff | 一个testcase的运行</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </aside>
+
+
+
+  
 
 
         </div>
@@ -1093,6 +980,20 @@
 <script src="/script/bootstarp.js"></script>
 
 
+
+<script>
+if (nlviconfig.theme.toc) {
+  setTimeout(function() {
+    if (nlviconfig.theme.scheme === 'balance') {
+      $("#header").addClass("show_toc");
+    } else if (nlviconfig.theme.scheme === 'banderole') {
+      $(".container-inner").addClass("has_toc");
+      $(".post-toc .title").addClass("show");
+      $(".toc-inner").addClass("show");
+    }
+  }, 1000);
+}
+</script>
 
 
 

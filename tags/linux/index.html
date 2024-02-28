@@ -234,6 +234,29 @@
         <div class="archive-post">
           <div class="archive-post-content">
             
+              <h1 id="安全机制">安全机制</h1>
+<p><strong>CONFIG_CFI_CLANG=y</strong><br>
+控制流完整性校验，限制ROP</p>
+<p><strong>CONFIG_SLAB_FREELIST_HARDENED=y</strong><br>
+类似于用户态下 glibc 中的 safe-linking 机制，在内核中的 slab/slub 分配器当中也存在着类似的机制保护着 freelist—— <code>SLAB_FREELIST_HARDENED</code>：</p>
+            
+          </div>
+          <div class="archive-post-info">
+            <time class="archive-post-time">
+              2024-01-11
+            </time>
+            <a  class="archive-post-link" href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
+              Pwn.Linux-Kernel-Pwn-All-in-One
+            </a>
+          </div>
+        </div>
+      
+        
+          </section>
+        
+        <div class="archive-post">
+          <div class="archive-post-content">
+            
               <p>最近在N1线下赛遇见一个seccomp沙箱，限制了只能使用 <code>io_uring_setup</code> 一个系统调用，之前不久的ACTF中， 使用<code>mmap</code>、<code>io_uring_setup</code>、<code>io_uring_enter</code> 三个系统调用，完成了orw。 如何仅仅使用 <code>io_uring_setup</code> 完成orw呢？</p>
 <p>本文将不仅仅局限于CTF，而是从io_uring的实现出发，先从宏观角度透视io_uring的实现框架， 然后以源代码为基础，自顶向下，从liburing，io_uring的用户态接口， 最后到io_uring的内核实现，一步步聚焦 <code>io_uring</code>  具体的实现。</p>
 <p>由于笔者为安全方向，因此笔者将更多关注 io_uring 中用户和内核态的通信这一容易产生安全漏洞的模块，而不会聚焦io_uring的异步调度和任务处理，以上。</p>
@@ -268,29 +291,6 @@
             </time>
             <a  class="archive-post-link" href="/Linux.Seccomp-and-Ptrace/">
               Linux.Seccomp-and-Ptrace
-            </a>
-          </div>
-        </div>
-      
-        
-          </section>
-        
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h1 id="安全机制">安全机制</h1>
-<p><strong>CONFIG_CFI_CLANG=y</strong><br>
-控制流完整性校验，限制ROP</p>
-<p><strong>CONFIG_SLAB_FREELIST_HARDENED=y</strong><br>
-类似于用户态下 glibc 中的 safe-linking 机制，在内核中的 slab/slub 分配器当中也存在着类似的机制保护着 freelist—— <code>SLAB_FREELIST_HARDENED</code>：</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-08-11
-            </time>
-            <a  class="archive-post-link" href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-              Pwn.Linux-Kernel-Pwn-All-in-One
             </a>
           </div>
         </div>
@@ -395,6 +395,14 @@
       <button>Kernel</button>
     </div>
   
+    <div class="tagcloud-tag">
+      <button>Fuzz</button>
+    </div>
+  
+    <div class="tagcloud-tag">
+      <button>Coding</button>
+    </div>
+  
   </div>
   
     <div class="tagcloud-postlist active">
@@ -423,7 +431,7 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -449,7 +457,7 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -499,7 +507,7 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
           </a>
         </div>
@@ -530,8 +538,32 @@
       
         <div class="tagcloud-post">
           <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2023 / 08 / 11</time>
+            <time class="tagcloud-posttime">2024 / 01 / 11</time>
             <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>Fuzz</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Fuzz.AFL-All-in-One/">
+            <time class="tagcloud-posttime">2024 / 01 / 12</time>
+            <span>Fuzz.AFL-All-in-One</span>
+          </a>
+        </div>
+      
+    </div>
+  
+    <div class="tagcloud-postlist ">
+      <h2>Coding</h2>
+      
+        <div class="tagcloud-post">
+          <a href="/Fuzz.AFL-All-in-One/">
+            <time class="tagcloud-posttime">2024 / 01 / 12</time>
+            <span>Fuzz.AFL-All-in-One</span>
           </a>
         </div>
       
