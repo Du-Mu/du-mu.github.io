@@ -1,215 +1,114 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-<meta name="browsermode" content="application">
-<meta name="apple-touch-fullscreen" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="V3rdant's Blog">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="msapplication-navbutton-color" content="#666666">
-<meta name= "format-detection" content="telephone=no" />
+<html lang="en" color-mode="light">
 
-
-
-
-  <meta name="keywords" content="pwn" />
-
-
-
-<link rel="apple-touch-startup-image" media="(device-width: 375px)" href="assets/apple-launch-1125x2436.png">
-<link rel="apple-touch-startup-image" media="(orientation: landscape)" href="assets/apple-touch-startup-image-2048x1496.png">
-
-<link rel="stylesheet" href="/style/style.css">
-
-<script>
-  var nlviconfig = {
-    title: "V3rdant's Blog",
-    author: "V3rdant",
-    baseUrl: "/",
-    theme: {
-      scheme: "banderole",
-      lightbox: true,
-      animate: true,
-      search: true,
-      friends: false,
-      reward: false,
-      pjax: false,
-      lazy: false,
-      toc: true
-    }
-  }
-</script>
-
-
-
-
-    
-<link rel="stylesheet" href="/script/lib/lightbox/css/lightbox.min.css">
-
-
-
-
-
-    
-<link rel="stylesheet" href="/syuanpi/syuanpi.min.css">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<style>
-@font-face {
-  font-family: "Allura";
-  src: url('/font/allura/allura.ttf');
-}
-</style>
-
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="V3rdant" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
   <title>
-    V3rdant's Blog
     
+      Category 
+      
+      
+      |
+    
+     V3rdant&#39;s Blog
   </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WT6LFRH6M0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-WT6LFRH6M0');
+    </script>
+  
+
+  
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
 <meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="V3rdant's Blog" type="application/atom+xml">
 </head>
-<body>
-  <div class="container">
-    <header class="header" id="header">
-  <div class="header-wrapper">
-    <div class="logo">
-  <div class="logo-inner syuanpi tvIn" style="display:none;">
-    <h1><a href="/">V3rdant's Blog</a></h1>
-    
-  </div>
-</div>
 
-    <nav class="main-nav">
-  
-  <ul class="main-nav-list syuanpi tvIn">
-  
-    <li class="menu-item">
-      <a href="javascript:;" id="search-btn" aria-label="Search">
-        <i class="iconfont icon-search"></i>
-      </a>
-    </li>
-  
-  
-  
-    
-  
-    <li class="menu-item">
-      <a href="/" id="article">
-        <span class="base-name">
-          
-            ARTICLE
-          
-        </span>
-      </a>
-    </li>
-  
-  
-    
-  
-    <li class="menu-item">
-      <a href="/archives" id="archives">
-        <span class="base-name">
-          
-            ARCHIVES
-          
-        </span>
-      </a>
-    </li>
-  
-  
-    
-  
-    <li class="menu-item">
-      <a href="javascript:;" id="tags">
-        <span class="base-name">
-          
-            TAGS
-          
-        </span>
-      </a>
-    </li>
-  
-  
-    
-  
-    <li class="menu-item">
-      <a href="/about" id="about">
-        <span class="base-name">
-          
-            ABOUT
-          
-        </span>
-      </a>
-    </li>
-  
-  
-  </ul>
-  
-</nav>
 
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">V3rdant</a></div>
   </div>
-</header>
-<div class="mobile-header" id="mobile-header">
-  <div class="mobile-header-nav">
-    <div class="mobile-header-item" id="mobile-left">
-      <div class="header-menu-item">
-        <div class="header-menu-line"></div>
-      </div>
-    </div>
-    <h1 class="mobile-header-title">
-      <a href="/">V3rdant's Blog</a>
-    </h1>
-    <div class="mobile-header-item"></div>
-  </div>
-  <div class="mobile-header-body">
-    <ul class="mobile-header-list">
+  <div class="navbar">
+    <ul>
       
-        <li class="mobile-nav-item syuanpi fadeInRightShort back-0">
-          <a href="/" >
-            
-              ARTICLE
-            
-          </a>
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
         </li>
       
-        <li class="mobile-nav-item syuanpi fadeInRightShort back-1">
-          <a href="/archives" >
-            
-              ARCHIVES
-            
-          </a>
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
         </li>
       
-        <li class="mobile-nav-item syuanpi fadeInRightShort back-2">
-          <a href="javascript:;" id="mobile-tags">
-            
-              TAGS
-            
-          </a>
+        <li class="nav-item" data-path="/categories/">
+          <a href="/categories/">Categories</a>
         </li>
       
-        <li class="mobile-nav-item syuanpi fadeInRightShort back-3">
-          <a href="/about" >
-            
-              ABOUT
-            
-          </a>
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
         </li>
       
     </ul>
@@ -217,322 +116,354 @@
 </div>
 
 
+<script src="/js/activeNav.js"></script>
 
-    <div class="container-inner" style="display:none;">
-      <main class="main" id="main">
-        <div class="main-wrapper">
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+
+  <!-- LaTex Display -->
+
+  
+    <script async type="text/javascript" src="/plugins/mathjax/tex-chtml.js"></script>
+  
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    }
+  </script>
+
+
+
+
+
+  <!-- clipboard -->
+
+  
+    <script async type="text/javascript" src="/plugins/clipboard.min.js"></script>
+  
+  
+<script src="/js/codeCopy.js"></script>
+
+
+
+
+
+
+
+  
+  <!-- 分类页 url形式：https://yoursite/categories/ -->
+  <div class="container category-index">
+    <div>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CTF/">CTF</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Pwn/">Pwn</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Fuzz/">Fuzz</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+  
+
+  
+
+  
+
+  
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
           
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/Du-Mu">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
     
+    <div class="footer-more">
       
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
+    </div>
+  
     
-  
-        </div>
-      </main>
-      <footer class="footer syuanpi fadeIn" id="footer">
-  <hr>
-  <div class="footer-wrapper">
-    <div class="left">
-      <div class="contact-icon">
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
   
   
-    <a target="_blank" rel="noopener" href="https://www.facebook.com/" class="iconfont icon-facebook" title="facebook"></a>
-  
-    <a target="_blank" rel="noopener" href="https://twitter.com/" class="iconfont icon-twitter" title="twitter"></a>
-  
-    <a target="_blank" rel="noopener" href="https://www.instagram.com/" class="iconfont icon-instagram" title="instagram"></a>
-  
-    <a target="_blank" rel="noopener" href="https://weibo.com/" class="iconfont icon-weibo" title="weibo"></a>
-  
-    <a target="_blank" rel="noopener" href="https://www.zhihu.com/people/" class="iconfont icon-zhihu" title="zhihu"></a>
-  
-    <a target="_blank" rel="noopener" href="https://github.com/" class="iconfont icon-github" title="github"></a>
-  
-    <a target="_blank" rel="noopener" href="https://www.linkedin.com/in/" class="iconfont icon-linkedin" title="linkedin"></a>
-  
-    <a target="_blank" rel="noopener" href="https://www.douban.com/people/" class="iconfont icon-douban" title="douban"></a>
-  
-    <a target="_blank" rel="noopener" href="https://medium.com/" class="iconfont icon-medium" title="medium"></a>
-  
-    <a target="_blank" rel="noopener" href="https://www.yuque.com/" class="iconfont icon-yuque" title="yuque"></a>
+    <div class="footer-views">
+      
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+      
+          本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+        
+      
+          本站访客数<span id="busuanzi_value_site_uv"></span>人
+        
+      
+    </div>
   
 </div>
 
-    </div>
-    <div class="right">
-      <div class="copyright">
-    <div class="info">
-        <span>&copy;</span>
-        <span>2016 ~ 2024</span>
-        <span>❤</span>
-        <span>V3rdant</span>
-    </div>
-    <div class="theme">
-        <span>
-            Powered by
-            <a href="http://hexo.io/" target="_blank" rel="noopener">Hexo </a>
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
         </span>
-        <span>
-            Theme
-            <a target="_blank" rel="noopener" href="https://github.com/ColMugX/hexo-theme-Nlvi"> Nlvi </a>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
         </span>
-    </div>
-    
-</div>
-
+      </div>
+      <div class="search-result" id="search-result"></div>
     </div>
   </div>
-</footer>
-    </div>
-    <div class="tagcloud" id="tagcloud">
-  <div class="tagcloud-taglist">
-  
-    <div class="tagcloud-tag">
-      <button>Pwn</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>linux</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>io_uring</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>shellcode</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>CTF</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>pwn</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>Kernel</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>Fuzz</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>Coding</button>
-    </div>
-  
-  </div>
-  
-    <div class="tagcloud-postlist active">
-      <h2>Pwn</h2>
-      
-        <div class="tagcloud-post">
-          <a href="/Linux.Seccomp-and-Ptrace/">
-            <time class="tagcloud-posttime">2023 / 10 / 31</time>
-            <span>Linux.Seccomp-and-Ptrace</span>
-          </a>
-        </div>
-      
-        <div class="tagcloud-post">
-          <a href="/Pwn.Heap-Exploation-up-to-2.31/">
-            <time class="tagcloud-posttime">2023 / 06 / 21</time>
-            <span>Pwn.Heap-Exploation-up-to-2.31</span>
-          </a>
-        </div>
-      
-        <div class="tagcloud-post">
-          <a href="/Pwn.I-Wanna-be-A-LLVM-Passer/">
-            <time class="tagcloud-posttime">2023 / 06 / 23</time>
-            <span>Pwn.I wanna be a llvm passer</span>
-          </a>
-        </div>
-      
-        <div class="tagcloud-post">
-          <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2024 / 01 / 11</time>
-            <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
-          </a>
-        </div>
-      
-    </div>
-  
-    <div class="tagcloud-postlist ">
-      <h2>linux</h2>
-      
-        <div class="tagcloud-post">
-          <a href="/Linux.Seccomp-and-Ptrace/">
-            <time class="tagcloud-posttime">2023 / 10 / 31</time>
-            <span>Linux.Seccomp-and-Ptrace</span>
-          </a>
-        </div>
-      
-        <div class="tagcloud-post">
-          <a href="/Linux.io_uring-Top-down-Approach/">
-            <time class="tagcloud-posttime">2023 / 12 / 04</time>
-            <span>Linux.io_uring-Top-down-Approch</span>
-          </a>
-        </div>
-      
-        <div class="tagcloud-post">
-          <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2024 / 01 / 11</time>
-            <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
-          </a>
-        </div>
-      
-    </div>
-  
-    <div class="tagcloud-postlist ">
-      <h2>io_uring</h2>
-      
-        <div class="tagcloud-post">
-          <a href="/Linux.io_uring-Top-down-Approach/">
-            <time class="tagcloud-posttime">2023 / 12 / 04</time>
-            <span>Linux.io_uring-Top-down-Approch</span>
-          </a>
-        </div>
-      
-    </div>
-  
-    <div class="tagcloud-postlist ">
-      <h2>shellcode</h2>
-      
-        <div class="tagcloud-post">
-          <a href="/Linux.io_uring-Top-down-Approach/">
-            <time class="tagcloud-posttime">2023 / 12 / 04</time>
-            <span>Linux.io_uring-Top-down-Approch</span>
-          </a>
-        </div>
-      
-    </div>
-  
-    <div class="tagcloud-postlist ">
-      <h2>CTF</h2>
-      
-        <div class="tagcloud-post">
-          <a href="/Pwn.Heap-Exploation-up-to-2.31/">
-            <time class="tagcloud-posttime">2023 / 06 / 21</time>
-            <span>Pwn.Heap-Exploation-up-to-2.31</span>
-          </a>
-        </div>
-      
-        <div class="tagcloud-post">
-          <a href="/Pwn.I-Wanna-be-A-LLVM-Passer/">
-            <time class="tagcloud-posttime">2023 / 06 / 23</time>
-            <span>Pwn.I wanna be a llvm passer</span>
-          </a>
-        </div>
-      
-        <div class="tagcloud-post">
-          <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2024 / 01 / 11</time>
-            <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
-          </a>
-        </div>
-      
-    </div>
-  
-    <div class="tagcloud-postlist ">
-      <h2>pwn</h2>
-      
-        <div class="tagcloud-post">
-          <a href="/Pwn.Stack-Overflow-Overview/">
-            <time class="tagcloud-posttime">2022 / 08 / 03</time>
-            <span>Pwn.Stack-Overflow-Overview</span>
-          </a>
-        </div>
-      
-        <div class="tagcloud-post">
-          <a href="/Pwn.The-Art-of-Shellcode/">
-            <time class="tagcloud-posttime">2022 / 07 / 31</time>
-            <span>Pwn.the-Art-of-Shellcode</span>
-          </a>
-        </div>
-      
-    </div>
-  
-    <div class="tagcloud-postlist ">
-      <h2>Kernel</h2>
-      
-        <div class="tagcloud-post">
-          <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2024 / 01 / 11</time>
-            <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
-          </a>
-        </div>
-      
-    </div>
-  
-    <div class="tagcloud-postlist ">
-      <h2>Fuzz</h2>
-      
-        <div class="tagcloud-post">
-          <a href="/Fuzz.AFL-All-in-One/">
-            <time class="tagcloud-posttime">2024 / 01 / 12</time>
-            <span>Fuzz.AFL-All-in-One</span>
-          </a>
-        </div>
-      
-    </div>
-  
-    <div class="tagcloud-postlist ">
-      <h2>Coding</h2>
-      
-        <div class="tagcloud-post">
-          <a href="/Fuzz.AFL-All-in-One/">
-            <time class="tagcloud-posttime">2024 / 01 / 12</time>
-            <span>Fuzz.AFL-All-in-One</span>
-          </a>
-        </div>
-      
-    </div>
-  
-</div>
 
-  </div>
-  <div class="backtop syuanpi melt toTop" id="backtop">
-    <i class="iconfont icon-up"></i>
-    <span style="text-align:center;font-family:Georgia;"><span style="font-family:Georgia;" id="scrollpercent">1</span>%</span>
-</div>
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
 
-  <div class="search" id="search">
-    <div class="input">
-      <input type="text" id="search-input" placeholder="搜索一下？" autofocus>
-    </div>
-    <div id="search-result"></div>
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
   </div>
 
-
-
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
-
-
-
-  <script></script>
-  <script src="/script/lib/lightbox/js/lightbox.min.js" async></script>
-
-
-
-
-
-
-
-
-
-
-
   
-<script src="/script/scheme/banderole.js"></script>
-
-
-
-
-<script src="/script/bootstarp.js"></script>
+<script src="/js/colorscheme.js"></script>
 
 
 
 
 
-</body>
+        
+  
+    <div class="share-icon tools-bar-item">
+      <a href="javascript: void(0)" id="share-icon">
+        <i class="iconfont iconshare"></i>
+      </a>
+      <div class="share-content hidden">
+        
+          <a class="share-item" href="https://twitter.com/intent/tweet?text=' + categories + '&url=' + https%3A%2F%2Fv3rdant.cn%2Fcategories%2Findex.html + '" target="_blank" title="Twitter">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        
+        
+          <a class="share-item" href="https://www.facebook.com/sharer.php?u=https://v3rdant.cn/categories/index.html" target="_blank" title="Facebook">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        
+      </div>
+    </div>
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
 </html>

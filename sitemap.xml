@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://v3rdant.cn/categories/index.html</loc>
+    
+    <lastmod>2024-03-03</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://v3rdant.cn/tags/index.html</loc>
+    
+    <lastmod>2024-03-03</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://v3rdant.cn/tags/index-1.html</loc>
+    
+    <lastmod>2024-03-03</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://v3rdant.cn/Fuzz.AFL-All-in-One/</loc>
     
     <lastmod>2024-02-28</lastmod>
@@ -83,24 +110,6 @@
   </url>
   
   <url>
-    <loc>https://v3rdant.cn/categories/index.html</loc>
-    
-    <lastmod>2024-01-12</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://v3rdant.cn/tags/index.html</loc>
-    
-    <lastmod>2024-01-12</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://v3rdant.cn/links/index.html</loc>
     
     <lastmod>2023-05-20</lastmod>
@@ -121,7 +130,7 @@
 
   <url>
     <loc>https://v3rdant.cn/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -129,63 +138,63 @@
   
   <url>
     <loc>https://v3rdant.cn/tags/Pwn/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://v3rdant.cn/tags/linux/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://v3rdant.cn/tags/io-uring/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://v3rdant.cn/tags/shellcode/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://v3rdant.cn/tags/CTF/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://v3rdant.cn/tags/pwn/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://v3rdant.cn/tags/Kernel/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://v3rdant.cn/tags/Fuzz/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://v3rdant.cn/tags/Coding/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -194,21 +203,21 @@
   
   <url>
     <loc>https://v3rdant.cn/categories/CTF/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://v3rdant.cn/categories/Pwn/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://v3rdant.cn/categories/Fuzz/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>

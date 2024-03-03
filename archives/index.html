@@ -1,216 +1,114 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-<meta name="browsermode" content="application">
-<meta name="apple-touch-fullscreen" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="V3rdant's Blog">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="msapplication-navbutton-color" content="#666666">
-<meta name= "format-detection" content="telephone=no" />
+<html lang="en" color-mode="light">
 
-
-
-
-  <meta name="keywords" content="pwn" />
-
-
-
-<link rel="apple-touch-startup-image" media="(device-width: 375px)" href="assets/apple-launch-1125x2436.png">
-<link rel="apple-touch-startup-image" media="(orientation: landscape)" href="assets/apple-touch-startup-image-2048x1496.png">
-
-<link rel="stylesheet" href="/style/style.css">
-
-<script>
-  var nlviconfig = {
-    title: "V3rdant's Blog",
-    author: "V3rdant",
-    baseUrl: "/",
-    theme: {
-      scheme: "banderole",
-      lightbox: true,
-      animate: true,
-      search: true,
-      friends: false,
-      reward: false,
-      pjax: false,
-      lazy: false,
-      toc: true
-    }
-  }
-</script>
-
-
-
-
-    
-<link rel="stylesheet" href="/script/lib/lightbox/css/lightbox.min.css">
-
-
-
-
-
-    
-<link rel="stylesheet" href="/syuanpi/syuanpi.min.css">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<style>
-@font-face {
-  font-family: "Allura";
-  src: url('/font/allura/allura.ttf');
-}
-</style>
-
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="V3rdant" />
+  <!-- Open Graph Description 简短摘要-->
+  
+  <!-- 用于搜索引擎的文章摘要 -->
+  
+  
+  
   <title>
+    
+      Archives 
+      
+      
+      |
+    
+     V3rdant&#39;s Blog
+  </title>
+
   
-    Archives · V3rdant's Blog
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
   
-</title>
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1886449_67xjft27j1l.css" />
+  <!-- 代码块风格 -->
+  
+
+  <!-- jquery3.3.1 -->
+  
+    <script defer type="text/javascript" src="/plugins/jquery.min.js"></script>
+  
+
+  <!-- fancybox -->
+  
+    <link href="/plugins/jquery.fancybox.min.css" rel="stylesheet">
+    <script defer type="text/javascript" src="/plugins/jquery.fancybox.min.js"></script>
+  
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WT6LFRH6M0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-WT6LFRH6M0');
+    </script>
+  
+
+  
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  <script>
+    var html = document.documentElement
+    const colorMode = localStorage.getItem('color-mode')
+    if (colorMode) {
+      document.documentElement.setAttribute('color-mode', colorMode)
+    }
+  </script>
 <meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="V3rdant's Blog" type="application/atom+xml">
 </head>
-<body>
-  <div class="container">
-    <header class="header" id="header">
-  <div class="header-wrapper">
-    <div class="logo">
-  <div class="logo-inner syuanpi tvIn" style="display:none;">
-    <h1><a href="/">V3rdant's Blog</a></h1>
-    
-  </div>
-</div>
 
-    <nav class="main-nav">
-  
-  <ul class="main-nav-list syuanpi tvIn">
-  
-    <li class="menu-item">
-      <a href="javascript:;" id="search-btn" aria-label="Search">
-        <i class="iconfont icon-search"></i>
-      </a>
-    </li>
-  
-  
-  
-    
-  
-    <li class="menu-item">
-      <a href="/" id="article">
-        <span class="base-name">
-          
-            ARTICLE
-          
-        </span>
-      </a>
-    </li>
-  
-  
-    
-  
-    <li class="menu-item">
-      <a href="/archives" id="archives">
-        <span class="base-name">
-          
-            ARCHIVES
-          
-        </span>
-      </a>
-    </li>
-  
-  
-    
-  
-    <li class="menu-item">
-      <a href="javascript:;" id="tags">
-        <span class="base-name">
-          
-            TAGS
-          
-        </span>
-      </a>
-    </li>
-  
-  
-    
-  
-    <li class="menu-item">
-      <a href="/about" id="about">
-        <span class="base-name">
-          
-            ABOUT
-          
-        </span>
-      </a>
-    </li>
-  
-  
-  </ul>
-  
-</nav>
 
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">V3rdant</a></div>
   </div>
-</header>
-<div class="mobile-header" id="mobile-header">
-  <div class="mobile-header-nav">
-    <div class="mobile-header-item" id="mobile-left">
-      <div class="header-menu-item">
-        <div class="header-menu-line"></div>
-      </div>
-    </div>
-    <h1 class="mobile-header-title">
-      <a href="/">V3rdant's Blog</a>
-    </h1>
-    <div class="mobile-header-item"></div>
-  </div>
-  <div class="mobile-header-body">
-    <ul class="mobile-header-list">
+  <div class="navbar">
+    <ul>
       
-        <li class="mobile-nav-item syuanpi fadeInRightShort back-0">
-          <a href="/" >
-            
-              ARTICLE
-            
-          </a>
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
         </li>
       
-        <li class="mobile-nav-item syuanpi fadeInRightShort back-1">
-          <a href="/archives" >
-            
-              ARCHIVES
-            
-          </a>
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
         </li>
       
-        <li class="mobile-nav-item syuanpi fadeInRightShort back-2">
-          <a href="javascript:;" id="mobile-tags">
-            
-              TAGS
-            
-          </a>
+        <li class="nav-item" data-path="/categories/">
+          <a href="/categories/">Categories</a>
         </li>
       
-        <li class="mobile-nav-item syuanpi fadeInRightShort back-3">
-          <a href="/about" >
-            
-              ABOUT
-            
-          </a>
+        <li class="nav-item" data-path="/tags/">
+          <a href="/tags/">Tags</a>
+        </li>
+      
+        <li class="nav-item" data-path="/about/">
+          <a href="/about/">About</a>
         </li>
       
     </ul>
@@ -218,542 +116,390 @@
 </div>
 
 
+<script src="/js/activeNav.js"></script>
 
-    <div class="container-inner" style="display:none;">
-      <main class="main" id="main">
-        <div class="main-wrapper">
-          
+
+
+      <div class="flex-container">
+        <!-- 归档页，展示本站所有文章，按照年份降序归类，url形式：https://yoursite/archives/ -->
+
+<!-- last: 按年份把文章分组，当前遍历到的年份 -->
+<!-- now: 当前遍历到的文章的发布年份 -->
+
+<div class="container archives">
+  <div class="post-list">
     
-  <div class="archive syuanpi fadeInRightShort" id="archive">
+        <!-- 后续文章的发布年份呈现 -->
+        <div class="content-title">
+          <h2>
+            <span>2024</span>
+          </h2>
+        </div>
+      
+      <div class="post-item" title="Fuzz.AFL-All-in-One">
+        <div class="time-m-d">01-12</div>
+        <div class="title">
+          <a href="/Fuzz.AFL-All-in-One/">
+            <span>Fuzz.AFL-All-in-One</span>
+          </a>
+        </div>
+      </div>
     
-      <aside class="archive-title">Total</aside>
-      <span class="archive-num">8 Posts In Total</span>
+      <div class="post-item" title="Pwn.Linux-Kernel-Pwn-All-in-One">
+        <div class="time-m-d">01-11</div>
+        <div class="title">
+          <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
+            <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
+          </a>
+        </div>
+      </div>
     
-      
-      
-        
-          
-          
-            
-            
-            <div class="archive-group">
-            <time class="archive-year"> 2024 </time>
-            <div class="archive-list">
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h1 id="overview">overview</h1>
-<p>对于AFL代码的重新阅读，笔者之前曾经阅读过一次AFL代码，但是比较粗糙，所以决定重新阅读一遍，理解其中比较细节的部分。</p>
-<p>首先简单介绍一下AFL，AFL是一个覆盖率引导的fuzz 工具。</p>
-<p>它将一个无跳转的顺序执行流程看成一个基本块，并通过一个bitmap记录运行时每一个输入对应的标准块。</p>
-<p>通过基本块的覆盖率引导对于输入种子的变异，从而不断变换输入，进行测试，来挖掘漏洞。</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2024-01-12
-            </time>
-            <a  class="archive-post-link" href="/Fuzz.AFL-All-in-One/">
-              Fuzz.AFL-All-in-One
-            </a>
-          </div>
+        <!-- 后续文章的发布年份呈现 -->
+        <div class="content-title">
+          <h2>
+            <span>2023</span>
+          </h2>
         </div>
       
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h1 id="安全机制">安全机制</h1>
-<p><strong>CONFIG_CFI_CLANG=y</strong><br>
-控制流完整性校验，限制ROP</p>
-<p><strong>CONFIG_SLAB_FREELIST_HARDENED=y</strong><br>
-类似于用户态下 glibc 中的 safe-linking 机制，在内核中的 slab/slub 分配器当中也存在着类似的机制保护着 freelist—— <code>SLAB_FREELIST_HARDENED</code>：</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2024-01-11
-            </time>
-            <a  class="archive-post-link" href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-              Pwn.Linux-Kernel-Pwn-All-in-One
-            </a>
-          </div>
+      <div class="post-item" title="Linux.io_uring-Top-down-Approch">
+        <div class="time-m-d">12-04</div>
+        <div class="title">
+          <a href="/Linux.io_uring-Top-down-Approach/">
+            <span>Linux.io_uring-Top-down-Approch</span>
+          </a>
         </div>
-      
-        
-          
-          
-            
-              </div></section>
-            
-            
-            <div class="archive-group">
-            <time class="archive-year"> 2023 </time>
-            <div class="archive-list">
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <p>最近在N1线下赛遇见一个seccomp沙箱，限制了只能使用 <code>io_uring_setup</code> 一个系统调用，之前不久的ACTF中， 使用<code>mmap</code>、<code>io_uring_setup</code>、<code>io_uring_enter</code> 三个系统调用，完成了orw。 如何仅仅使用 <code>io_uring_setup</code> 完成orw呢？</p>
-<p>本文将不仅仅局限于CTF，而是从io_uring的实现出发，先从宏观角度透视io_uring的实现框架， 然后以源代码为基础，自顶向下，从liburing，io_uring的用户态接口， 最后到io_uring的内核实现，一步步聚焦 <code>io_uring</code>  具体的实现。</p>
-<p>由于笔者为安全方向，因此笔者将更多关注 io_uring 中用户和内核态的通信这一容易产生安全漏洞的模块，而不会聚焦io_uring的异步调度和任务处理，以上。</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-12-04
-            </time>
-            <a  class="archive-post-link" href="/Linux.io_uring-Top-down-Approach/">
-              Linux.io_uring-Top-down-Approch
-            </a>
-          </div>
-        </div>
-      
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h2 id="Background">Background</h2>
-<p>最近ACTF出现了一个限制非常严格的沙箱，校队里一位pwn师傅搜到了一些用ptrace修改子进程rax来绕过seccomp的wp。</p>
-<p>正值校赛，为了出题的事忙得焦头烂额，就没有细想。</p>
-<p>但是由于我记得seccomp 是内核hook，而ptrace， 出于一些对调试器的映像，我觉得他对于attach的子进程的寄存器的更改，<s>是在用户态实现的</s>。 那么ptrace的处理应该在seccomp之前，所以我觉得不太可行。</p>
-<p>在有时间后，我开始探究了一下，确实不太可行，只是原因跟我想象得不太一样…</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-10-31
-            </time>
-            <a  class="archive-post-link" href="/Linux.Seccomp-and-Ptrace/">
-              Linux.Seccomp-and-Ptrace
-            </a>
-          </div>
-        </div>
-      
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h1 id="overview">overview</h1>
-<p>华中赛遇到了一个llvm的题，顺手系统总结一下llvm pass吧。</p>
-<p>首先简单介绍一下llvm，llvm是一套用C++编写的编译器基础设施。LLVM Pass提供了一些可供重写的函数，本义是用来实现一些优化。而Pwn的llvm pass类题，就是重写了runOnFunction函数。</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-06-23
-            </time>
-            <a  class="archive-post-link" href="/Pwn.I-Wanna-be-A-LLVM-Passer/">
-              Pwn.I wanna be a llvm passer
-            </a>
-          </div>
-        </div>
-      
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <p>关于heap我所知道的一切</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2023-06-21
-            </time>
-            <a  class="archive-post-link" href="/Pwn.Heap-Exploation-up-to-2.31/">
-              Pwn.Heap-Exploation-up-to-2.31
-            </a>
-          </div>
-        </div>
-      
-        
-          
-          
-            
-              </div></section>
-            
-            
-            <div class="archive-group">
-            <time class="archive-year"> 2022 </time>
-            <div class="archive-list">
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h3 id="杂谈">杂谈</h3>
-<p>作为一种基本的漏洞，栈溢出在CTF中出现的非常频繁，因为其多样化的利用形式，难以进行系统的归类，本文结合笔者个人的经验，综合讨论各种栈溢出技术，如果有遗漏，欢迎评论留言，或者给笔者发邮件，进行补充。</p>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2022-08-03
-            </time>
-            <a  class="archive-post-link" href="/Pwn.Stack-Overflow-Overview/">
-              Pwn.Stack-Overflow-Overview
-            </a>
-          </div>
-        </div>
-      
-        
-          
-          
-          
-        <div class="archive-post">
-          <div class="archive-post-content">
-            
-              <h1 id="Basic">Basic</h1>
-<p>首先给出两个常用shellcode仓库，可以检索需要的shellcode</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://shell-storm.org/shellcode/index.html">shellcode database</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.exploit-db.com/google-hacking-database">exploit-db</a></li>
-</ul>
-            
-          </div>
-          <div class="archive-post-info">
-            <time class="archive-post-time">
-              2022-07-31
-            </time>
-            <a  class="archive-post-link" href="/Pwn.The-Art-of-Shellcode/">
-              Pwn.the-Art-of-Shellcode
-            </a>
-          </div>
-        </div>
-      
-      
-        </section></section>
-      
-  </div>
-  
-  <nav class="pagination">
-      <span class="page-number current">1</span>
-  </nav>
-
-
-
-
-        </div>
-      </main>
-      <footer class="footer syuanpi fadeIn" id="footer">
-  <hr>
-  <div class="footer-wrapper">
-    <div class="left">
-      <div class="contact-icon">
-  
-  
-    <a target="_blank" rel="noopener" href="https://www.facebook.com/" class="iconfont icon-facebook" title="facebook"></a>
-  
-    <a target="_blank" rel="noopener" href="https://twitter.com/" class="iconfont icon-twitter" title="twitter"></a>
-  
-    <a target="_blank" rel="noopener" href="https://www.instagram.com/" class="iconfont icon-instagram" title="instagram"></a>
-  
-    <a target="_blank" rel="noopener" href="https://weibo.com/" class="iconfont icon-weibo" title="weibo"></a>
-  
-    <a target="_blank" rel="noopener" href="https://www.zhihu.com/people/" class="iconfont icon-zhihu" title="zhihu"></a>
-  
-    <a target="_blank" rel="noopener" href="https://github.com/" class="iconfont icon-github" title="github"></a>
-  
-    <a target="_blank" rel="noopener" href="https://www.linkedin.com/in/" class="iconfont icon-linkedin" title="linkedin"></a>
-  
-    <a target="_blank" rel="noopener" href="https://www.douban.com/people/" class="iconfont icon-douban" title="douban"></a>
-  
-    <a target="_blank" rel="noopener" href="https://medium.com/" class="iconfont icon-medium" title="medium"></a>
-  
-    <a target="_blank" rel="noopener" href="https://www.yuque.com/" class="iconfont icon-yuque" title="yuque"></a>
-  
-</div>
-
-    </div>
-    <div class="right">
-      <div class="copyright">
-    <div class="info">
-        <span>&copy;</span>
-        <span>2016 ~ 2024</span>
-        <span>❤</span>
-        <span>V3rdant</span>
-    </div>
-    <div class="theme">
-        <span>
-            Powered by
-            <a href="http://hexo.io/" target="_blank" rel="noopener">Hexo </a>
-        </span>
-        <span>
-            Theme
-            <a target="_blank" rel="noopener" href="https://github.com/ColMugX/hexo-theme-Nlvi"> Nlvi </a>
-        </span>
-    </div>
+      </div>
     
-</div>
-
-    </div>
-  </div>
-</footer>
-    </div>
-    <div class="tagcloud" id="tagcloud">
-  <div class="tagcloud-taglist">
-  
-    <div class="tagcloud-tag">
-      <button>Pwn</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>linux</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>io_uring</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>shellcode</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>CTF</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>pwn</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>Kernel</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>Fuzz</button>
-    </div>
-  
-    <div class="tagcloud-tag">
-      <button>Coding</button>
-    </div>
-  
-  </div>
-  
-    <div class="tagcloud-postlist active">
-      <h2>Pwn</h2>
-      
-        <div class="tagcloud-post">
+      <div class="post-item" title="Linux.Seccomp-and-Ptrace">
+        <div class="time-m-d">10-31</div>
+        <div class="title">
           <a href="/Linux.Seccomp-and-Ptrace/">
-            <time class="tagcloud-posttime">2023 / 10 / 31</time>
             <span>Linux.Seccomp-and-Ptrace</span>
           </a>
         </div>
-      
-        <div class="tagcloud-post">
-          <a href="/Pwn.Heap-Exploation-up-to-2.31/">
-            <time class="tagcloud-posttime">2023 / 06 / 21</time>
-            <span>Pwn.Heap-Exploation-up-to-2.31</span>
-          </a>
-        </div>
-      
-        <div class="tagcloud-post">
+      </div>
+    
+      <div class="post-item" title="Pwn.I wanna be a llvm passer">
+        <div class="time-m-d">06-23</div>
+        <div class="title">
           <a href="/Pwn.I-Wanna-be-A-LLVM-Passer/">
-            <time class="tagcloud-posttime">2023 / 06 / 23</time>
             <span>Pwn.I wanna be a llvm passer</span>
           </a>
         </div>
-      
-        <div class="tagcloud-post">
-          <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2024 / 01 / 11</time>
-            <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
-          </a>
-        </div>
-      
-    </div>
-  
-    <div class="tagcloud-postlist ">
-      <h2>linux</h2>
-      
-        <div class="tagcloud-post">
-          <a href="/Linux.Seccomp-and-Ptrace/">
-            <time class="tagcloud-posttime">2023 / 10 / 31</time>
-            <span>Linux.Seccomp-and-Ptrace</span>
-          </a>
-        </div>
-      
-        <div class="tagcloud-post">
-          <a href="/Linux.io_uring-Top-down-Approach/">
-            <time class="tagcloud-posttime">2023 / 12 / 04</time>
-            <span>Linux.io_uring-Top-down-Approch</span>
-          </a>
-        </div>
-      
-        <div class="tagcloud-post">
-          <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2024 / 01 / 11</time>
-            <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
-          </a>
-        </div>
-      
-    </div>
-  
-    <div class="tagcloud-postlist ">
-      <h2>io_uring</h2>
-      
-        <div class="tagcloud-post">
-          <a href="/Linux.io_uring-Top-down-Approach/">
-            <time class="tagcloud-posttime">2023 / 12 / 04</time>
-            <span>Linux.io_uring-Top-down-Approch</span>
-          </a>
-        </div>
-      
-    </div>
-  
-    <div class="tagcloud-postlist ">
-      <h2>shellcode</h2>
-      
-        <div class="tagcloud-post">
-          <a href="/Linux.io_uring-Top-down-Approach/">
-            <time class="tagcloud-posttime">2023 / 12 / 04</time>
-            <span>Linux.io_uring-Top-down-Approch</span>
-          </a>
-        </div>
-      
-    </div>
-  
-    <div class="tagcloud-postlist ">
-      <h2>CTF</h2>
-      
-        <div class="tagcloud-post">
+      </div>
+    
+      <div class="post-item" title="Pwn.Heap-Exploation-up-to-2.31">
+        <div class="time-m-d">06-21</div>
+        <div class="title">
           <a href="/Pwn.Heap-Exploation-up-to-2.31/">
-            <time class="tagcloud-posttime">2023 / 06 / 21</time>
             <span>Pwn.Heap-Exploation-up-to-2.31</span>
           </a>
         </div>
-      
-        <div class="tagcloud-post">
-          <a href="/Pwn.I-Wanna-be-A-LLVM-Passer/">
-            <time class="tagcloud-posttime">2023 / 06 / 23</time>
-            <span>Pwn.I wanna be a llvm passer</span>
-          </a>
+      </div>
+    
+        <!-- 后续文章的发布年份呈现 -->
+        <div class="content-title">
+          <h2>
+            <span>2022</span>
+          </h2>
         </div>
       
-        <div class="tagcloud-post">
-          <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2024 / 01 / 11</time>
-            <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
-          </a>
-        </div>
-      
-    </div>
-  
-    <div class="tagcloud-postlist ">
-      <h2>pwn</h2>
-      
-        <div class="tagcloud-post">
+      <div class="post-item" title="Pwn.Stack-Overflow-Overview">
+        <div class="time-m-d">08-03</div>
+        <div class="title">
           <a href="/Pwn.Stack-Overflow-Overview/">
-            <time class="tagcloud-posttime">2022 / 08 / 03</time>
             <span>Pwn.Stack-Overflow-Overview</span>
           </a>
         </div>
-      
-        <div class="tagcloud-post">
+      </div>
+    
+      <div class="post-item" title="Pwn.the-Art-of-Shellcode">
+        <div class="time-m-d">07-31</div>
+        <div class="title">
           <a href="/Pwn.The-Art-of-Shellcode/">
-            <time class="tagcloud-posttime">2022 / 07 / 31</time>
             <span>Pwn.the-Art-of-Shellcode</span>
           </a>
         </div>
+      </div>
+    
+  </div>
+</div>
+
+        
+<div class="footer">
+  <div class="social">
+    <ul>
       
+        <li>
+          
+              <a title="github" target="_blank" rel="noopener" href="https://github.com/Du-Mu">
+                <i class="iconfont icon-github"></i>
+              </a>
+              
+        </li>
+        
+    </ul>
+  </div>
+  
+    
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © 2024 Oranges</a>
+        
     </div>
   
-    <div class="tagcloud-postlist ">
-      <h2>Kernel</h2>
+    
+    <div class="footer-more">
       
-        <div class="tagcloud-post">
-          <a href="/Pwn.Linux-Kernel-Pwn-All-in-One/">
-            <time class="tagcloud-posttime">2024 / 01 / 11</time>
-            <span>Pwn.Linux-Kernel-Pwn-All-in-One</span>
-          </a>
-        </div>
-      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
     </div>
   
-    <div class="tagcloud-postlist ">
-      <h2>Fuzz</h2>
-      
-        <div class="tagcloud-post">
-          <a href="/Fuzz.AFL-All-in-One/">
-            <time class="tagcloud-posttime">2024 / 01 / 12</time>
-            <span>Fuzz.AFL-All-in-One</span>
-          </a>
-        </div>
-      
-    </div>
   
-    <div class="tagcloud-postlist ">
-      <h2>Coding</h2>
+    <div class="footer-views">
       
-        <div class="tagcloud-post">
-          <a href="/Fuzz.AFL-All-in-One/">
-            <time class="tagcloud-posttime">2024 / 01 / 12</time>
-            <span>Fuzz.AFL-All-in-One</span>
-          </a>
-        </div>
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+      
+          本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+        
+      
+          本站访客数<span id="busuanzi_value_site_uv"></span>人
+        
       
     </div>
   
 </div>
 
-  </div>
-  <div class="backtop syuanpi melt toTop" id="backtop">
-    <i class="iconfont icon-up"></i>
-    <span style="text-align:center;font-family:Georgia;"><span style="font-family:Georgia;" id="scrollpercent">1</span>%</span>
+      </div>
+
+      <div class="tools-bar">
+        <div class="back-to-top tools-bar-item hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
 </div>
 
-  <div class="search" id="search">
-    <div class="input">
-      <input type="text" id="search-input" placeholder="搜索一下？" autofocus>
-    </div>
-    <div id="search-result"></div>
+
+<script src="/js/backtotop.js"></script>
+
+
+
+        
+  <div class="search-icon tools-bar-item" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
   </div>
 
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
 
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
 
 
-
-  <script></script>
-  <script src="/script/lib/lightbox/js/lightbox.min.js" async></script>
-
-
-
-
-
-
-
-
-
-
+        
+  <div class="tools-bar-item theme-icon" id="switch-color-scheme">
+    <a href="javascript: void(0)">
+      <i id="theme-icon" class="iconfont icon-moon"></i>
+    </a>
+  </div>
 
   
-<script src="/script/scheme/banderole.js"></script>
-
-
-
-
-<script src="/script/bootstarp.js"></script>
+<script src="/js/colorscheme.js"></script>
 
 
 
 
 
-</body>
+        
+  
+  
+<script src="/js/shares.js"></script>
+
+
+
+      </div>
+    </div>
+  </body>
 </html>
