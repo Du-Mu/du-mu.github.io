@@ -2,11 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://v3rdant.cn/Fuzz.AFL-All-in-One/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
+  </url>
+  <url>
+    <loc>https://v3rdant.cn/Pwn.Linux-Kernel-Pwn-All-in-One/</loc>
+    <lastmod>2024-03-03</lastmod>
+  </url>
+  <url>
+    <loc>https://v3rdant.cn/Linux.io_uring-Top-down-Approach/</loc>
+    <lastmod>2024-03-03</lastmod>
   </url>
   <url>
     <loc>https://v3rdant.cn/Pwn.Heap-Exploation-up-to-2.31/</loc>
-    <lastmod>2024-02-28</lastmod>
+    <lastmod>2024-03-03</lastmod>
   </url>
   <url>
     <loc>https://v3rdant.cn/Pwn.Stack-Overflow-Overview/</loc>
@@ -17,19 +25,11 @@
     <lastmod>2024-02-28</lastmod>
   </url>
   <url>
-    <loc>https://v3rdant.cn/Pwn.Linux-Kernel-Pwn-All-in-One/</loc>
-    <lastmod>2024-02-28</lastmod>
-  </url>
-  <url>
     <loc>https://v3rdant.cn/Linux.Seccomp-and-Ptrace/</loc>
     <lastmod>2024-01-26</lastmod>
   </url>
   <url>
     <loc>https://v3rdant.cn/Pwn.I-Wanna-be-A-LLVM-Passer/</loc>
     <lastmod>2024-01-26</lastmod>
-  </url>
-  <url>
-    <loc>https://v3rdant.cn/Linux.io_uring-Top-down-Approach/</loc>
-    <lastmod>2024-01-12</lastmod>
   </url>
 </urlset> 

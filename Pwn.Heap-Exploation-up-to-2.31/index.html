@@ -170,7 +170,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-          2024-02-28 23:02:54
+          2024-03-03 16:21:36
         </span>
         
               <span class="post-categories">
@@ -270,7 +270,7 @@
 <li>orw</li>
 </ul>
 <h1 id="leak">leak</h1>
-<p>一般而言，堆题中的leak主要是针对libc地址，heap地址的leak相对而言较为简单，而libc地址的leak将在 [[#stack]] 攻击面部分详述。</p>
+<p>一般而言，堆题中的leak主要是针对libc地址，heap地址的leak相对而言较为简单，而libc地址的leak将在 ![#stack] 攻击面部分详述。</p>
 <p>一般而言，heap leak 堆地址主要利用unsorted bin的第一个chunk会存在libc地址来leak。如果存在UAF，可以将一个直接放入unsorted bin，然后show来获得。</p>
 <p>也可以释放入unsorted  bin 后再申请回来实现，由于malloc并不会清空chunk内容，因此可以读取到残留的libc的指针。</p>
 <p>而在没有show相关输出chunk内容的函数时，考虑通过<code>_IO_2_1_stdout_</code> 来leak<br>
@@ -476,7 +476,7 @@
 在glibc2.30以下的版本，counts的类型是char，此结构大小是0x250。</p>
 <p>一般是作为辅助攻击的方法，可以简化攻击链。</p>
 <h4 id="example">example</h4>
-<p>[[2021-DownUnder-note]]</p>
+<p>![2021-DownUnder-note]</p>
 <h3 id="global-max-fast">global_max_fast</h3>
 <p>实际上就是house of corrison的利用，类似的，tcache也有类似的利用。使得大chunk被当作tcache处理。</p>
 <h3 id="heap-info">heap_info</h3>
@@ -517,7 +517,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-              2024-02-28 23:02:54
+              2024-03-03 16:21:36
             </span>
             
                   <span class="post-categories">
