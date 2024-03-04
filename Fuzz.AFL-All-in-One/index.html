@@ -170,7 +170,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-          2024-03-04 15:40:10
+          2024-03-04 15:45:54
         </span>
         
               <span class="post-categories">
@@ -259,7 +259,7 @@
 <h2 id="main-payload-64">main_payload_64</h2>
 <p><code>main_payload_64</code>包含 <code>trampoline_fmt</code> 运行时所需要的一些函数以及全局变量，其中最核心的是 <code>__afl_maybe_log</code> 函数</p>
 <p>这里整个流程大致如下(图源ScUpax0s师傅)</p>
-<p>!(Pasted image 20240228220636.png)[/images/‘Pasted image 20240228220636.png’]</p>
+<p>!(Pasted-image-20240228220636.png)[/images/Pasted-image-20240228220636.png]</p>
 <p>简单解释一下就是，在第一此运行时， <code>__afl_area_ptr==NULL</code> 和 <code>__afl_alobal_area==NULL</code>  均为true，说明此时是第一次运行到<code>__afl_maybe_log</code> ，此时会进入下面的分支，在完成初始化后，进程阻塞从管道中读取，直到收到afl-fuzz进程发送过来的启动命令，此时会fork一个子进程，此子进程并恢复寄存器，然后继续运行。</p>
 <p>在之后，子进程再次进入桩代码就会直接进入 <code>__afl_store</code>，也就是写入当前基本块对应的bitmap用来标识运行状态</p>
 <h3 id="第一次运行">第一次运行</h3>
@@ -579,7 +579,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-              2024-03-04 15:40:10
+              2024-03-04 15:45:54
             </span>
             
                   <span class="post-categories">
