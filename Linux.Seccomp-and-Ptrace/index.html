@@ -170,7 +170,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-          2024-01-26 22:38:52
+          2024-03-04 15:37:44
         </span>
         
               <span class="post-categories">
@@ -206,7 +206,7 @@
         <h2 id="Background">Background</h2>
 <p>最近ACTF出现了一个限制非常严格的沙箱，校队里一位pwn师傅搜到了一些用ptrace修改子进程rax来绕过seccomp的wp。</p>
 <p>正值校赛，为了出题的事忙得焦头烂额，就没有细想。</p>
-<p>但是由于我记得seccomp 是内核hook，而ptrace， 出于一些对调试器的映像，我觉得他对于attach的子进程的寄存器的更改，<s>是在用户态实现的</s>。 那么ptrace的处理应该在seccomp之前，所以我觉得不太可行。</p>
+<p>但是由于我记得seccomp 是内核hook，而ptrace， 出于一些对调试器的印象，我觉得他对于attach的子进程的寄存器的更改，<s>是在用户态实现的</s>。 那么ptrace的处理应该在seccomp之前，所以我觉得不太可行。</p>
 <p>在有时间后，我开始探究了一下，确实不太可行，只是原因跟我想象得不太一样…</p>
 <span id="more"></span>
 <h2 id="Intro">Intro</h2>
@@ -227,7 +227,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">--&gt;prctl </span><br><span class="line">	--&gt;prctl_set_seccomp</span><br><span class="line">		--&gt;do_seccomp</span><br><span class="line">			--&gt;seccomp_set_mode_filter</span><br><span class="line">				--&gt; seccomp_attach_filter </span><br></pre></td></tr></table></figure>
 <p><code>seccomp_attach_filter</code> 核心代码如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">filter-&gt;prev = current-&gt;seccomp.filter;</span><br><span class="line">seccomp_cache_prepare(filter);</span><br><span class="line">current-&gt;seccomp.filter = filter;</span><br><span class="line"><span class="type">atomic_inc</span>(&amp;current-&gt;seccomp.filter_count);</span><br></pre></td></tr></table></figure>
-<p>current是一个全局的指针，主要保存了当前进程的一些信息。</p>
+<p>current是一个全局的指针，指向当前进程的task结构体，主要保存了当前进程的一些信息。</p>
 <p>所以，当我们注册seccomp，实际上就是设置了当前进程的filter规则。而什么时候根据这个规则进行过滤呢？</p>
 <p>笔者将在syscall的分析中给出答案。</p>
 <h3 id="ptrace">ptrace</h3>
@@ -294,7 +294,7 @@ preventing the system call from beginning.&gt;</p>
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-              2024-01-26 22:38:52
+              2024-03-04 15:37:44
             </span>
             
                   <span class="post-categories">

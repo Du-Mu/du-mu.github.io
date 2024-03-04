@@ -170,7 +170,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-          2024-03-03 16:21:36
+          2024-03-04 15:37:44
         </span>
         
               <span class="post-categories">
@@ -270,9 +270,10 @@
 <li>orw</li>
 </ul>
 <h1 id="leak">leak</h1>
-<p>一般而言，堆题中的leak主要是针对libc地址，heap地址的leak相对而言较为简单，而libc地址的leak将在 ![#stack] 攻击面部分详述。</p>
+<p>一般而言，堆题中的leak主要是针对libc地址，heap地址的leak相对而言较为简单，而libc地址的leak将在 [[#stack]] 攻击面部分详述。</p>
 <p>一般而言，heap leak 堆地址主要利用unsorted bin的第一个chunk会存在libc地址来leak。如果存在UAF，可以将一个直接放入unsorted bin，然后show来获得。</p>
 <p>也可以释放入unsorted  bin 后再申请回来实现，由于malloc并不会清空chunk内容，因此可以读取到残留的libc的指针。</p>
+<p>此外，当释放进入unsorted bin后，申请一个从unsorted bin 切分下的 chunk，此时chunk头也会留有相应指针。</p>
 <p>而在没有show相关输出chunk内容的函数时，考虑通过<code>_IO_2_1_stdout_</code> 来leak<br>
 基本原理就是partial overwrite 覆盖unsorted  bin中的libc地址，分配到__IO_2_1_stdout的位置，然后改写来完成leak</p>
 <h1 id="Basic-tricks-up-to-2-30">Basic tricks up to 2.30</h1>
@@ -331,6 +332,7 @@
 </ul>
 <h2 id="tcache-poison">tcache poison</h2>
 <p>主要是通过改写tcache的next指针，实现类似于fastbin的house of spirit的效果。</p>
+<p>这个技术非常常用，由于tcache基本没有任何检查，如果需要任意地址分配，这是第一个考虑的技术。</p>
 <h2 id="house-of-orange">house of orange</h2>
 <p>house of orange 原利用链中的IO_FILE相关利用已经失效了，这里主要关注其绕过无free函数限制的方法，即通过malloc大于top chunk大小的chunk时会先释放top chunk，再拓展堆区域。</p>
 <p>一般而言，修改top chunk需要满足一下条件。</p>
@@ -476,7 +478,7 @@
 在glibc2.30以下的版本，counts的类型是char，此结构大小是0x250。</p>
 <p>一般是作为辅助攻击的方法，可以简化攻击链。</p>
 <h4 id="example">example</h4>
-<p>![2021-DownUnder-note]</p>
+<p>[[2021-DownUnder-note]]</p>
 <h3 id="global-max-fast">global_max_fast</h3>
 <p>实际上就是house of corrison的利用，类似的，tcache也有类似的利用。使得大chunk被当作tcache处理。</p>
 <h3 id="heap-info">heap_info</h3>
@@ -517,7 +519,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-              2024-03-03 16:21:36
+              2024-03-04 15:37:44
             </span>
             
                   <span class="post-categories">
