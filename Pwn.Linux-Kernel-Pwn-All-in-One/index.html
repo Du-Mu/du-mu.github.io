@@ -170,7 +170,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-          2024-03-03 16:21:36
+          2024-03-05 09:58:38
         </span>
         
               <span class="post-categories">
@@ -218,9 +218,9 @@
         <h1 id="overview">overview</h1>
 <p>笔者厌倦了用户态堆的种种tricks，于是决定进入kernel pwn的大坑😊</p>
 <h1 id="安全机制">安全机制</h1>
-<p><strong>CONFIG_CFI_CLANG=y</strong></p>
+<p><strong>CONFIG_CFI_CLANG</strong></p>
 <p>控制流完整性校验，限制ROP</p>
-<p><strong>CONFIG_SLAB_FREELIST_HARDENED=y</strong></p>
+<p><strong>CONFIG_SLAB_FREELIST_HARDENED</strong></p>
 <p>类似于用户态下 glibc 中的 safe-linking 机制，在内核中的 slab/slub 分配器当中也存在着类似的机制保护着 freelist—— <code>SLAB_FREELIST_HARDENED</code>：</p>
 <p>类似于 glibc 2.32 版本引入的保护，在开启这种保护之前，slub 中的 free object 的 next 指针直接存放着 next free object 的地址，攻击者可以通过读取 freelist 泄露出内核线性映射区的地址，在开启了该保护之后 free object 的 next 指针存放的是由以下三个值进行异或操作后的值：</p>
 <ul>
@@ -228,7 +228,7 @@
 <li>下一个 free object 的地址</li>
 <li>由 kmem_cache 指定的一个 random 值</li>
 </ul>
-<p><strong>CONFIG_HARDENED_USERCOPY=y</strong></p>
+<p><strong>CONFIG_HARDENED_USERCOPY</strong></p>
 <p>hardened usercopy 是用以在用户空间与内核空间之间拷贝数据时进行越界检查的一种防护机制，<strong>主要检查拷贝过程中对内核空间中数据的读写是否会越界</strong>：</p>
 <ul>
 <li>读取的数据长度是否超出源 object 范围</li>
@@ -236,10 +236,10 @@
 </ul>
 <p>不过这种保护 <em>不适用于内核空间内的数据拷贝</em> ，这也是目前主流的绕过手段</p>
 <p>这一保护被用于 <code>copy_to_user()</code> 与 <code>copy_from_user()</code> 等数据交换 API 中</p>
-<p><strong>CONFIG_SLAB_FREELIST_RANDOM=y</strong></p>
+<p><strong>CONFIG_SLAB_FREELIST_RANDOM</strong></p>
 <p>这种保护主要发生在 slub allocator 向 buddy system 申请到页框之后的处理过程中，对于未开启这种保护的一张完整的 slub，其上的 object 的连接顺序是线性连续的，但在开启了这种保护之后其上的 object 之间的连接顺序是随机的，这让攻击者无法直接预测下一个分配的 object 的地址</p>
 <p>需要注意的是这种保护发生在<strong>slub allocator 刚从 buddy system 拿到新 slub 的时候，运行时 freelist 的构成仍遵循 LIFO</strong></p>
-<p><strong>CONFIG_INIT_ON_ALLOC_DEFAULT_ON=y</strong></p>
+<p><strong>CONFIG_INIT_ON_ALLOC_DEFAULT_ON</strong></p>
 <p>当编译内核时开启了这个选项时，在内核进行“堆内存”分配时（包括 buddy system 和 slab allocator），<strong>会将被分配的内存上的内容进行清零</strong>，从而防止了利用未初始化内存进行数据泄露的情况</p>
 <p><strong>CONFIG_RANDOMIZE_KSTACK_OFFSET</strong></p>
 <p>决定内核栈是否存在随机偏移</p>
@@ -364,6 +364,8 @@
 <p>这里的getRootPrivilige就是用户态的 提权代码。</p>
 <h4 id="绕过SMAP与SMEP">绕过SMAP与SMEP</h4>
 <p>SMAP和SMEP是 <code>x64</code> 限制内核和用户空间的数据访问的一个架构功能，通过CR4寄存器的低位来判断是否开启。 开启后 从内核态访问用户态的数据会直接panic，因此通过在ROP链中插入 修改 <code>cr4</code> 寄存器的gadget即可绕过</p>
+<p><img src="/images/Pasted-image-20240305085117.png" alt="Pasted-image-20240305085117.png"></p>
+<p>gdb 无法查看 cr4 寄存器的值，可以通过 kernel crash 时的信息查看。为了关闭 smep 保护，常用一个固定值 <code>0x6f0</code>，即 <code>mov cr4, 0x6f0</code>。</p>
 <h4 id="KPTI如何限制ret2usr">KPTI如何限制ret2usr</h4>
 <p>最后讨论一下KPTI的实现</p>
 <blockquote>
@@ -373,7 +375,7 @@ The userspace page tables map only the kernel data needed to enter and exit the 
 For new userspace mappings, the kernel makes the entries in its page tables like normal. The only difference is when the kernel makes entries in the top (PGD) level. In addition to setting the entry in the main kernel PGD, a copy of the entry is made in the userspace page tables’ PGD.<br>
 This sharing at the PGD level also inherently shares all the lower layers of the page tables. This leaves a single, shared set of userspace page tables to manage. One PTE to lock, one set of accessed bits, dirty bits, etc…</p>
 </blockquote>
-<p>KPTI维护两套页表，一套和没有开启KPTI 时的页表类似，拥有用户态和内核态的完整映射，这是给内核态使用的，不同的是， 此页表对于用户态内存空间的映射，是没有可执行权限的，这里权限的限制是通过页面来实现，因此ret2usr如果关闭了smap和smep，尽管可以访问到用户态数据，但是无法执行用户态代码；</p>
+<p>KPTI维护两套页表，一套和没有开启KPTI 时的页表类似，拥有用户态和内核态的完整映射，这是给内核态使用的，不同的是， 此页表对于用户态内存空间的映射，是没有可执行权限的，这里权限的限制是通过页表的权限位来实现的，因此ret2usr如果关闭了smap和smep，尽管可以访问到用户态数据，但是无法执行用户态代码；</p>
 <p>此外，供给用户态的页表，拥有用户态的完整映射和内核的部分映射，这部分映射仅包含进入和离开内核态的代码。</p>
 <h3 id="pt-regs-与-KROP">pt_regs 与 KROP</h3>
 <p>在5.xx版本（笔者还没有检查具体是哪些版本），或者高版本没有开启如下选项时：</p>
@@ -382,6 +384,9 @@ This sharing at the PGD level also inherently shares all the lower layers of the
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pt_regs</span> &#123;</span>  </span><br><span class="line"><span class="comment">/*  </span></span><br><span class="line"><span class="comment">* C ABI says these regs are callee-preserved. They aren&#x27;t saved on kernel entry  </span></span><br><span class="line"><span class="comment">* unless syscall needs a complete, fully filled &quot;struct pt_regs&quot;.  </span></span><br><span class="line"><span class="comment">*/</span>  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> r15;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> r14;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> r13;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> r12;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> rbp;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> rbx;  </span><br><span class="line"><span class="comment">/* These regs are callee-clobbered. Always saved on kernel entry. */</span>  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> r11;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> r10;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> r9;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> r8;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> rax;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> rcx;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> rdx;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> rsi;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> rdi;  </span><br><span class="line"><span class="comment">/*  </span></span><br><span class="line"><span class="comment">* On syscall entry, this is syscall#. On CPU exception, this is error code.  </span></span><br><span class="line"><span class="comment">* On hw interrupt, it&#x27;s IRQ number:  </span></span><br><span class="line"><span class="comment">*/</span>  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> orig_rax;  </span><br><span class="line"><span class="comment">/* Return frame for iretq */</span>  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> rip;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> cs;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> eflags;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> rsp;  </span><br><span class="line"><span class="type">unsigned</span> <span class="type">long</span> ss;  </span><br><span class="line"><span class="comment">/* top of stack page */</span>  </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>我们注意到，这些内容，由用户态的寄存器决定，可以由我们控制。</p>
 <p>因此这些部分可以用于布置ROP链， 当劫持到内核某个结构体的函数指针时，只需要<strong>寻找到一条形如 “add rsp, val ; ret” 的 gadget 便能够完成 ROP</strong></p>
+<p>具体而言，当通过syscall触发进入内核态前，我们通过在用户态控制所有寄存器，之后，触发syscall时，在syscall_entry 会将用户态的所有寄存器压入栈中来保存运行状态，这时，如果我们能劫持控制流，并通过类似 <code>add rsp, val ; ret</code> 的gadget来迁移栈，在我们可以控制的<code>pt_regs</code>上进行ROP</p>
+<p>然而，在之后的内核版本中，加入了</p>
+<p><code>CONFIG_RANDOMIZE_KSTACK_OFFSET</code> ， 使得在进入内核时，会产生一个随机栈偏移，使得此利用的稳定性下降。</p>
 <h3 id="ret2dir">ret2dir</h3>
 <p>内核堆区 direct_mapping_arean 存在对于整个物理内存的映射，因此，通过mmap在用户态喷射的匿名页面，实际上也从此分配。</p>
 <p>通过mmap大量分配，可以获取到 kernel 上一块近乎连续的物理内存，因此，通过不断堆喷布置gadget滑块，然后随机选择一个内核基地址进行栈迁移，最终就有很大概率命中我们写入的页面。</p>
@@ -397,9 +402,9 @@ This sharing at the PGD level also inherently shares all the lower layers of the
 <ul>
 <li>pt_regs: 写在内核栈上</li>
 <li>ret2dir： 写在direct mapping arena</li>
-<li>sycrop</li>
+<li>sycrop: 写在加入随机化的区域</li>
 </ul>
-<p>由于ROP可以很方便劫持控制流，所用使用ROP攻击内核时，一般使用 <code>commit_cred</code> 进行提权</p>
+<p>由于ROP可以很方便劫持控制流，所以使用ROP攻击内核时，一般使用 <code>commit_cred</code> 进行提权</p>
 <p>遗憾的是，在高版本内核，由于CFI的引入，很多时候难以找到完善的gadget进行利用，限制了ROP的使用</p>
 <h2 id="heap">heap</h2>
 <h3 id="UAF">UAF</h3>
@@ -485,7 +490,7 @@ This sharing at the PGD level also inherently shares all the lower layers of the
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-              2024-03-03 16:21:36
+              2024-03-05 09:58:38
             </span>
             
                   <span class="post-categories">

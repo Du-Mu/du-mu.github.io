@@ -1,8 +1,9 @@
+https://v3rdant.cn/Fuzz.Kernel-Fuzz-With-Syzkaller/
+https://v3rdant.cn/Pwn.Linux-Kernel-Pwn-All-in-One/
 https://v3rdant.cn/Linux.io_uring-Top-down-Approach/
 https://v3rdant.cn/Fuzz.AFL-All-in-One/
 https://v3rdant.cn/Pwn.Heap-Exploation-up-to-2.31/
 https://v3rdant.cn/Linux.Seccomp-and-Ptrace/
-https://v3rdant.cn/Pwn.Linux-Kernel-Pwn-All-in-One/
 https://v3rdant.cn/categories/index.html
 https://v3rdant.cn/tags/index.html
 https://v3rdant.cn/tags/index-1.html
