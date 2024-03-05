@@ -170,7 +170,7 @@
       <div class="post-attach">
         <span class="post-pubtime">
           <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-          2024-03-05 09:58:38
+          2024-03-05 10:05:02
         </span>
         
               <span class="post-categories">
@@ -360,15 +360,15 @@
 <p>创建镜像：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">sudo apt-get install debootstrap</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">mkdir</span> image</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> image</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">wget https://raw.githubusercontent.com/google/syzkaller/master/tools/create-image.sh -O create-image.sh</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chmod</span> +x create-image.sh</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">./create-image.sh</span></span><br></pre></td></tr></table></figure>
 <p>qemu启动脚本和qemu.cfg如下：</p>
-<p><img src="/Fuzz/image-20231129202507739.png" alt="image-20231129202507739"></p>
-<p><img src="/Fuzz/image-20231129202515811.png" alt="image-20231129202515811"></p>
+<p><img src="/images/image-20231129202507739.png" alt="image-20231129202507739.png"></p>
+<p><img src="/images/image-20231129202515811.png" alt="image-20231129202515811.png"></p>
 <h2 id="运行syzkaller">运行syzkaller</h2>
 <p>在经过3、4天的运行后，结果如下：</p>
-<p><img src="/Fuzz/image-20231129202651345.png" alt="image-20231129202651345"></p>
+<p><img src="/images/image-20231129202651345.png" alt="image-20231129202651345.png"></p>
 <h2 id="漏洞分析">漏洞分析</h2>
 <p>这里选择 <code>memory leak in iov_iter_extract_pages</code>  来进行分析。</p>
 <p>首先查看crash时的函数调用栈：</p>
-<p><img src="/Fuzz/image-20231130141347493.png" alt="image-20231130141347493"></p>
+<p><img src="/images/image-20231130141347493.png" alt="image-20231130141347493.png"></p>
 <p>定位 <code>iov_iter_exxtract_pages</code> 函数， 这个函数从基于用户空间内存的迭代器中提取出一组连续的页面,并对这些页面加锁pin。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// lib/iov_iter.c</span></span><br><span class="line"><span class="type">static</span> <span class="type">ssize_t</span> <span class="title function_">iov_iter_extract_user_pages</span><span class="params">(<span class="keyword">struct</span> iov_iter *i,</span></span><br><span class="line"><span class="params">					   <span class="keyword">struct</span> page ***pages,</span></span><br><span class="line"><span class="params">					   <span class="type">size_t</span> maxsize,</span></span><br><span class="line"><span class="params">					   <span class="type">unsigned</span> <span class="type">int</span> maxpages,</span></span><br><span class="line"><span class="params">					   <span class="type">iov_iter_extraction_t</span> extraction_flags,</span></span><br><span class="line"><span class="params">					   <span class="type">size_t</span> *offset0)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> addr;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">int</span> gup_flags = <span class="number">0</span>;</span><br><span class="line">	<span class="type">size_t</span> offset;</span><br><span class="line">	<span class="type">int</span> res;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (i-&gt;data_source == ITER_DEST)</span><br><span class="line">		gup_flags |= FOLL_WRITE;</span><br><span class="line">	<span class="keyword">if</span> (extraction_flags &amp; ITER_ALLOW_P2PDMA)</span><br><span class="line">		gup_flags |= FOLL_PCI_P2PDMA;</span><br><span class="line">	<span class="keyword">if</span> (i-&gt;nofault)</span><br><span class="line">		gup_flags |= FOLL_NOFAULT;</span><br><span class="line"></span><br><span class="line">	addr = first_iovec_segment(i, &amp;maxsize);</span><br><span class="line">	*offset0 = offset = addr % PAGE_SIZE;</span><br><span class="line">	addr &amp;= PAGE_MASK;</span><br><span class="line">	maxpages = want_pages_array(pages, maxsize, offset, maxpages);</span><br><span class="line">	<span class="keyword">if</span> (!maxpages)</span><br><span class="line">		<span class="keyword">return</span> -ENOMEM;</span><br><span class="line">    <span class="comment">// 根据迭代器的信息,计算出需要提取的用户空间地址范围。</span></span><br><span class="line">	res = pin_user_pages_fast(addr, maxpages, gup_flags, *pages);</span><br><span class="line">    <span class="comment">// 调用pin_user_pages_fast()对该地址范围内的页面加锁</span></span><br><span class="line">	<span class="keyword">if</span> (unlikely(res &lt;= <span class="number">0</span>))</span><br><span class="line">		<span class="keyword">return</span> res;</span><br><span class="line">	maxsize = <span class="type">min_t</span>(<span class="type">size_t</span>, maxsize, res * PAGE_SIZE - offset);</span><br><span class="line">    <span class="comment">// 根据实际加锁的页面数量,计算迭代器可以前进的最大长度。</span></span><br><span class="line">	iov_iter_advance(i, maxsize);</span><br><span class="line">    <span class="comment">// 调用iov_iter_advance()移动迭代器。</span></span><br><span class="line">	<span class="keyword">return</span> maxsize;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>而syzkaller给出的漏洞是memory leak，即存在分配未释放的内存。</p>
@@ -399,7 +399,7 @@
           <div class="post-attach">
             <span class="post-pubtime">
               <i class="iconfont icon-updatetime mr-10" title="Update time"></i>
-              2024-03-05 09:58:38
+              2024-03-05 10:05:02
             </span>
             
                   <span class="post-categories">
